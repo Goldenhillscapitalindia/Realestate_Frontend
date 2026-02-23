@@ -9,6 +9,7 @@ import MarketRadar from "./components/market_radar/MarketRadar";
 import MarketRadarView from "./components/market-radar-view/components/MarketRadarView";
 import PfDemo from "./components/portfolio_intelligence/pf_demo";
 import PfPropertyInsights from "./components/portfolio_intelligence/pf_property_insights";
+import RealEstateUploader from "./components/deal_lens/RealEstateUploader";
 
 
 const queryClient = new QueryClient();
@@ -30,6 +31,8 @@ const App = () => (
           />
           <Route path="/market_radar" element={<MarketRadar />} />
           <Route path="/market_radar_view/:sub_market_name" element={<MarketRadarView />} />
+          <Route path="/deal_lens" element={<RealEstateUploader />} />
+
 
         </Routes>
       </BrowserRouter>

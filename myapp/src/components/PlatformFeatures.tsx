@@ -1,6 +1,6 @@
 import { ScrollReveal } from "./ScrollReveal";
 import { Brain, Radar, Search } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { Route, useNavigate } from "react-router-dom";
 import portfolioDashboard from "../assets/portfolio-dashboard.png";
 import marketRadar from "../assets/market-radar.jpg";
 import dealLens from "../assets/deal-lens.jpg";
@@ -69,7 +69,7 @@ const PlatformFeatures = () => {
               {[
                 { label: "Portfolio Intelligence", route: "/portfolio_intelligence" },
                 { label: "Market Radar Signals", route: "/market_radar" },
-                { label: "Deal Underwriting Lens" },
+                { label: "Deal Underwriting Lens", route: "/deal_lens" },
               ].map((tab) => (
                 <button
                   key={tab.label}
@@ -103,13 +103,13 @@ const PlatformFeatures = () => {
                     <ul className="space-y-3">
                       {feature.points.map((point) => (
                         <li key={point} className="flex items-start gap-3 text-muted-foreground">
-                          <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-700 mt-2.5 shrink-0" />
                           {point}
                         </li>
                       ))}
                     </ul>
                     <p className="text-base font-semibold text-foreground pt-2">
-                      <span className="text-accent">Outcome:</span> {feature.subtitle}
+                      <span className="text-blue-700">Outcome:</span> {feature.subtitle}
                     </p>
                   </div>
 
