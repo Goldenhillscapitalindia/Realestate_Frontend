@@ -66,23 +66,20 @@ const PlatformFeatures = () => {
               One Unified Intelligence Platform
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-              {["Portfolio Intelligence", "Market Radar Signals", "Deal Underwriting Lens"].map((tab) => {
-                const isMarketRadar = tab === "Market Radar Signals";
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => {
-                      if (isMarketRadar) {
-                        navigate("/market_radar");
-                      }
-                    }}
-                    className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-200 border border-border text-sm font-medium text-foreground transition hover:border-foreground/40"
-                  >
-                    {tab}
-                  </button>
-                );
-              })}
+              {[
+                { label: "Portfolio Intelligence", route: "/portfolio_intelligence" },
+                { label: "Market Radar Signals", route: "/market_radar" },
+                { label: "Deal Underwriting Lens" },
+              ].map((tab) => (
+                <button
+                  key={tab.label}
+                  type="button"
+                  onClick={() => tab.route && navigate(tab.route)}
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-200 border border-border text-sm font-medium text-foreground transition hover:border-foreground/40"
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
         </ScrollReveal>
