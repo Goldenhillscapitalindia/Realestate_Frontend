@@ -13,8 +13,8 @@ const HeroSection = () => {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="max-w-3xl mx-auto text-center mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 bg-accent/10 text-accent border border-accent/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 animate-fade-up">
-            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+          <div className="inline-flex items-center gap-2 bg-accent/10 text-indigo-500 border border-accent/20 rounded-full px-4 py-1.5 text-sm font-medium mb-6 animate-fade-up">
+            <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
             Predictive Intelligence for Real Estate
           </div>
 

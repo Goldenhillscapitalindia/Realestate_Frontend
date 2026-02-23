@@ -1,5 +1,6 @@
 import { ScrollReveal } from "./ScrollReveal";
 import { Brain, Radar, Search } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import portfolioDashboard from "../assets/portfolio-dashboard.png";
 import marketRadar from "../assets/market-radar.jpg";
 import dealLens from "../assets/deal-lens.jpg";
@@ -52,62 +53,90 @@ const features = [
 ];
 
 const PlatformFeatures = () => {
+  const navigate = useNavigate();
   return (
     <section className="section-padding section-soft" id="platform">
       <div className="max-w-7xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
+            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
               What Vertex Does
             </p>
             <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground mb-4">
               One Unified Intelligence Platform
             </h2>
             <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
-              {["Portfolio Intelligence", "Market Radar Signals", "Deal Underwriting Lens"].map((t) => (
-                <span
-                  key={t}
-                  className="inline-block px-4 py-2 rounded-full bg-card border border-border text-sm font-medium text-foreground"
-                >
-                  {t}
-                </span>
-              ))}
+              {["Portfolio Intelligence", "Market Radar Signals", "Deal Underwriting Lens"].map((tab) => {
+                const isMarketRadar = tab === "Market Radar Signals";
+                return (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => {
+                      if (isMarketRadar) {
+                        navigate("/market_radar");
+                      }
+                    }}
+                    className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-200 border border-border text-sm font-medium text-foreground transition hover:border-foreground/40"
+                  >
+                    {tab}
+                  </button>
+                );
+              })}
             </div>
           </div>
         </ScrollReveal>
 
         <div className="space-y-24">
-          {features.map((feature, i) => (
-            <ScrollReveal key={feature.title} delay={i * 50}>
-              <div
-                className={`flex flex-col ${
-                  i % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"
-                } items-center gap-12 lg:gap-16`}
-              >
-                {/* Text */}
-                <div className="flex-1 space-y-6">
-                  <div className="inline-flex items-center gap-3">
-                    <span className="text-3xl">{feature.emoji}</span>
-                    <h3 className="font-display font-bold text-2xl md:text-3xl text-foreground">
-                      {feature.title}
-                    </h3>
+          {features.map((feature, i) => {
+            const isMarketRadar = feature.title === "Market Radar Signal";
+            return (
+              <ScrollReveal key={feature.title} delay={i * 50}>
+                <div
+                  className={`flex flex-col ${i % 2 === 1 ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 lg:gap-16`}
+                >
+                  {/* Text */}
+                  <div className="flex-1 space-y-6">
+                    <div className="inline-flex items-center gap-3">
+                      <span className="text-3xl">{feature.emoji}</span>
+                      <h3 className="font-display font-bold text-2xl md:text-3xl text-foreground">
+                        {feature.title}
+                      </h3>
+                    </div>
+                    <ul className="space-y-3">
+                      {feature.points.map((point) => (
+                        <li key={point} className="flex items-start gap-3 text-muted-foreground">
+                          <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0" />
+                          {point}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="text-base font-semibold text-foreground pt-2">
+                      <span className="text-accent">Outcome:</span> {feature.subtitle}
+                    </p>
                   </div>
-                  <ul className="space-y-3">
-                    {feature.points.map((point) => (
-                      <li key={point} className="flex items-start gap-3 text-muted-foreground">
-                        <span className="w-1.5 h-1.5 rounded-full bg-accent mt-2.5 shrink-0" />
-                        {point}
-                      </li>
-                    ))}
-                  </ul>
-                  <p className="text-base font-semibold text-foreground pt-2">
-                    <span className="text-accent">Outcome:</span> {feature.subtitle}
-                  </p>
-                </div>
 
-                {/* Image */}
-                <div className="flex-1 w-full">
-                  <div className="rounded-xl overflow-hidden float-shadow border border-border">
+                  {/* Image */}
+                  <div
+                    className={`flex-1 w-full rounded-xl overflow-hidden float-shadow border border-border ${isMarketRadar ? "cursor-pointer" : ""}`}
+                    onClick={() => {
+                      if (isMarketRadar) {
+                        navigate("/market_radar");
+                      }
+                    }}
+                    role={isMarketRadar ? "button" : undefined}
+                    aria-label={isMarketRadar ? "View Market Radar" : undefined}
+                    tabIndex={isMarketRadar ? 0 : undefined}
+                    onKeyDown={
+                      isMarketRadar
+                        ? (event) => {
+                            if (event.key === "Enter" || event.key === " ") {
+                              navigate("/market_radar");
+                            }
+                          }
+                        : undefined
+                    }
+                  >
                     <img
                       src={feature.image}
                       alt={feature.alt}
@@ -116,9 +145,9 @@ const PlatformFeatures = () => {
                     />
                   </div>
                 </div>
-              </div>
-            </ScrollReveal>
-          ))}
+              </ScrollReveal>
+            );
+          })}
         </div>
       </div>
     </section>

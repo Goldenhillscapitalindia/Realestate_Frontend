@@ -6,7 +6,7 @@ const WhyChooseVertex = () => {
       <div className="max-w-7xl mx-auto">
         <ScrollReveal>
           <div className="max-w-3xl mx-auto text-center mb-16">
-            <p className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
+            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
               Why Real Estate Leaders Choose Vertex
             </p>
             <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground mb-6 leading-tight">

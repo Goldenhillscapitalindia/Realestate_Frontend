@@ -5,7 +5,7 @@ import path from 'path';
 export default defineConfig({
   server: {
     host: "::",   // network accessible
-    port: 4000,   // your desired port
+    port: 2000,   // your desired port
     strictPort: true,
   },
   plugins: [
