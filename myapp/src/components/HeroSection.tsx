@@ -1,6 +1,6 @@
-import { Button } from "@/components/ui/button";
-import heroDashboard from "@/assets/hero-dashboard.jpg";
+import heroDashboard from "../assets/hero-dashboard.jpg";
 import { ArrowRight, Play } from "lucide-react";
+import { Button } from "./ui/button";
 
 const HeroSection = () => {
   return (

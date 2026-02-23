@@ -1,5 +1,8 @@
 import { ScrollReveal } from "./ScrollReveal";
 import { Brain, Radar, Search } from "lucide-react";
+import portfolioDashboard from '../../public/portfolio-dashboard.jpg';
+import marketRadar from "../../public/market-radar.jpg";
+import dealLens from "../../public/deal-lens.jpg";
 
 const features = [
   {
