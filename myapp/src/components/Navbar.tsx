@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { Menu, X } from "lucide-react";
 
@@ -11,6 +12,7 @@ const navLinks = [
 ];
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -50,11 +52,12 @@ const Navbar = () => {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
-          {/* <Button variant="ghost" size="sm" asChild>
-            <a href="#demo">Log In</a>
-          </Button> */}
-          <Button variant="hero" size="default" asChild>
-            <a href="#demo">Demo</a>
+          <Button
+            variant="hero"
+            size="default"
+            onClick={() => navigate("/portfolio_intelligence")}
+          >
+            Demo
           </Button>
         </div>
 
@@ -80,8 +83,16 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <Button variant="hero" size="lg" className="w-full" asChild>
-            <a href="#demo">Request a Demo</a>
+          <Button
+            variant="hero"
+            size="lg"
+            className="w-full"
+            onClick={() => {
+              setMobileOpen(false);
+              navigate("/portfolio_intelligence");
+            }}
+          >
+            Request a Demo
           </Button>
         </div>
       )}
