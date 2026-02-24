@@ -61,9 +61,10 @@ const PfDemo: React.FC = () => {
             <button
               type="button"
               onClick={() => navigate("/", { state: { scrollTo: "demos" } })}
-              className="back-button-hex back-button-theme-sidebar"
+              className="back-button-hex back-button-theme-sidebar flex items-center gap-2 whitespace-nowrap"
             >
-              <ArrowLeft className="h-5 w-5" />back
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back</span>
             </button>
           </div>
           <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -77,11 +78,10 @@ const PfDemo: React.FC = () => {
                   setActiveTab("Portfolio Analytics");
                   setIsPortfolioMenuOpen((prev) => !prev);
                 }}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
-                  activeTab === "Portfolio Analytics"
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Portfolio Analytics"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
-                }`}
+                  }`}
               >
                 <span className="inline-block h-2 w-2 rounded-full bg-current" />
                 <span className="flex-1">Portfolio Analytics</span>
@@ -101,16 +101,14 @@ const PfDemo: React.FC = () => {
                           setActiveTab("Portfolio Analytics");
                           setPortfolioSubTab(subTab.id);
                         }}
-                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition ${
-                          isSubActive
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition ${isSubActive
                             ? "bg-[#dff3eb] text-[#066b52]"
                             : "text-slate-700 hover:bg-slate-100"
-                        }`}
+                          }`}
                       >
                         <span
-                          className={`inline-block h-2.5 w-2.5 rounded-full ${
-                            isSubActive ? "bg-[#0b8f6b]" : "bg-slate-300"
-                          }`}
+                          className={`inline-block h-2.5 w-2.5 rounded-full ${isSubActive ? "bg-[#0b8f6b]" : "bg-slate-300"
+                            }`}
                         />
                         {subTab.label}
                       </button>
@@ -123,11 +121,10 @@ const PfDemo: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab("Properties")}
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
-                activeTab === "Properties"
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Properties"
                   ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                   : "bg-white/5 text-blue-100 hover:bg-white/10"
-              }`}
+                }`}
             >
               <span className="inline-block h-2 w-2 rounded-full bg-current" />
               <span className="flex-1">Properties</span>
@@ -136,11 +133,10 @@ const PfDemo: React.FC = () => {
             <button
               type="button"
               onClick={() => setActiveTab("AI Rent Intelligence")}
-              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
-                activeTab === "AI Rent Intelligence"
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "AI Rent Intelligence"
                   ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                   : "bg-white/5 text-blue-100 hover:bg-white/10"
-              }`}
+                }`}
             >
               <span className="inline-block h-2 w-2 rounded-full bg-current" />
               <span className="flex-1">AI Rent Intelligence</span>
