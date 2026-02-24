@@ -1,22 +1,22 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import PfDemoPortfolioAnalytics from "./pf_demo_portfolio_analytics";
+import PfDemoPortfolioAnalytics, {
+  portfolioAnalyticsTabDefinitions,
+  PortfolioAnalyticsTabId,
+} from "./pf_demo_portfolio_analytics";
 import PfDemoProperties from "./pf_demo_properties";
 import PfDemoAiRentIntelligence from "./pf_demo_ai_rent_intelligence";
+import { ArrowLeft } from "lucide-react";
 
 const tabs = ["Portfolio Analytics", "Properties", "AI Rent Intelligence"] as const;
 type DemoTab = (typeof tabs)[number];
 
-const tabComponents: Record<DemoTab, React.FC> = {
-  "Portfolio Analytics": PfDemoPortfolioAnalytics,
-  Properties: PfDemoProperties,
-  "AI Rent Intelligence": PfDemoAiRentIntelligence,
-};
-
 const PfDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DemoTab>("Portfolio Analytics");
-  const ActiveTab = useMemo(() => tabComponents[activeTab], [activeTab]);
+  const [portfolioSubTab, setPortfolioSubTab] = useState<PortfolioAnalyticsTabId>("snapshot");
+  const [isPortfolioMenuOpen, setIsPortfolioMenuOpen] = useState(true);
+  const mainScrollRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -27,69 +27,136 @@ const PfDemo: React.FC = () => {
     }
   }, [location.state]);
 
+  useEffect(() => {
+    mainScrollRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  }, [activeTab, portfolioSubTab]);
+
+  const activeContent = useMemo(() => {
+    if (activeTab === "Portfolio Analytics") {
+      return (
+        <PfDemoPortfolioAnalytics
+          activeSubTab={portfolioSubTab}
+          onSubTabChange={setPortfolioSubTab}
+          showTabMenu={false}
+        />
+      );
+    }
+    if (activeTab === "Properties") return <PfDemoProperties />;
+    return <PfDemoAiRentIntelligence />;
+  }, [activeTab, portfolioSubTab]);
+
   return (
     <section
-      className="min-h-screen px-6 py-10 text-black"
+      className="h-screen overflow-hidden text-black"
       style={{
         background:
-          "radial-gradient(1200px 600px at 10% 0%, rgba(214,237,255,0.7) 0%, rgba(248,250,255,0.92) 40%, rgba(255,255,255,1) 100%)",
+          "radial-gradient(1200px 600px at 10% 0%, rgba(232,239,250,0.85) 0%, rgba(241,246,252,0.95) 40%, rgba(248,251,255,1) 100%)",
       }}
-    >          <button
-            type="button"
-            onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
-            className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
-          >
-            ← Back
-          </button>
-      <div className="mx-auto max-w-6xl space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          
-          <div className="flex items-center gap-4">
-          {/* <button
-            type="button"
-            onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
-            className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
-          >
-            ← Back
-          </button> */}
+    >
+      <div className="grid h-screen grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]">
+        <aside
+          className="sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"
+        >
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={() => navigate("/", { state: { scrollTo: "demos" } })}
+              className="back-button-hex back-button-theme-sidebar"
+            >
+              <ArrowLeft className="h-5 w-5" />back
+            </button>
+          </div>
+          <div className="mb-6 rounded-2xl border border-white/10 bg-white/5 p-4">
+            <h1 className="text-2xl font-semibold">Portfolio Intelligence</h1>
+          </div>
+          <nav className="space-y-2">
             <div>
-              <h1 className="text-3xl font-bold text-black text-[#003366]">Portfolio Intelligence</h1>
-              {/* <p className="text-sm text-black">318 Properties - $30.2B AUM</p> */}
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("Portfolio Analytics");
+                  setIsPortfolioMenuOpen((prev) => !prev);
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
+                  activeTab === "Portfolio Analytics"
+                    ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                    : "bg-white/5 text-blue-100 hover:bg-white/10"
+                }`}
+              >
+                <span className="inline-block h-2 w-2 rounded-full bg-current" />
+                <span className="flex-1">Portfolio Analytics</span>
+                <span className="text-sm opacity-80">{isPortfolioMenuOpen ? "v" : ">"}</span>
+              </button>
+
+              {isPortfolioMenuOpen && (
+                <div className="mt-2 space-y-2 rounded-2xl bg-white p-3 shadow-lg">
+                  {portfolioAnalyticsTabDefinitions.map((subTab) => {
+                    const isSubActive =
+                      activeTab === "Portfolio Analytics" && portfolioSubTab === subTab.id;
+                    return (
+                      <button
+                        key={subTab.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveTab("Portfolio Analytics");
+                          setPortfolioSubTab(subTab.id);
+                        }}
+                        className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition ${
+                          isSubActive
+                            ? "bg-[#dff3eb] text-[#066b52]"
+                            : "text-slate-700 hover:bg-slate-100"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-2.5 w-2.5 rounded-full ${
+                            isSubActive ? "bg-[#0b8f6b]" : "bg-slate-300"
+                          }`}
+                        />
+                        {subTab.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
 
-        </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab("Properties")}
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
+                activeTab === "Properties"
+                  ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                  : "bg-white/5 text-blue-100 hover:bg-white/10"
+              }`}
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-current" />
+              <span className="flex-1">Properties</span>
+            </button>
 
-        {/* <div className="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"> */}
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap gap-3">
-              {tabs.map((tab) => {
-                const isActive = tab === activeTab;
-                return (
-                  <button
-                    key={tab}
-                    type="button"
-                    onClick={() => setActiveTab(tab)}
-                    className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                      isActive
-                        ? "bg-sky-500 text-white shadow-sm"
-                        : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    }`}
-                  >
-                    {tab}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+            <button
+              type="button"
+              onClick={() => setActiveTab("AI Rent Intelligence")}
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${
+                activeTab === "AI Rent Intelligence"
+                  ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                  : "bg-white/5 text-blue-100 hover:bg-white/10"
+              }`}
+            >
+              <span className="inline-block h-2 w-2 rounded-full bg-current" />
+              <span className="flex-1">AI Rent Intelligence</span>
+            </button>
+          </nav>
+        </aside>
 
-          <div>
-            <ActiveTab />
+        <main ref={mainScrollRef} className="h-screen min-w-0 overflow-y-auto bg-[#f3f6fb] px-4 py-6 md:px-6 md:pt-7">
+          <div className="mx-auto w-full max-w-[1420px]">
+            {activeContent}
           </div>
-        {/* </div> */}
+        </main>
       </div>
     </section>
   );
 };
 
 export default PfDemo;
+

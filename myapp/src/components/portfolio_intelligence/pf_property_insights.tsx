@@ -46,6 +46,7 @@ type RiskAlert = IntelligenceTips & {
   renewalRate?: number;
   riskDrivers?: string[];
   expiringUnits?: number;
+  expiringUnitsNext90Days?: number; // ✅ added (365 Western)
   monthlyImpact?: number;
   revenueAtRisk?: number;
   annualNoiImpact?: number;
@@ -78,6 +79,20 @@ type PropertyIntelligence = {
   reviewIntelligence?: ReviewIntelligence;
 };
 
+// ✅ rentComparison can be ARRAY (unit breakdown) or OBJECT (summary)
+type RentComparisonEntry = {
+  market?: number;
+  inPlace?: number;
+  unitType?: string;
+};
+
+type RentComparisonSummary = {
+  averageMarketRent?: number | null;
+  averageInPlaceRent?: number | null;
+  totalMarkToMarket?: number | null;
+  lossToLeasePercent?: number | null;
+};
+
 type PropertyResponseDetails = {
   kpis?: {
     noi?: number;
@@ -100,14 +115,13 @@ type PropertyResponseDetails = {
     name?: string;
     units?: number;
     location?: string;
-    yearBuilt?: number;
+    yearBuilt?: number | null;
   };
   intelligence?: PropertyIntelligence;
-  rentComparison?: {
-    market?: number;
-    inPlace?: number;
-    unitType?: string;
-  }[];
+
+  // ✅ union type
+  rentComparison?: RentComparisonEntry[] | RentComparisonSummary;
+
   leaseExpirationLadder?: {
     month?: string;
     units?: number;
@@ -125,9 +139,7 @@ const isValidNumber = (value: number | undefined | null): value is number =>
   typeof value === "number" && !Number.isNaN(value);
 
 const formatCurrency = (value?: number | null): string => {
-  if (!isValidNumber(value)) {
-    return "-";
-  }
+  if (!isValidNumber(value)) return "-";
 
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -137,21 +149,17 @@ const formatCurrency = (value?: number | null): string => {
 };
 
 const formatPercent = (value?: number | null): string => {
-  if (!isValidNumber(value)) {
-    return "-";
-  }
+  if (!isValidNumber(value)) return "-";
 
-  if (value > 1) {
-    return `${value.toFixed(1)}%`;
-  }
+  // if API sends 68 => 68%
+  if (value > 1) return `${value.toFixed(1)}%`;
 
+  // if API sends 0.68 => 68%
   return `${(value * 100).toFixed(1)}%`;
 };
 
 const formatYoY = (value?: number | null): string | undefined => {
-  if (!isValidNumber(value)) {
-    return undefined;
-  }
+  if (!isValidNumber(value)) return undefined;
 
   const percent = value * 100;
   const sign = percent >= 0 ? "+" : "";
@@ -178,11 +186,7 @@ const baseBarOptions = {
     },
     tooltip: {
       callbacks: {
-        // label: (context: any) => `${context.raw} units`,
-                label: (context: any) => `${context.dataset.label}: ${context.raw} units`,
- 
-
-
+        label: (context: any) => `${context.dataset.label}: ${context.raw} units`,
       },
     },
   },
@@ -223,7 +227,6 @@ const trendLineOptions: ChartOptions<"line"> = {
   },
 };
 
-
 type InsightCardProps = {
   title: string;
   value: string;
@@ -256,9 +259,13 @@ const InsightCard: React.FC<InsightCardProps> = ({
   >
     <div className="flex items-center justify-between">
       <p className="text-sm font-semibold text-slate-900">{title}</p>
-      
+
       {badge ? (
-        <span className={`rounded-full px-3 py-1 text-[11px] font-semibold ${badgeClass ?? "bg-slate-100 text-slate-500"}`}>
+        <span
+          className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+            badgeClass ?? "bg-slate-100 text-slate-500"
+          }`}
+        >
           {badge}
         </span>
       ) : null}
@@ -297,29 +304,28 @@ const PfPropertyInsights: React.FC = () => {
 
     const fetchData = async () => {
       if (!propertyName || !submarket || !region) {
-        if (isActive) {
-          setStatus("error");
-        }
+        if (isActive) setStatus("error");
         return;
       }
 
       setStatus("loading");
       try {
-        const response = await axios.post<{ data: PropertyRecord }>(`${API_URL}/api/get_property_model_data/`, {
-          fetch: "specific",
-          property_name: propertyName,
-          submarket,
-          region,
-        });
+        const response = await axios.post<{ data: PropertyRecord }>(
+          `${API_URL}/api/get_property_model_data/`,
+          {
+            fetch: "specific",
+            property_name: propertyName,
+            submarket,
+            region,
+          }
+        );
 
         if (isActive) {
           setRecord(response.data?.data ?? null);
           setStatus("idle");
         }
-      } catch (error) {
-        if (isActive) {
-          setStatus("error");
-        }
+      } catch {
+        if (isActive) setStatus("error");
       }
     };
 
@@ -329,54 +335,57 @@ const PfPropertyInsights: React.FC = () => {
     };
   }, [API_URL, propertyName, region, submarket]);
 
-  const kpiCards = useMemo(() => {
-    const kpis = record?.property_response?.kpis;
-    const intelligence = record?.property_response?.intelligence;
-    if (!kpis) {
-      return [];
-    }
-
-    const reviewRating = intelligence?.reviewIntelligence?.rating;
-    const riskAlert = intelligence?.riskAlert;
-    const market = intelligence?.marketMomentum;
-
-    return [
-      { label: "Occupancy", value: formatPercent(kpis.occupancy) },
-      {
-        label: "NOI",
-        value: formatCurrency(kpis.noi),
-      },
-      { label: "NOI YoY", value: formatYoY(kpis.noiYoY) },
-
-      {
-        label: "Revenue",
-        value: formatCurrency(kpis.revenue),
-      },
-      { label: "Revenue YoY", value: formatYoY(kpis.revenueYoY) },
-
-      { label: "NOI Margin", value: formatPercent(kpis.noiMargin) },
-      { label: "Renewal Rate", value: formatPercent(riskAlert?.renewalRate) },
-      { label: "Expense Ratio", value: formatPercent(kpis.expenseRatio) },
-      { label: "Expense YoY", value: formatYoY(kpis.expenseYoY) },
-      { label: "Loss to Lease", value: formatPercent(kpis.lossToLease) },
-      { label: "Mark-to-Market", value: formatCurrency(kpis.markToMarket) },
-    ];
-  }, [record]);
-
-  const rentComparisonList = record?.property_response?.rentComparison ?? [];
-
   const reviewDetails = record?.property_response?.intelligence?.reviewIntelligence;
   const riskAlert = record?.property_response?.intelligence?.riskAlert;
   const marketMomentum = record?.property_response?.intelligence?.marketMomentum;
+
+  // ✅ FIX #1: rentComparison may be OBJECT or ARRAY
+  const rentComparisonList: RentComparisonEntry[] = useMemo(() => {
+    const rc = record?.property_response?.rentComparison;
+    return Array.isArray(rc) ? rc : [];
+  }, [record?.property_response?.rentComparison]);
+
+  // ✅ FIX #2: expiring units field differs across properties
+  const expiringUnits = useMemo(() => {
+    const v =
+      riskAlert?.expiringUnits ??
+      riskAlert?.expiringUnitsNext90Days;
+    return isValidNumber(v) ? v : undefined;
+  }, [riskAlert?.expiringUnits, riskAlert?.expiringUnitsNext90Days]);
+
   type InsightKey = "review" | "market" | "risk";
   const [selectedInsight, setSelectedInsight] = useState<InsightKey>("review");
+
+  // reset selection if property changes
+  useEffect(() => {
+    setSelectedInsight("review");
+  }, [propertyName, submarket, region]);
+
+  const kpiCards = useMemo(() => {
+    const kpis = record?.property_response?.kpis;
+    if (!kpis) return [];
+
+    return [
+      { label: "Occupancy", value: formatPercent(kpis.occupancy) },
+      { label: "NOI", value: formatCurrency(kpis.noi) },
+      { label: "NOI YoY", value: formatYoY(kpis.noiYoY) ?? "-" },
+      { label: "Revenue", value: formatCurrency(kpis.revenue) },
+      { label: "Revenue YoY", value: formatYoY(kpis.revenueYoY) ?? "-" },
+      { label: "NOI Margin", value: formatPercent(kpis.noiMargin) },
+      { label: "Renewal Rate", value: formatPercent(riskAlert?.renewalRate) },
+      { label: "Expense Ratio", value: formatPercent(kpis.expenseRatio) },
+      { label: "Expense YoY", value: formatYoY(kpis.expenseYoY) ?? "-" },
+      { label: "Loss to Lease", value: formatPercent(kpis.lossToLease) },
+      { label: "Mark-to-Market", value: formatCurrency(kpis.markToMarket) },
+    ];
+  }, [record, riskAlert?.renewalRate]);
 
   const insightCards = useMemo(() => {
     const reviewValue = reviewDetails?.rating ? reviewDetails.rating.toFixed(1) : "-";
     const marketValue = marketMomentum?.absorption
       ? `${marketMomentum.absorption.toLocaleString()} units`
       : "-";
-    const riskValue = riskAlert?.expiringUnits ? `${riskAlert.expiringUnits} units` : "-";
+    const riskValue = expiringUnits !== undefined ? `${expiringUnits} units` : "-";
 
     return [
       {
@@ -395,7 +404,9 @@ const PfPropertyInsights: React.FC = () => {
         caption: "Metro absorption",
         badge: marketMomentum?.confidence ?? "Medium",
         badgeClass: "bg-sky-100 text-sky-700",
-        description: marketMomentum?.vacancyTrend ? `Vacancy ${marketMomentum.vacancyTrend.toLowerCase()}` : "Momentum data loading.",
+        description: marketMomentum?.vacancyTrend
+          ? `Vacancy ${marketMomentum.vacancyTrend.toLowerCase()}`
+          : "Momentum data loading.",
       },
       {
         key: "risk" as InsightKey,
@@ -407,13 +418,15 @@ const PfPropertyInsights: React.FC = () => {
         description: "Actionable next steps to protect NOI.",
       },
     ];
-  }, [marketMomentum, reviewDetails, riskAlert]);
+  }, [marketMomentum, reviewDetails, riskAlert, expiringUnits]);
+
   const propertyMeta = record?.property_response?.property;
   const yearBuilt = propertyMeta?.yearBuilt;
 
   const trends = record?.property_response?.trends;
   const noiTrend = trends?.noiTrend12Month ?? [];
   const revenueExpense = trends?.revenueVsExpense ?? [];
+
   const noiChartData = useMemo(
     () => ({
       labels: noiTrend.map((point) => point.month),
@@ -432,6 +445,7 @@ const PfPropertyInsights: React.FC = () => {
     }),
     [noiTrend]
   );
+
   const revenueExpenseChartData = useMemo(
     () => ({
       labels: revenueExpense.map((point) => point.month),
@@ -458,18 +472,20 @@ const PfPropertyInsights: React.FC = () => {
     }),
     [revenueExpense]
   );
+
   const revenueLineOptions = useMemo<ChartOptions<"line">>(() => {
     return {
       ...trendLineOptions,
       plugins: {
         ...trendLineOptions.plugins,
         legend: {
-          ...trendLineOptions.plugins?.legend,
+          ...(trendLineOptions.plugins?.legend ?? {}),
           display: true,
         },
       },
     };
   }, []);
+
   const leaseData = record?.property_response?.leaseExpirationLadder ?? [];
 
   const leaseChartData = useMemo(() => {
@@ -477,9 +493,7 @@ const PfPropertyInsights: React.FC = () => {
       .filter((item): item is { month: string; units: number } => Boolean(item.month) && isValidNumber(item.units))
       .map((item) => ({ month: item.month, units: item.units }));
 
-    if (!entries.length) {
-      return null;
-    }
+    if (!entries.length) return null;
 
     return {
       labels: entries.map((entry) => entry.month),
@@ -496,12 +510,7 @@ const PfPropertyInsights: React.FC = () => {
 
   const rentComparisonEntries = useMemo(() => {
     return rentComparisonList
-      .filter(
-        (entry) =>
-          Boolean(entry.unitType) &&
-          isValidNumber(entry.market) &&
-          isValidNumber(entry.inPlace)
-      )
+      .filter((entry) => Boolean(entry.unitType) && isValidNumber(entry.market) && isValidNumber(entry.inPlace))
       .map((entry) => ({
         unitType: entry.unitType ?? "Unknown",
         market: entry.market ?? 0,
@@ -510,25 +519,13 @@ const PfPropertyInsights: React.FC = () => {
   }, [rentComparisonList]);
 
   const rentComparisonChartData = useMemo(() => {
-    if (!rentComparisonEntries.length) {
-      return null;
-    }
+    if (!rentComparisonEntries.length) return null;
 
     return {
       labels: rentComparisonEntries.map((entry) => entry.unitType),
       datasets: [
-        {
-          label: "In-Place",
-          data: rentComparisonEntries.map((entry) => entry.inPlace),
-          backgroundColor: "#0ea5e9",
-          borderRadius: 6,
-        },
-        {
-          label: "Market",
-          data: rentComparisonEntries.map((entry) => entry.market),
-          backgroundColor: "#f97316",
-          borderRadius: 6,
-        },
+        { label: "In-Place", data: rentComparisonEntries.map((entry) => entry.inPlace), backgroundColor: "#0ea5e9", borderRadius: 6 },
+        { label: "Market", data: rentComparisonEntries.map((entry) => entry.market), backgroundColor: "#f97316", borderRadius: 6 },
       ],
     };
   }, [rentComparisonEntries]);
@@ -574,37 +571,27 @@ const PfPropertyInsights: React.FC = () => {
           confidence: riskAlert?.confidence ?? "High confidence",
           description: "Prioritize expiring units and expense drivers before they erode NOI.",
           keyStats: [
-            {
-              label: "Expiring Units",
-              value: riskAlert?.expiringUnits ? `${riskAlert.expiringUnits} units` : "-",
-            },
+            { label: "Expiring Units", value: expiringUnits !== undefined ? `${expiringUnits} units` : "-" },
             { label: "Revenue At Risk", value: formatCurrency(riskAlert?.revenueAtRisk) },
             { label: "Avg Tenure", value: riskAlert?.avgTenureMonths ? `${riskAlert.avgTenureMonths} months` : "-" },
-            { label: "Renewal Rate", value: riskAlert?.renewalRate ? formatPercent(riskAlert.renewalRate) : "-" },
+            { label: "Renewal Rate", value: formatPercent(riskAlert?.renewalRate) },
           ],
           whyThisMatters:
-            riskAlert?.riskDrivers?.length && riskAlert.riskDrivers.length > 0
-              ? riskAlert.riskDrivers
-              : [
-                  "Expiring leases can pressure occupancy and push concessions.",
-                  "Expense volatility hits NOI when not pre-empted.",
-                  "Focused renewals and maintenance reduce surprise churn.",
-                ],
+            riskAlert?.riskDrivers?.length ? riskAlert.riskDrivers : [
+              "Expiring leases can pressure occupancy and push concessions.",
+              "Expense volatility hits NOI when not pre-empted.",
+              "Focused renewals and maintenance reduce surprise churn.",
+            ],
           monthlyImpact,
           annualImpact,
           nextActions:
-            riskAlert?.nextActions ?? [
-              "Launch 60-day renewal campaign",
-              "Segment expiring units weekly",
-              "Budget for preventive maintenance spend",
-            ],
+            riskAlert?.nextActions ?? ["Launch 60-day renewal campaign", "Segment expiring units weekly", "Budget for preventive maintenance spend"],
         };
       default:
         return {
           title: "Review Intelligence",
           confidence: reviewDetails?.confidence ?? "Medium confidence",
-          description:
-            "Resident sentiment pinpoints maintenance, amenity, and communication levers for renewals.",
+          description: "Resident sentiment pinpoints maintenance, amenity, and communication levers for renewals.",
           keyStats: [
             { label: "Rating", value: reviewDetails?.rating ? `${reviewDetails.rating.toFixed(1)}/5` : "-" },
             { label: "Reviews (90d)", value: `${reviewDetails?.reviews90d ?? 0}` },
@@ -619,14 +606,10 @@ const PfPropertyInsights: React.FC = () => {
           monthlyImpact,
           annualImpact,
           nextActions:
-            reviewDetails?.nextActions ?? [
-              "Respond to all reviews within 24 hours",
-              "Address recurring maintenance themes",
-              "Highlight wins in marketing and leasing",
-            ],
+            reviewDetails?.nextActions ?? ["Respond to all reviews within 24 hours", "Address recurring maintenance themes", "Highlight wins in marketing and leasing"],
         };
     }
-  }, [marketMomentum, riskAlert, reviewDetails, selectedInsight]);
+  }, [marketMomentum, riskAlert, reviewDetails, selectedInsight, expiringUnits]);
 
   if (status === "loading") {
     return (
@@ -654,10 +637,10 @@ const PfPropertyInsights: React.FC = () => {
         >
           Back
         </button>
+
         <div className="space-y-6 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-
               <h1 className="text-3xl font-semibold text-indigo-900">{record.property_name}</h1>
               <p className="text-sm text-pink-600">
                 {record.submarket} - {record.region}
@@ -671,12 +654,12 @@ const PfPropertyInsights: React.FC = () => {
               <p className="text-right text-s text-blue-600">{propertyMeta?.location ?? "-"}</p>
             </div>
           </div>
+
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {kpiCards.map((card) => (
               <div key={card.label} className="space-y-1 rounded-3xl border border-slate-100 bg-blue-50/50 p-4">
                 <p className="text-s font-semibold uppercase tracking-wide text-center text-blue-700">{card.label}</p>
                 <p className="text-xl font-semibold text-center text-slate-900">{card.value}</p>
-                {/* {card.annotation ? <p className="text-xs text-emerald-600">{card.annotation}</p> : null} */}
               </div>
             ))}
           </div>
@@ -693,6 +676,7 @@ const PfPropertyInsights: React.FC = () => {
                 </div>
               </div>
             ) : null}
+
             {revenueExpense.length ? (
               <div className="relative rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
@@ -719,11 +703,10 @@ const PfPropertyInsights: React.FC = () => {
                 <p className="mt-3 text-sm text-slate-400">No lease ladder data available</p>
               )}
             </div>
+
             <div className="rounded-3xl border border-slate-100 bg-white p-4 shadow-sm">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold uppercase tracking-wide text-black">
-                  In-Place vs Market Rent
-                </h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wide text-black">In-Place vs Market Rent</h3>
               </div>
               {rentComparisonChartData ? (
                 <div className="mt-4 h-72">
@@ -740,6 +723,7 @@ const PfPropertyInsights: React.FC = () => {
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-slate-900">AI Insights</h2>
           </div>
+
           <div className="grid gap-4 lg:grid-cols-[minmax(0,320px)_1fr]">
             <div className="space-y-3">
               {insightCards.map((card) => (
@@ -756,22 +740,19 @@ const PfPropertyInsights: React.FC = () => {
                 />
               ))}
             </div>
+
             <div className="rounded-3xl border border-slate-100 bg-slate-50/50 p-6 shadow-sm">
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  {/* <p className="text-xs uppercase tracking-wide text-slate-500">Selected insight</p> */}
                   <h3 className="text-2xl font-semibold text-indigo-900">{detailPanel.title}</h3>
-                  {/* <p className="rounded-full bg-blue-50 px-1 py-1 text-[11px] font-semibold text-black shadow-sm">
-                  {detailPanel.confidence}
-                </p> */}
                 </div>
                 <span className="rounded-full bg-blue-50 px-1 py-1 text-[13px] font-semibold text-black shadow-sm">
                   {detailPanel.confidence}
                 </span>
-                  
-
               </div>
+
               <p className="mt-2 text-sm text-slate-900">{detailPanel.description}</p>
+
               <div className="mt-4 flex flex-wrap gap-2">
                 {detailPanel.keyStats.map((stat) => (
                   <div
@@ -783,6 +764,7 @@ const PfPropertyInsights: React.FC = () => {
                   </div>
                 ))}
               </div>
+
               <div className="mt-4 space-y-2">
                 <p className="text-m font-semibold uppercase tracking-wide text-black">Why this matters</p>
                 <ul className="space-y-2 text-sm text-slate-600">
@@ -794,26 +776,13 @@ const PfPropertyInsights: React.FC = () => {
                   ))}
                 </ul>
               </div>
-              {/* <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <div className="rounded-2xl border border-emerald-100 bg-emerald-50 p-3">
-                  <p className="text-[13px] font-semibold  text-black">Monthly Impact</p>
-                  <p className="text-2xl font-semibold text-emerald-700">
-                    {formatCurrency(detailPanel.monthlyImpact)}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3">
-                  <p className="text-[13px] font-semibold  text-black">Annual NOI Impact</p>
-                  <p className="text-2xl font-semibold text-slate-900">
-                    {formatCurrency(detailPanel.annualImpact)}
-                  </p>
-                </div>
-              </div> */}
+
               <div className="mt-4 space-y-2">
                 <p className="text-m font-semibold uppercase tracking-wide text-black">Next best actions</p>
                 <ol className="space-y-2 text-sm text-slate-600">
                   {detailPanel.nextActions.map((action, index) => (
                     <li
-                      key={action}
+                      key={`${action}-${index}`}
                       className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-indigo-50 px-3 py-2"
                     >
                       <span className="text-xs font-semibold text-black">{index + 1}</span>

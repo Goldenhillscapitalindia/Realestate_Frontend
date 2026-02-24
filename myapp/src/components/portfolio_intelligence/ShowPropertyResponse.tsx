@@ -1,6 +1,5 @@
 // src/components/RealEstateResponses.tsx
 import React, { useState } from "react";
-import { useTheme } from "../sections/ThemeContext";
 import { Block } from "../portfolio_intelligence_components/Utils/RComponentsUtils";
 import RRenderer from "../portfolio_intelligence_components/RRenderer";
 
@@ -31,7 +30,6 @@ const ShowPropertyResponse: React.FC<Props> = ({
   tabLabels,
   titleText,
 }) => {
-  const { theme } = useTheme();
   const labels = { ...TAB_LABELS, ...tabLabels };
   const availableTabs = (Object.keys(responses) as FileType[]).filter(
     (key) => responses[key].length > 0
@@ -115,3 +113,4 @@ const ShowPropertyResponse: React.FC<Props> = ({
 };
 
 export default ShowPropertyResponse;
+
