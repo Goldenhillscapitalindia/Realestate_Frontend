@@ -7,21 +7,19 @@ const WhyChooseVertex = () => {
         <ScrollReveal>
           <div className="max-w-3xl mx-auto text-center mb-16">
             <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
-              Why Real Estate Leaders Choose Vertex
-            </p>
+              Why Choose vertex AI?            </p>
             <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground mb-6 leading-tight">
-              Decisions Should Be Forward-Looking —{" "}
-              <span className="gradient-text">Not Rear-View</span>
+              Stop Explaining Last Month —{" "}
+              <span className="gradient-text">Start Controlling Next Quarter</span>
             </h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Real estate still relies on spreadsheets, fragmented systems, and manual workflows.
-              Vertex changes that by surfacing predictive intelligence — not just reports.
+   From lease expirations to revenue lift projections, Vertex turns raw property data into forward-looking decisions.
             </p>
           </div>
         </ScrollReveal>
 
         {/* Logo Carousel Placeholder */}
-        <ScrollReveal delay={100}>
+        {/* <ScrollReveal delay={100}>
           <div className="border border-border rounded-xl bg-muted/50 py-8 px-6">
             <p className="text-xs text-muted-foreground uppercase tracking-widest text-center mb-6">
               Trusted by teams at leading firms
@@ -34,7 +32,7 @@ const WhyChooseVertex = () => {
               ))}
             </div>
           </div>
-        </ScrollReveal>
+        </ScrollReveal> */}
       </div>
     </section>
   );

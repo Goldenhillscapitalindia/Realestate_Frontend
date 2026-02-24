@@ -19,16 +19,16 @@ const HeroSection = () => {
           </div>
 
           <h1 className="font-display font-extrabold text-4xl md:text-5xl lg:text-6xl leading-[1.1] tracking-tight text-foreground mb-6 animate-fade-up-delay-1">
-            Intelligence that Powers{" "}
-            <span className="gradient-text">Real Estate Decisions</span>
+            The Intelligence Layer  {" "}
+            <span className="gradient-text"> for Modern Real Estate</span>
           </h1>
 
-          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-4 animate-fade-up-delay-2">
-            Vertex transforms data into predictive insights that protect revenue, reduce risk, and accelerate growth — all in a single platform.
-          </p>
+          <p className="text-m md:text-lg text-muted-foreground leading-relaxed mb-4 animate-fade-up-delay-2">
+            AI-powered property intelligence  turns financial data into forward-looking decisions — protecting NOI, reducing risk, and unlocking portfolio-wide growth.
+            Supporting Line: From acquisition underwriting to active asset management — all in one platform.          </p>
 
           <p className="text-sm text-muted-foreground mb-8 animate-fade-up-delay-2">
-            📍 For asset owners, institutional investors, operators, and deal teams.
+            📍From acquisition underwriting to active asset management — all in one platform.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up-delay-3">

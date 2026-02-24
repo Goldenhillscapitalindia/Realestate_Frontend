@@ -30,7 +30,7 @@ const UseCases = () => {
       <div className="max-w-7xl mx-auto">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-accent uppercase tracking-widest mb-3">
+            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
               Real Use Cases
             </p>
             <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground">
@@ -39,22 +39,44 @@ const UseCases = () => {
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {cases.map((c, i) => (
-            <ScrollReveal key={c.title} delay={i * 80}>
-              <div className="card-glass p-8 group cursor-default">
-                <div className="w-12 h-12 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center mb-5 group-hover:bg-accent/10 group-hover:border-accent/20 transition-colors">
-                  <c.icon className="w-5 h-5 text-primary group-hover:text-accent transition-colors" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-stretch">          {cases.map((c, i) => (
+          <ScrollReveal key={c.title} delay={i * 80}>
+            <div className="relative h-full flex flex-col 
+                p-8 rounded-2xl bg-white/60 backdrop-blur-sm 
+                border border-border/40 shadow-sm 
+                hover:shadow-xl hover:-translate-y-1 
+                transition-all duration-300 
+                group overflow-hidden">
+
+              {/* Left Accent Line */}
+              <div className="absolute left-0 top-0 h-full w-[4px] 
+                  bg-gradient-to-b from-indigo-500 via-purple-500 to-indigo-500 
+                  opacity-70 group-hover:opacity-100 transition-opacity" />
+
+              {/* Content wrapper to add spacing from accent */}
+              <div className="pl-4 flex flex-col flex-grow">
+
+                {/* Icon */}
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br 
+                  from-indigo-50 to-indigo-100 
+                  flex items-center justify-center mb-6">
+                  <c.icon className="w-6 h-6 text-indigo-600" />
                 </div>
-                <h3 className="font-display font-bold text-lg text-foreground mb-2">
+
+                {/* Title */}
+                <h3 className="font-display font-semibold text-xl text-foreground mb-3 tracking-tight">
                   {c.title}
                 </h3>
+
+                {/* Description */}
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {c.description}
                 </p>
+
               </div>
-            </ScrollReveal>
-          ))}
+            </div>
+          </ScrollReveal>
+        ))}
         </div>
       </div>
     </section>

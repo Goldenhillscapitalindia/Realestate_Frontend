@@ -45,7 +45,7 @@ const Index = () => {
       <AILayer />
       <PlatformExperience />
       <WhyVertex />
-      <SocialProof />
+      {/* <SocialProof /> */}
       <CTASection />
       <Footer />
     </div>
