@@ -14,12 +14,28 @@ import StatusFooter from "./StatusFooter";
 import VacancyRentSupplyGrid from "./VacancyRentSupplyGrid";
 
 
-const MarketRadarView: React.FC = () => {
+type MarketRadarViewProps = {
+  subMarketName?: string;
+  region?: string;
+  assetType?: "Multifamily" | "Industrial";
+  onBack?: () => void;
+  embedded?: boolean;
+};
+
+const MarketRadarView: React.FC<MarketRadarViewProps> = ({
+  subMarketName,
+  region: regionProp,
+  assetType: assetTypeProp,
+  onBack,
+  embedded = false,
+}) => {
   const { sub_market_name = "" } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const region = (location.state as { region?: string } | null)?.region ?? "";
+  const targetSubMarket = subMarketName ?? sub_market_name;
+  const region = regionProp ?? (location.state as { region?: string } | null)?.region ?? "";
   const assetType =
+    assetTypeProp ??
     (location.state as { assetType?: "Multifamily" | "Industrial" } | null)?.assetType ??
     "Multifamily";
   const API_URL = import.meta.env.VITE_API_URL;
@@ -39,14 +55,14 @@ const MarketRadarView: React.FC = () => {
       setError(null);
       try {
         const response = await axios.post(`${API_URL}/api/get_market_radar_data/`, {
-          sub_market_name,
+          sub_market_name: targetSubMarket,
           region,
           fetch: "specific" ,
           construction_type: assetType === "Multifamily" ? "multi_family" : "industrial",
         });
         const payload = response.data?.data ?? response.data;
         if (!active) return;
-        setData(normalizeApiPayload(payload, sub_market_name));
+        setData(normalizeApiPayload(payload, targetSubMarket));
       } catch (err) {
         console.error(err);
         if (!active) return;
@@ -61,22 +77,26 @@ const MarketRadarView: React.FC = () => {
     return () => {
       active = false;
     };
-  }, [API_URL, sub_market_name, region, assetType]);
+  }, [API_URL, targetSubMarket, region, assetType]);
 
   const viewData = useMemo(
-    () => buildViewData(data, sub_market_name),
-    [data, sub_market_name]
+    () => buildViewData(data, targetSubMarket),
+    [data, targetSubMarket]
   );
 
   const pulseStyle = PULSE_STYLES[viewData.pulseKey];
 
   return (
     <section
-      className="min-h-screen px-6 py-10 text-black"
-      style={{
-        background:
-          "linear-gradient(180deg, rgba(248,250,255,1) 0%, rgba(240,244,255,1) 100%)",
-      }}
+      className={embedded ? "text-black" : "min-h-screen px-6 py-10 text-black"}
+      style={
+        embedded
+          ? undefined
+          : {
+              background:
+                "linear-gradient(180deg, rgba(248,250,255,1) 0%, rgba(240,244,255,1) 100%)",
+            }
+      }
     >
       <div className="mx-auto max-w-6xl space-y-8">
         <MarketRadarViewHeader
@@ -84,7 +104,7 @@ const MarketRadarView: React.FC = () => {
           region={viewData.region}
           pulseLabel={viewData.pulseLabel}
           pulseDot={pulseStyle.dot}
-          onBack={() => navigate(-1)}
+          onBack={onBack ?? (() => navigate(-1))}
         />
         <HealthIndicatorsSection indicators={viewData.healthIndicators} />
         <KeyTrendsSection trends={viewData.keyTrends} />

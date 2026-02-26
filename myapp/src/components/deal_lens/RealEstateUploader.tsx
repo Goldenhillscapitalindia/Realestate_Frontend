@@ -8,7 +8,11 @@ import { Block } from "./Realestate_components/Utils/RComponentsUtils";
 
 type FileType = "memorandum" | "t12" | "rent_roll";
 
-const RealEstateUploader: React.FC = () => {
+type RealEstateUploaderProps = {
+  showBackButton?: boolean;
+};
+
+const RealEstateUploader: React.FC<RealEstateUploaderProps> = ({ showBackButton = true }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -128,15 +132,17 @@ const handleUpload = async () => {
         }`}
     >
       {/* Back Button */}
-      <button
-            onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
-        className={`fixed top-4 left-4 px-4 py-2 rounded-lg shadow-md z-50 ${theme === "dark"
-            ? "bg-gray-700 text-white hover:bg-gray-600"
-            : "bg-gray-200 text-black hover:bg-gray-300"
-          }`}
-      >
-        ← Back
-      </button>
+      {showBackButton && (
+        <button
+          onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
+          className={`fixed top-4 left-4 px-4 py-2 rounded-lg shadow-md z-50 ${theme === "dark"
+              ? "bg-gray-700 text-white hover:bg-gray-600"
+              : "bg-gray-200 text-black hover:bg-gray-300"
+            }`}
+        >
+          Back
+        </button>
+      )}
 
       {/* Main Card */}
       <div
@@ -245,3 +251,4 @@ const handleUpload = async () => {
 };
 
 export default RealEstateUploader;
+
