@@ -278,6 +278,17 @@ const InsightCard: React.FC<InsightCardProps> = ({
   </button>
 );
 
+type PropertyContext = {
+  property_name: string;
+  submarket: string;
+  region: string;
+};
+
+type PfPropertyInsightsProps = {
+  propertyContext?: PropertyContext;
+  onBack?: () => void;
+};
+
 type InsightDetail = {
   title: string;
   confidence: string;
@@ -289,13 +300,13 @@ type InsightDetail = {
   nextActions: string[];
 };
 
-const PfPropertyInsights: React.FC = () => {
+const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext, onBack }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const propertyName = searchParams.get("property_name") ?? "";
-  const submarket = searchParams.get("submarket") ?? "";
-  const region = searchParams.get("region") ?? "";
+  const propertyName = propertyContext?.property_name ?? searchParams.get("property_name") ?? "";
+  const submarket = propertyContext?.submarket ?? searchParams.get("submarket") ?? "";
+  const region = propertyContext?.region ?? searchParams.get("region") ?? "";
   const [record, setRecord] = useState<PropertyRecord | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
@@ -629,16 +640,16 @@ const PfPropertyInsights: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 p-6 text-slate-900">
-      <div className="mx-auto max-w-6xl space-y-6">
+      <div className="w-full space-y-6">
         <button
           type="button"
-          onClick={() => navigate("/portfolio_intelligence", { state: { activeTab: "Properties" } })}
+          onClick={onBack ?? (() => navigate("/portfolio_intelligence", { state: { activeTab: "Properties" } }))}
           className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-sm transition hover:bg-slate-50"
         >
           Back
         </button>
 
-        <div className="space-y-6 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="space-y-6">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
               <h1 className="text-3xl font-semibold text-indigo-900">{record.property_name}</h1>
@@ -719,7 +730,7 @@ const PfPropertyInsights: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-4 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-slate-900">AI Insights</h2>
           </div>

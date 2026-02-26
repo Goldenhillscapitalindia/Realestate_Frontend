@@ -10,9 +10,22 @@ import MarketRadarHighlights from "./MarketRadarHighlights";
 import MarketRadarMap from "./MarketRadarMap";
 import MarketRadarTable from "./MarketRadarTable";
 import AddSubmarketModal from "./AddSubmarketModal";
+import MarketRadarView from "../market-radar-view/components/MarketRadarView";
 
 
-const MarketRadar: React.FC = () => {
+type MarketRadarProps = {
+  showBackButton?: boolean;
+  showHeaderCard?: boolean;
+  openDetailsInPlace?: boolean;
+  showPanelCard?: boolean;
+};
+
+const MarketRadar: React.FC<MarketRadarProps> = ({
+  showBackButton = false,
+  showHeaderCard = true,
+  openDetailsInPlace = false,
+  showPanelCard = true,
+}) => {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [data, setData] = useState<MarketRadarItem[]>([]);
@@ -27,7 +40,9 @@ const MarketRadar: React.FC = () => {
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<MarketRadarItem | null>(null);
   const navigate = useNavigate();
+  const embedded = openDetailsInPlace;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -126,23 +141,41 @@ const MarketRadar: React.FC = () => {
     }
   };
 
+  if (openDetailsInPlace && selectedItem) {
+    return (
+      <MarketRadarView
+        subMarketName={selectedItem.sub_market_name}
+        region={selectedItem.region}
+        assetType={assetType}
+        onBack={() => setSelectedItem(null)}
+        embedded={openDetailsInPlace}
+      />
+    );
+  }
+
   return (
     <section
-      className="min-h-screen px-6 py-10 text-black"
-      style={{
-        background:
-          "linear-gradient(180deg, rgba(248,250,255,1) 0%, rgba(240,244,255,1) 100%)",
-      }}
+      className={embedded ? "text-black" : "min-h-screen px-6 py-10 text-black"}
+      style={
+        embedded
+          ? undefined
+          : {
+              background:
+                "linear-gradient(180deg, rgba(248,250,255,1) 0%, rgba(240,244,255,1) 100%)",
+            }
+      }
     >
-      <div className="mx-auto max-w-6xl space-y-6">
+      <div className={embedded ? "w-full space-y-6" : "mx-auto max-w-6xl space-y-6"}>
         <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:border-slate-400 hover:text-black"
-            onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
-          >
-            ← Back
-          </button>
+          {showBackButton && (
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-black shadow-sm transition hover:border-slate-400 hover:text-black"
+              onClick={() => navigate("/", { state: { scrollTo: "#platform" } })}
+            >
+              Back
+            </button>
+          )}
           <div className="flex flex-1 justify-center gap-2 ">
             {["Multifamily", "Industrial"].map((tab) => {
               const isActive = assetType === tab;
@@ -163,15 +196,36 @@ const MarketRadar: React.FC = () => {
             })}
           </div>
         </div>
-        <MarketRadarHeader />
+        {showHeaderCard && <MarketRadarHeader />}
         <MarketRadarHighlights pulseCounts={pulseCounts} assetType={assetType} />
-        <div
-          className="rounded-2xl border border-slate-200 p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,255,0.98) 100%)",
-          }}
-        >
+        {showPanelCard ? (
+          <div
+            className="rounded-2xl border border-slate-200 p-6 shadow-[0_24px_60px_rgba(15,23,42,0.08)]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(248,250,255,0.98) 100%)",
+            }}
+          >
+            <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
+              <MarketRadarMap data={data} mapCenter={mapCenterLatLng} mapBounds={mapBounds} />
+              <MarketRadarTable
+                data={data}
+                loading={loading}
+                error={error}
+                onAddSubmarket={() => setIsAddOpen(true)}
+                onSelectsub_market_name={(item) => {
+                  if (openDetailsInPlace) {
+                    setSelectedItem(item);
+                    return;
+                  }
+                  navigate(`/market_radar_view/${encodeURIComponent(item.sub_market_name)}`, {
+                    state: { region: item.region, assetType },
+                  });
+                }}
+              />
+            </div>
+          </div>
+        ) : (
           <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
             <MarketRadarMap data={data} mapCenter={mapCenterLatLng} mapBounds={mapBounds} />
             <MarketRadarTable
@@ -179,14 +233,18 @@ const MarketRadar: React.FC = () => {
               loading={loading}
               error={error}
               onAddSubmarket={() => setIsAddOpen(true)}
-              onSelectsub_market_name={(item) =>
+              onSelectsub_market_name={(item) => {
+                if (openDetailsInPlace) {
+                  setSelectedItem(item);
+                  return;
+                }
                 navigate(`/market_radar_view/${encodeURIComponent(item.sub_market_name)}`, {
                   state: { region: item.region, assetType },
-                })
-              }
+                });
+              }}
             />
           </div>
-        </div>
+        )}
         {/* <MarketRadarFooter count={data.length} lastUpdated={lastUpdated} /> */}
       </div>
       <AddSubmarketModal

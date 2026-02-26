@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
-type PropertyRecord = {
+export type PropertyRecord = {
   property_name: string;
   submarket: string;
   region: string;
@@ -15,12 +14,15 @@ type PropertyRecord = {
   property_response: unknown;
 };
 
-const PfDemoProperties: React.FC = () => {
+type PfDemoPropertiesProps = {
+  onSelectProperty?: (property: Pick<PropertyRecord, "property_name" | "submarket" | "region">) => void;
+};
+
+const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty }) => {
   const [data, setData] = useState<PropertyRecord[]>([]);
   const [selected, setSelected] = useState<PropertyRecord | null>(null);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const API_URL = import.meta.env.VITE_API_URL;
-  const navigate = useNavigate();
 
   useEffect(() => {
     let isActive = true;
@@ -54,12 +56,13 @@ const PfDemoProperties: React.FC = () => {
 
   const handleRowClick = (row: PropertyRecord) => {
     setSelected(row);
-    const params = new URLSearchParams({
-      property_name: row.property_name,
-      submarket: row.submarket,
-      region: row.region,
-    });
-    navigate(`/portfolio_intelligence/property-insights?${params.toString()}`);
+    if (onSelectProperty) {
+      onSelectProperty({
+        property_name: row.property_name,
+        submarket: row.submarket,
+        region: row.region,
+      });
+    }
   };
 
 

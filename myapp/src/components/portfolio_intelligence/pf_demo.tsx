@@ -5,20 +5,40 @@ import PfDemoPortfolioAnalytics, {
   portfolioAnalyticsTabDefinitions,
   PortfolioAnalyticsTabId,
 } from "./pf_demo_portfolio_analytics";
-import PfDemoProperties from "./pf_demo_properties";
+import PfDemoProperties, { PropertyRecord } from "./pf_demo_properties";
 import PfDemoAiRentIntelligence from "./pf_demo_ai_rent_intelligence";
-import { ArrowLeft } from "lucide-react";
+import PfPropertyInsights from "./pf_property_insights";
+import {
+  ArrowLeft,
+  BarChart3,
+  Building2,
+  Lightbulb,
+  TrendingUp,
+  FileText,
+} from "lucide-react";
+import MarketRadar from "../market_radar/MarketRadar";
+import RealEstateUploader from "../deal_lens/RealEstateUploader";
 
-const tabs = ["Portfolio Analytics", "Properties", "AI Rent Intelligence"] as const;
+const tabs = [
+  "Portfolio Analytics",
+  "Properties",
+  "AI Rent Intelligence",
+  "Market Signal Radar",
+  "Deal Underwriting Lens",
+] as const;
 type DemoTab = (typeof tabs)[number];
 
 const PfDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState<DemoTab>("Portfolio Analytics");
+  const [selectedProperty, setSelectedProperty] = useState<
+    Pick<PropertyRecord, "property_name" | "submarket" | "region"> | null
+  >(null);
   const [portfolioSubTab, setPortfolioSubTab] = useState<PortfolioAnalyticsTabId>("snapshot");
   const [isPortfolioMenuOpen, setIsPortfolioMenuOpen] = useState(true);
   const mainScrollRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
+  const isDealLensTab = activeTab === "Deal Underwriting Lens";
 
   useEffect(() => {
     const requestedTab = location.state?.activeTab as DemoTab | undefined;
@@ -41,9 +61,29 @@ const PfDemo: React.FC = () => {
         />
       );
     }
-    if (activeTab === "Properties") return <PfDemoProperties />;
-    return <PfDemoAiRentIntelligence />;
-  }, [activeTab, portfolioSubTab]);
+    if (activeTab === "Properties") {
+      if (selectedProperty) {
+        return (
+          <PfPropertyInsights
+            propertyContext={selectedProperty}
+            onBack={() => setSelectedProperty(null)}
+          />
+        );
+      }
+      return <PfDemoProperties onSelectProperty={setSelectedProperty} />;
+    }
+    if (activeTab === "AI Rent Intelligence") return <PfDemoAiRentIntelligence />;
+    if (activeTab === "Market Signal Radar") {
+      return (
+        <MarketRadar
+          showHeaderCard={false}
+          openDetailsInPlace={true}
+          showPanelCard={false}
+        />
+      );
+    }
+    return <RealEstateUploader showBackButton={false} />;
+  }, [activeTab, portfolioSubTab, selectedProperty]);
 
   return (
     <section
@@ -83,7 +123,7 @@ const PfDemo: React.FC = () => {
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
                   }`}
               >
-                <span className="inline-block h-2 w-2 rounded-full bg-current" />
+                <BarChart3 className="h-4 w-4" />
                 <span className="flex-1">Portfolio Analytics</span>
                 <span className="text-sm opacity-80">{isPortfolioMenuOpen ? "v" : ">"}</span>
               </button>
@@ -120,13 +160,16 @@ const PfDemo: React.FC = () => {
 
             <button
               type="button"
-              onClick={() => setActiveTab("Properties")}
+              onClick={() => {
+                setActiveTab("Properties");
+                setSelectedProperty(null);
+              }}
               className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Properties"
                   ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                   : "bg-white/5 text-blue-100 hover:bg-white/10"
                 }`}
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-current" />
+              <Building2 className="h-4 w-4" />
               <span className="flex-1">Properties</span>
             </button>
 
@@ -138,14 +181,42 @@ const PfDemo: React.FC = () => {
                   : "bg-white/5 text-blue-100 hover:bg-white/10"
                 }`}
             >
-              <span className="inline-block h-2 w-2 rounded-full bg-current" />
+              <Lightbulb className="h-4 w-4" />
               <span className="flex-1">AI Rent Intelligence</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("Market Signal Radar")}
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Market Signal Radar"
+                  ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                  : "bg-white/5 text-blue-100 hover:bg-white/10"
+                }`}
+            >
+              <TrendingUp className="h-4 w-4" />
+              <span className="flex-1">Market Signal Radar</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab("Deal Underwriting Lens")}
+              className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Deal Underwriting Lens"
+                  ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                  : "bg-white/5 text-blue-100 hover:bg-white/10"
+                }`}
+            >
+              <FileText className="h-4 w-4" />
+              <span className="flex-1">Deal Underwriting Lens</span>
             </button>
           </nav>
         </aside>
 
-        <main ref={mainScrollRef} className="h-screen min-w-0 overflow-y-auto bg-[#f3f6fb] px-4 py-6 md:px-6 md:pt-7">
-          <div className="mx-auto w-full max-w-[1420px]">
+        <main
+          ref={mainScrollRef}
+          className={`h-screen min-w-0 overflow-y-auto px-4 py-6 md:px-6 md:pt-7 ${isDealLensTab ? "bg-[#0b112f]" : "bg-[#f3f6fb]"
+            }`}
+        >
+          <div className={isDealLensTab ? "w-full" : "mx-auto w-full max-w-[1420px]"}>
             {activeContent}
           </div>
         </main>
