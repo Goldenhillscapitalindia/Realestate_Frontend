@@ -3,39 +3,39 @@ import { PortfolioSnapshot } from "../portfolio_analytics_types";
 
 const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
   if (!data) {
-    return <p className="text-sm text-slate-500">Snapshot is not yet available.</p>;
+    return <p className="text-sm text-slate-800">Snapshot is not yet available.</p>;
   }
 
   return (
     <div className="space-y-4 text-slate-900">
       <div className="grid gap-4 xl:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Portfolio Scale
           </p>
           <div className="mt-4 space-y-2">
             <div>
               <p className="text-5xl font-bold leading-none">{data.totalProperties?.toLocaleString() ?? "-"}</p>
-              <p className="mt-1 text-lg text-slate-500">Active Assets</p>
+              <p className="mt-1 text-lg text-slate-800">Active Assets</p>
             </div>
             <div className="pt-2">
               <p className="text-5xl font-bold leading-none">{data.totalUnits?.toLocaleString() ?? "-"}</p>
-              <p className="mt-1 text-lg text-slate-500">Units Under Management</p>
+              <p className="mt-1 text-lg text-slate-800">Units Under Management</p>
             </div>
           </div>
           <div className="mt-5 border-t border-slate-200 pt-4">
             <p className="text-4xl font-bold leading-none">{data.grossPotentialRent?.display ?? "-"}</p>
-            <p className="mt-1 text-lg text-slate-500">Gross Potential Rent</p>
+            <p className="mt-1 text-lg text-slate-800">Gross Potential Rent</p>
           </div>
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Portfolio Profitability
           </p>
           <div className="mt-8 text-center">
             <p className="text-6xl font-bold leading-none">{data.noiMargin?.display ?? "-"}</p>
-            <p className="mt-2 text-lg text-slate-500">NOI Margin</p>
+            <p className="mt-2 text-lg text-slate-800">NOI Margin</p>
             <p className="mt-4 text-2xl font-medium text-slate-700">
               {data.netOperatingIncome?.display ?? "-"} Net Operating Income
             </p>
@@ -63,16 +63,16 @@ const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
 
       <div className="grid gap-4 xl:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Revenue Momentum
           </p>
           <div className="mt-4">
             <p className="text-4xl font-bold leading-none">{data.revenuePerUnit?.display ?? "-"}</p>
-            <p className="mt-1 text-lg text-slate-500">Revenue / Unit</p>
+            <p className="mt-1 text-lg text-slate-800">Revenue / Unit</p>
           </div>
           <div className="mt-3">
             <p className="text-5xl font-bold leading-none">{data.averageOccupancy?.display ?? "-"}</p>
-            <p className="mt-1 text-lg text-slate-500">Average Occupancy</p>
+            <p className="mt-1 text-lg text-slate-800">Average Occupancy</p>
           </div>
           <div className="mt-5 border-t border-slate-200 pt-4">
             <div className="flex items-center justify-between">
@@ -99,16 +99,16 @@ const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
         </section>
 
         <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Operating Pressure
           </p>
           <div className="mt-4">
             <p className="text-5xl font-bold leading-none">{data.operatingExpenseRatio?.display ?? "-"}</p>
-            <p className="mt-1 text-lg text-slate-500">Operating Expense Ratio</p>
+            <p className="mt-1 text-lg text-slate-800">Operating Expense Ratio</p>
           </div>
           <div className="mt-3">
             <p className="text-5xl font-bold leading-none">{data.expensePerUnit?.display ?? "-"}</p>
-            <p className="mt-1 text-lg text-slate-500">Expense / Unit</p>
+            <p className="mt-1 text-lg text-slate-800">Expense / Unit</p>
           </div>
           <div className="mt-5 border-t border-slate-200 pt-4">
             <p className="text-xl text-slate-700">
@@ -116,7 +116,7 @@ const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
               <span className="mx-4" />
               Bad Debt: <span className="font-medium">{data.badDebt?.display ?? "-"}</span>
             </p>
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-slate-900">
               Expenses Stable - Concessions Slightly Elevated
             </p>
           </div>
@@ -125,24 +125,24 @@ const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
 
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Portfolio Signals
           </p>
           <button type="button" className="text-sm font-medium text-blue-700 hover:text-blue-800">
             View Detailed Drivers -&gt;
           </button>
         </div>
-        <ul className="mt-4 space-y-2 text-slate-700">
+        <ul className="mt-4 space-y-2 text-slate-800">
           <li className="flex gap-2">
-            <span className="pt-1 text-blue-700">&bull;</span>
+            <span className="pt-1 text-blue-700 text-slate-700">&bull;</span>
             <span>NOI margin remains strong despite elevated vacancy.</span>
           </li>
           <li className="flex gap-2">
-            <span className="pt-1 text-blue-700">&bull;</span>
+            <span className="pt-1 text-blue-700 text-slate-700">&bull;</span>
             <span>Expense ratio stable; administrative costs trending upward.</span>
           </li>
           <li className="flex gap-2">
-            <span className="pt-1 text-blue-700">&bull;</span>
+            <span className="pt-1 text-blue-700 text-slate-700">&bull;</span>
             <span>Revenue per unit continues to outpace expense growth.</span>
           </li>
         </ul>
