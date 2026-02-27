@@ -11,6 +11,7 @@ import PfDemo from "./components/portfolio_intelligence/pf_demo";
 import PfPropertyInsights from "./components/portfolio_intelligence/pf_property_insights";
 import RealEstateUploader from "./components/deal_lens/RealEstateUploader";
 import Login from "./pages/Login";
+import Signup from "./pages/Signup";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 
@@ -25,7 +26,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           <Route

@@ -12,18 +12,20 @@ import {
 } from "@/lib/google/googleAuth";
 import {
   googleLoginRequest,
-  loginRequest,
   meRequest,
+  signupRequest,
 } from "@/lib/auth-api";
 import PasswordInput from "@/components/auth/PasswordInput";
 
-const Login = () => {
+const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const fromPath = (location.state as { from?: string } | null)?.from ?? "/portfolio_intelligence";
   const googleButtonRef = useRef<HTMLDivElement | null>(null);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [googleReady, setGoogleReady] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,10 +46,14 @@ const Login = () => {
     return fallback;
   };
 
-  const handleSignIn = async (event: FormEvent) => {
+  const handleSignUp = async (event: FormEvent) => {
     event.preventDefault();
-    if (!email.trim() || !password.trim()) {
-      setError("Please enter email and password.");
+    if (!username.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+      setError("Please fill all fields.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
       return;
     }
 
@@ -55,7 +61,12 @@ const Login = () => {
       setIsSubmitting(true);
       setError("");
 
-      const auth = await loginRequest({ email, password });
+      const auth = await signupRequest({
+        username,
+        email,
+        password,
+        confirmPassword,
+      });
       setAuthSession({
         accessToken: auth.accessToken,
         sessionId: auth.sessionId,
@@ -70,7 +81,7 @@ const Login = () => {
 
       navigate(fromPath, { replace: true });
     } catch (err) {
-      setError(getApiErrorMessage("Login failed. Please try again.", err));
+      setError(getApiErrorMessage("Sign up failed. Please try again.", err));
     } finally {
       setIsSubmitting(false);
     }
@@ -184,11 +195,16 @@ const Login = () => {
       <div className="absolute -bottom-24 -right-12 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl" />
 
       <div className="relative z-10 w-full max-w-xl rounded-3xl border border-white/30 bg-white/10 p-7 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.7)] backdrop-blur-2xl sm:p-10">
-        <h1 className="mb-6 text-center text-2xl font-bold text-white">
-          Login to Continue
-        </h1>
+        <h1 className="mb-6 text-center text-2xl font-bold text-white">Sign up</h1>
 
-        <form onSubmit={handleSignIn} className="space-y-4">
+        <form onSubmit={handleSignUp} className="space-y-4">
+          <Input
+            className={glassInputClass}
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            disabled={isSubmitting}
+          />
           <Input
             className={glassInputClass}
             type="email"
@@ -199,9 +215,16 @@ const Login = () => {
           />
           <PasswordInput
             className={glassInputClass}
-            placeholder="Password"
+            placeholder="Create Password"
             value={password}
             onChange={setPassword}
+            disabled={isSubmitting}
+          />
+          <PasswordInput
+            className={glassInputClass}
+            placeholder="Re-enter Password"
+            value={confirmPassword}
+            onChange={setConfirmPassword}
             disabled={isSubmitting}
           />
 
@@ -225,25 +248,25 @@ const Login = () => {
               type="submit"
               disabled={isSubmitting}
             >
-              Sign in
+              Sign up
             </Button>
           </div>
         </form>
 
         <div className="mt-5 text-center text-sm text-slate-200">
-          Don't have an account?{" "}
+          Already signed in?{" "}
           <button
             type="button"
             className="font-semibold text-cyan-200 hover:underline"
             disabled={isSubmitting}
             onClick={() => {
               setError("");
-              navigate("/signup", {
+              navigate("/login", {
                 state: { from: fromPath },
               });
             }}
           >
-            Sign up
+            Sign in
           </button>
         </div>
 
@@ -264,4 +287,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;

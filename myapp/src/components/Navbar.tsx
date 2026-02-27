@@ -78,6 +78,12 @@ const Navbar = () => {
               key={link.label}
               href={link.href}
               className="text-m font-medium text-[#2b0f66] hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent after:transition-all hover:after:w-full"
+              onClick={(event) => {
+                if (!loggedIn) {
+                  event.preventDefault();
+                  setIsModalOpen(true);
+                }
+              }}
             >
               {link.label}
             </a>
@@ -86,18 +92,18 @@ const Navbar = () => {
 
         <div className="hidden lg:flex items-center gap-3">
           <Button
-            variant="heroOutline"
-            size="default"
-            onClick={() => (loggedIn ? handleLogout() : navigate("/login"))}
-          >
-            {loggedIn ? "Logout" : "Login"}
-          </Button>
-          <Button
             variant="hero"
             size="default"
             onClick={() => guardNavigation("/portfolio_intelligence")}
           >
             Demo
+          </Button>
+          <Button
+            variant="heroOutline"
+            size="default"
+            onClick={() => (loggedIn ? handleLogout() : navigate("/login"))}
+          >
+            {loggedIn ? "Logout" : "Login"}
           </Button>
         </div>
 
@@ -118,11 +124,28 @@ const Navbar = () => {
               key={link.label}
               href={link.href}
               className="block text-sm font-medium text-muted-foreground hover:text-foreground"
-              onClick={() => setMobileOpen(false)}
+              onClick={(event) => {
+                if (!loggedIn) {
+                  event.preventDefault();
+                  setIsModalOpen(true);
+                }
+                setMobileOpen(false);
+              }}
             >
               {link.label}
             </a>
           ))}
+          <Button
+            variant="hero"
+            size="lg"
+            className="w-full"
+            onClick={() => {
+              setMobileOpen(false);
+              guardNavigation("/portfolio_intelligence");
+            }}
+          >
+            Request a Demo
+          </Button>
           <Button
             variant="heroOutline"
             size="lg"
@@ -137,17 +160,6 @@ const Navbar = () => {
             }}
           >
             {loggedIn ? "Logout" : "Login"}
-          </Button>
-          <Button
-            variant="hero"
-            size="lg"
-            className="w-full"
-            onClick={() => {
-              setMobileOpen(false);
-              guardNavigation("/portfolio_intelligence");
-            }}
-          >
-            Request a Demo
           </Button>
         </div>
       )}

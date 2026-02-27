@@ -18,8 +18,7 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   return (
-    <div className="relative min-h-screen bg-slate-900/80">
-      <div className="pointer-events-none absolute inset-0 bg-black/40 backdrop-blur-sm" />
+    <div className="relative min-h-screen">
       <AccessBlockedModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
