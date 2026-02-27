@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import { setAuthSession, setAuthUser } from "@/lib/auth";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import { loadGoogleScript } from "@/lib/google/loadGoogleScript";
 import {
   createNonce,
@@ -182,108 +184,122 @@ const Signup = () => {
   }, [handleGoogleSuccess]);
 
   const glassInputClass =
-    "border-white/35 bg-white/10 text-white placeholder:text-slate-200 focus-visible:border-[#93c5fd] focus-visible:ring-[#93c5fd]";
+    "border-slate-300 bg-white text-slate-800 placeholder:text-slate-400 focus-visible:border-[#2b57b8] focus-visible:ring-[#2b57b8]";
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-6 py-10">
-      <div
-        className="absolute inset-0 bg-cover bg-center opacity-35"
-        style={{ backgroundImage: "url('/hero-dashboard.jpg')" }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-br from-[#050b24]/90 via-[#0c1f4f]/80 to-[#0f6f8c]/70" />
-      <div className="absolute -top-20 -left-10 h-64 w-64 rounded-full bg-cyan-300/20 blur-3xl" />
-      <div className="absolute -bottom-24 -right-12 h-72 w-72 rounded-full bg-indigo-300/20 blur-3xl" />
+    <div className="min-h-screen bg-slate-100">
+      <Navbar />
+      <main className="relative flex min-h-[calc(100vh-360px)] items-center justify-center overflow-hidden px-6 pb-16 pt-28">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage:
+              "linear-gradient(180deg, #eef2f8 0%, #e9eef6 100%)",
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#dbe4f2]/70" />
+        <div
+          className="absolute inset-0 opacity-20"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 20% 20%, rgba(59,130,246,0.14), transparent 35%), radial-gradient(circle at 80% 75%, rgba(99,102,241,0.12), transparent 38%)",
+          }}
+        />
+        <div className="absolute left-[-120px] top-[8%] h-72 w-72 rounded-full bg-sky-200/35 blur-3xl" />
+        <div className="absolute right-[-120px] top-[35%] h-80 w-80 rounded-full bg-indigo-200/35 blur-3xl" />
 
-      <div className="relative z-10 w-full max-w-xl rounded-3xl border border-white/30 bg-white/10 p-7 shadow-[0_20px_60px_-20px_rgba(15,23,42,0.7)] backdrop-blur-2xl sm:p-10">
-        <h1 className="mb-6 text-center text-2xl font-bold text-white">Sign up</h1>
+        <div className="relative z-10 w-full max-w-xl rounded-3xl border border-slate-200 bg-white/95 p-7 shadow-xl backdrop-blur-sm sm:p-10">
+          <h1 className="mb-6 text-center text-2xl font-bold text-[#1e2f73]">Sign up</h1>
 
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <Input
-            className={glassInputClass}
-            placeholder="Username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <Input
-            className={glassInputClass}
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={isSubmitting}
-          />
-          <PasswordInput
-            className={glassInputClass}
-            placeholder="Create Password"
-            value={password}
-            onChange={setPassword}
-            disabled={isSubmitting}
-          />
-          <PasswordInput
-            className={glassInputClass}
-            placeholder="Re-enter Password"
-            value={confirmPassword}
-            onChange={setConfirmPassword}
-            disabled={isSubmitting}
-          />
+          <form onSubmit={handleSignUp} className="space-y-4">
+            <Input
+              className={glassInputClass}
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <Input
+              className={glassInputClass}
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={isSubmitting}
+            />
+            <PasswordInput
+              className={glassInputClass}
+              placeholder="Create Password"
+              value={password}
+              onChange={setPassword}
+              disabled={isSubmitting}
+            />
+            <PasswordInput
+              className={glassInputClass}
+              placeholder="Re-enter Password"
+              value={confirmPassword}
+              onChange={setConfirmPassword}
+              disabled={isSubmitting}
+            />
 
-          {error ? <p className="text-sm text-rose-200">{error}</p> : null}
+            {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-          <div className="grid grid-cols-2 gap-3 pt-1">
-            <Button
+            <div className="grid grid-cols-2 gap-3 pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                className="border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                disabled={isSubmitting}
+                onClick={() => {
+                  setError("");
+                  navigate("/");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-[#1e2f73] text-white hover:bg-[#233889]"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                Sign up
+              </Button>
+            </div>
+          </form>
+
+          <div className="mt-5 text-center text-sm text-slate-600">
+            Already signed in?{" "}
+            <button
               type="button"
-              variant="outline"
-              className="border-white/35 bg-white/10 text-white hover:bg-white/20"
+              className="font-semibold text-[#2b57b8] hover:underline"
               disabled={isSubmitting}
               onClick={() => {
                 setError("");
-                navigate("/");
+                navigate("/login", {
+                  state: { from: fromPath },
+                });
               }}
             >
-              Cancel
-            </Button>
-            <Button
-              className="bg-[#1d1a63] text-white hover:bg-[#272383]"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              Sign up
-            </Button>
+              Sign in
+            </button>
           </div>
-        </form>
 
-        <div className="mt-5 text-center text-sm text-slate-200">
-          Already signed in?{" "}
-          <button
-            type="button"
-            className="font-semibold text-cyan-200 hover:underline"
-            disabled={isSubmitting}
-            onClick={() => {
-              setError("");
-              navigate("/login", {
-                state: { from: fromPath },
-              });
-            }}
-          >
-            Sign in
-          </button>
-        </div>
+          <div className="mt-4 mb-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-slate-300" />
+            <span className="text-xs font-medium uppercase tracking-wider text-slate-500">OR</span>
+            <span className="h-px flex-1 bg-slate-300" />
+          </div>
 
-        <div className="mt-4 mb-4 flex items-center gap-3">
-          <span className="h-px flex-1 bg-white/30" />
-          <span className="text-xs font-medium uppercase tracking-wider text-slate-200">OR</span>
-          <span className="h-px flex-1 bg-white/30" />
+          <div className="flex w-full justify-center">
+            <div ref={googleButtonRef} />
+          </div>
+          {!googleReady ? (
+            <p className="mt-2 text-center text-xs text-slate-500">Loading Google sign-in...</p>
+          ) : null}
         </div>
-
-        <div className="flex w-full justify-center">
-          <div ref={googleButtonRef} />
-        </div>
-        {!googleReady ? (
-          <p className="mt-2 text-center text-xs text-slate-200">Loading Google sign-in...</p>
-        ) : null}
-      </div>
-    </main>
+      </main>
+      <Footer />
+    </div>
   );
 };
 
