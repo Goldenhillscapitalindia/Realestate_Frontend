@@ -25,7 +25,8 @@ const HeroSection = () => {
 
           <p className="text-m md:text-lg text-muted-foreground leading-relaxed mb-4 animate-fade-up-delay-2">
             AI-powered property intelligence  turns financial data into forward-looking decisions — protecting NOI, reducing risk, and unlocking portfolio-wide growth.
-            Supporting Line: From acquisition underwriting to active asset management — all in one platform.          </p>
+            {/* Supporting Line: From acquisition underwriting to active asset management — all in one platform.           */}
+            </p>
 
           <p className="text-sm text-muted-foreground mb-8 animate-fade-up-delay-2">
             📍From acquisition underwriting to active asset management — all in one platform.
