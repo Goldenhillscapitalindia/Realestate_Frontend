@@ -1,11 +1,34 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
-import { Menu, X } from "lucide-react";
+import { LogOut, Menu, X } from "lucide-react";
 import AccessBlockedModal from "./AccessBlockedModal";
 import { useLoginGuard } from "@/hooks/use-login-guard";
-import { clearUserLogin, getAccessToken, isUserLoggedIn } from "@/lib/auth";
+import {
+  clearUserLogin,
+  getAccessToken,
+  getAuthUser,
+  isUserLoggedIn,
+} from "@/lib/auth";
 import { logoutRequest } from "@/lib/auth-api";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const navLinks = [
   { label: "Platform", href: "#platform" },
@@ -20,6 +43,8 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(isUserLoggedIn());
+  const [profileName, setProfileName] = useState("User");
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const { isModalOpen, setIsModalOpen, guardNavigation, goToLogin } = useLoginGuard();
 
   useEffect(() => {
@@ -29,7 +54,16 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    const syncAuthState = () => setLoggedIn(isUserLoggedIn());
+    const syncAuthState = () => {
+      setLoggedIn(isUserLoggedIn());
+      const user = getAuthUser();
+      const nameValue =
+        (typeof user?.username === "string" && user.username) ||
+        (typeof user?.name === "string" && user.name) ||
+        (typeof user?.email === "string" && user.email) ||
+        "User";
+      setProfileName(nameValue);
+    };
     window.addEventListener("storage", syncAuthState);
     window.addEventListener("focus", syncAuthState);
     document.addEventListener("visibilitychange", syncAuthState);
@@ -51,9 +85,13 @@ const Navbar = () => {
     } finally {
       clearUserLogin();
       setLoggedIn(false);
-      navigate("/");
+      setProfileName("User");
+      setLogoutDialogOpen(false);
+      navigate("/logout");
     }
   };
+
+  const profileInitial = profileName.trim().charAt(0).toUpperCase() || "U";
 
   return (
     <nav
@@ -98,13 +136,38 @@ const Navbar = () => {
           >
             Demo
           </Button>
-          <Button
-            variant="heroOutline"
-            size="default"
-            onClick={() => (loggedIn ? handleLogout() : navigate("/login"))}
-          >
-            {loggedIn ? "Logout" : "Login"}
-          </Button>
+          {loggedIn ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0f6d84] text-base font-semibold text-white transition-colors hover:bg-[#0c5b6f]"
+                  aria-label="Open profile menu"
+                >
+                  {profileInitial}
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuLabel className="truncate">{profileName}</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => setLogoutDialogOpen(true)}
+                  className="cursor-pointer text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="heroOutline"
+              size="default"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </Button>
+          )}
         </div>
 
         {/* Mobile Toggle */}
@@ -153,7 +216,7 @@ const Navbar = () => {
             onClick={() => {
               setMobileOpen(false);
               if (loggedIn) {
-                void handleLogout();
+                setLogoutDialogOpen(true);
               } else {
                 navigate("/login");
               }
@@ -169,6 +232,30 @@ const Navbar = () => {
         onOpenChange={setIsModalOpen}
         onGoToLogin={goToLogin}
       />
+      <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+        <AlertDialogContent className="max-w-[520px]">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-2xl font-semibold text-slate-900">
+              Sign out of Vertex Real Estate?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base leading-relaxed text-slate-600">
+              You are currently signed in as{" "}
+              <span className="font-semibold text-slate-900">{profileName}</span>. You will need to log in again to continue.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>CANCEL</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 text-white hover:bg-red-700"
+              onClick={() => {
+                void handleLogout();
+              }}
+            >
+              SIGN OUT
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </nav>
   );
 };

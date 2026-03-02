@@ -184,7 +184,7 @@ const Signup = () => {
   }, [handleGoogleSuccess]);
 
   const glassInputClass =
-    "border-slate-300 bg-white text-slate-800 placeholder:text-slate-400 focus-visible:border-[#2b57b8] focus-visible:ring-[#2b57b8]";
+    "border-slate-300 bg-white text-slate-800 placeholder:text-slate-400 transition-colors duration-150 hover:border-slate-400 focus-visible:border-[#5a68bf] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:shadow-none";
 
   return (
     <div className="min-h-screen bg-slate-100">
@@ -208,8 +208,8 @@ const Signup = () => {
         <div className="absolute left-[-120px] top-[8%] h-72 w-72 rounded-full bg-sky-200/35 blur-3xl" />
         <div className="absolute right-[-120px] top-[35%] h-80 w-80 rounded-full bg-indigo-200/35 blur-3xl" />
 
-        <div className="relative z-10 w-full max-w-xl rounded-3xl border border-slate-200 bg-white/95 p-7 shadow-xl backdrop-blur-sm sm:p-10">
-          <h1 className="mb-6 text-center text-2xl font-bold text-[#1e2f73]">Sign up</h1>
+        <div className="font-auth relative z-10 w-full max-w-xl rounded-3xl border border-white/50 bg-white/60 p-7 shadow-[0_18px_45px_rgba(15,23,42,0.18)] ring-1 ring-white/35 backdrop-blur-xl sm:p-10">
+          <h1 className="mb-6 text-center text-2xl font-semibold tracking-tight text-[#3a4da5]">Sign Up</h1>
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <Input
@@ -271,7 +271,7 @@ const Signup = () => {
             Already signed in?{" "}
             <button
               type="button"
-              className="font-semibold text-[#2b57b8] hover:underline"
+              className="font-semibold text-[#3a4da5] hover:underline"
               disabled={isSubmitting}
               onClick={() => {
                 setError("");

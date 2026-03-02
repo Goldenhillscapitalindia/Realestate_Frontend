@@ -36,7 +36,7 @@ const PasswordInput = ({
         onClick={() => setVisible((prev) => !prev)}
         disabled={disabled}
       >
-        {visible ? <EyeOff size={18} /> : <Eye size={18} />}
+        {visible ? <Eye size={20} /> : <EyeOff size={20} />}
       </button>
     </div>
   );
