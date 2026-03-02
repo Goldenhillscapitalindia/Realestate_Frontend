@@ -10,7 +10,6 @@ import { loadGoogleScript } from "@/lib/google/loadGoogleScript";
 import {
   createNonce,
   decodeGoogleIdToken,
-  requestGoogleAccessToken,
 } from "@/lib/google/googleAuth";
 import {
   googleLoginRequest,
@@ -105,11 +104,6 @@ const Signup = () => {
           sessionId: googleAuth.sessionId,
           user: googleAuth.user ?? undefined,
         });
-
-        const accessToken = await requestGoogleAccessToken();
-        if (accessToken) {
-          window.sessionStorage.setItem("google_access_token", accessToken);
-        }
 
         const me = await meRequest({
           token: googleAuth.accessToken,

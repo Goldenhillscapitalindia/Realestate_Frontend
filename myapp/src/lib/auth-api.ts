@@ -44,10 +44,12 @@ export const signupRequest = async (params: {
   confirmPassword: string;
 }): Promise<AuthResult> => {
   const response = await authClient.post<RawAuthResponse>("/api/auth/signup/", {
+    // Backend signup serializer requires both name and username.
+    name: params.username,
     username: params.username,
     email: params.email,
     password: params.password,
-    confirm_password: params.confirmPassword,
+    reenter_password: params.confirmPassword,
   });
 
   return parseAuthResponse(response.data);
@@ -58,7 +60,8 @@ export const loginRequest = async (params: {
   password: string;
 }): Promise<AuthResult> => {
   const response = await authClient.post<RawAuthResponse>("/api/auth/login/", {
-    email: params.email,
+    // Backend login expects `identifier` (email or username).
+    identifier: params.email,
     password: params.password,
   });
 
