@@ -242,7 +242,7 @@ const Signup = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                className="border-[#D1D5DB] bg-[#F3F4F6] text-[#374151] hover:bg-[#E5E7EB]"
                 disabled={isSubmitting}
                 onClick={() => {
                   setError("");
@@ -278,7 +278,7 @@ const Signup = () => {
             </button>
           </div>
 
-          <div className="mt-4 mb-4 flex items-center gap-3">
+          <div className="mb-4 mt-4 flex items-center gap-3">
             <span className="h-px flex-1 bg-slate-300" />
             <span className="text-xs font-medium uppercase tracking-wider text-slate-500">OR</span>
             <span className="h-px flex-1 bg-slate-300" />

@@ -1,5 +1,6 @@
 import { Button } from "./ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription } from "./ui/dialog";
+import { History } from "lucide-react";
 
 type AccessBlockedModalProps = {
   open: boolean;
@@ -14,17 +15,17 @@ const AccessBlockedModal = ({
 }: AccessBlockedModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[min(92vw,760px)] max-w-[760px] rounded-[26px] border-0 bg-transparent p-0 shadow-none [&>button]:hidden">
-        <div className="rounded-[26px] bg-gradient-to-r from-[#101b56] via-[#2f35ac] to-[#2a9bcc] px-8 py-10 text-center text-white shadow-2xl sm:px-12 sm:py-12">
-          <DialogTitle className="font-display text-[15px] font-bold tracking-tight text-white sm:text-[25px]">
-            Session Ended
-          </DialogTitle>
-          <DialogDescription className="font-body mx-auto mt-4 max-w-[560px] text-[16px] leading-relaxed text-white/90 sm:text-[20px]">
+      <DialogContent className="w-[min(92vw,620px)] max-w-[620px] border-0 bg-transparent p-0 shadow-none [&>button]:hidden">
+        <div className="mx-auto w-full rounded-2xl bg-white px-7 py-8 text-center shadow-[0_16px_40px_rgba(22,35,98,0.28)] sm:px-9 sm:py-9">
+          <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white shadow-[0_4px_14px_rgba(0,0,0,0.08)] ring-1 ring-slate-100">
+            <History className="h-10 w-10 text-slate-700" strokeWidth={1.8} />
+          </div>
+          <DialogDescription className="font-body mx-auto mt-1 max-w-[460px] text-[15px] leading-snug text-slate-900 sm:text-[18px]">
             Your session has timed out for security reasons. Please log in again to continue.
           </DialogDescription>
           <Button
             type="button"
-            className="mt-7 h-12 rounded-full bg-[#ff7f2a] px-10 text-[16px] font-semibold text-white hover:bg-[#f17422] sm:mt-8 sm:h-14 sm:px-12 sm:text-[18px]"
+            className="mt-7 h-10 rounded-md bg-[#1e2f73] px-10 text-[14px] font-semibold text-white hover:bg-[#233889] sm:h-11 sm:text-[16px]"
             onClick={onGoToLogin}
           >
             Go to Login

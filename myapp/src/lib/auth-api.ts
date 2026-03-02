@@ -285,3 +285,10 @@ export const meRequest = async (params?: {
   const user = asRecord(payload.user) ?? asRecord(payload.profile);
   return user ?? payload;
 };
+
+export const forgotPasswordRequest = async (email: string): Promise<void> => {
+  await authClient.post("/api/auth/forgot-password/", {
+    email,
+    identifier: email,
+  });
+};
