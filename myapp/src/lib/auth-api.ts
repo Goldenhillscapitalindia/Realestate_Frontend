@@ -100,3 +100,10 @@ export const meRequest = async (params: {
 
   return response.data;
 };
+
+export const forgotPasswordRequest = async (email: string): Promise<void> => {
+  await authClient.post("/api/auth/forgot-password/", {
+    email,
+    identifier: email,
+  });
+};

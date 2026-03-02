@@ -141,7 +141,7 @@ const Navbar = () => {
               <DropdownMenuTrigger asChild>
                 <button
                   type="button"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-[#0f6d84] text-base font-semibold text-white transition-colors hover:bg-[#0c5b6f]"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-[#0f6d84] text-xl font-semibold text-white transition-colors hover:bg-[#0c5b6f]"
                   aria-label="Open profile menu"
                 >
                   {profileInitial}

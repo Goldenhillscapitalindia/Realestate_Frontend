@@ -2,6 +2,11 @@ import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import axios from "axios";
 import { setAuthSession, setAuthUser } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
@@ -12,6 +17,7 @@ import {
   decodeGoogleIdToken,
 } from "@/lib/google/googleAuth";
 import {
+  forgotPasswordRequest,
   googleLoginRequest,
   loginRequest,
   meRequest,
@@ -26,6 +32,11 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [forgotSuccess, setForgotSuccess] = useState("");
+  const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
   const [googleReady, setGoogleReady] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -69,7 +80,7 @@ const Login = () => {
       });
       setAuthUser(me);
 
-      navigate(fromPath, { replace: true });
+      navigate("/", { replace: true });
     } catch (err) {
       setError(getApiErrorMessage("Login failed. Please try again.", err));
     } finally {
@@ -100,7 +111,7 @@ const Login = () => {
         });
         setAuthUser(me);
 
-        navigate(fromPath, { replace: true });
+        navigate("/", { replace: true });
       } catch (err) {
         setError(getApiErrorMessage("Google login failed. Please try again.", err));
       } finally {
@@ -109,6 +120,26 @@ const Login = () => {
     },
     [fromPath, navigate],
   );
+
+  const handleForgotPassword = async (event: FormEvent) => {
+    event.preventDefault();
+    if (!forgotEmail.trim()) {
+      setForgotError("Please enter your recovery email.");
+      return;
+    }
+
+    try {
+      setIsForgotSubmitting(true);
+      setForgotError("");
+      setForgotSuccess("");
+      await forgotPasswordRequest(forgotEmail.trim());
+      setForgotSuccess("Password reset link has been sent to your email.");
+    } catch (err) {
+      setForgotError(getApiErrorMessage("Unable to process request. Please try again.", err));
+    } finally {
+      setIsForgotSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -200,7 +231,7 @@ const Login = () => {
             <Input
               className={glassInputClass}
               type="email"
-              placeholder="Email"
+              placeholder="Email or username"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isSubmitting}
@@ -253,6 +284,19 @@ const Login = () => {
             >
               Sign up
             </button>
+            <button
+              type="button"
+              className="mt-3 block w-full font-medium text-[#c24150] hover:underline"
+              disabled={isSubmitting}
+              onClick={() => {
+                setForgotOpen(true);
+                setForgotError("");
+                setForgotSuccess("");
+                setForgotEmail(email);
+              }}
+            >
+              Forgot Password?
+            </button>
           </div>
 
           <div className="mt-4 mb-4 flex items-center gap-3">
@@ -269,6 +313,43 @@ const Login = () => {
           ) : null}
         </div>
       </main>
+      <Dialog
+        open={forgotOpen}
+        onOpenChange={(open) => {
+          setForgotOpen(open);
+          if (!open) {
+            setForgotError("");
+            setForgotSuccess("");
+          }
+        }}
+      >
+        <DialogContent className="max-w-[560px] border border-slate-200 bg-white p-6 shadow-2xl">
+          <DialogDescription className="font-auth text-[20px] font-semibold leading-snug text-[#1e2f73]">
+            Please enter your email address to reset your password
+          </DialogDescription>
+          <form onSubmit={handleForgotPassword} className="mt-5 space-y-4">
+            <Input
+              type="email"
+              placeholder="Recovery Email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              className={`${glassInputClass} h-12 bg-white text-[17px] md:text-[17px] font-medium text-[#0f172a] placeholder:text-slate-400`}
+              disabled={isForgotSubmitting}
+            />
+            {forgotError ? <p className="text-sm text-red-600">{forgotError}</p> : null}
+            {forgotSuccess ? <p className="text-sm text-emerald-700">{forgotSuccess}</p> : null}
+            <div className="flex justify-end pt-1">
+              <Button
+                type="submit"
+                className="h-11 bg-[#1e2f73] px-7 text-white hover:bg-[#233889] disabled:bg-slate-300 disabled:text-slate-500"
+                disabled={isForgotSubmitting || !forgotEmail.trim()}
+              >
+                {isForgotSubmitting ? "SUBMITTING..." : "SUBMIT"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Footer />
     </div>
 
