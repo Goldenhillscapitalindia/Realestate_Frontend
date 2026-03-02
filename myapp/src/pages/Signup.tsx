@@ -242,7 +242,7 @@ const Signup = () => {
               <Button
                 type="button"
                 variant="outline"
-                className="border-slate-300 bg-white text-slate-700 hover:bg-slate-50"
+                className="border-[#D1D5DB] bg-[#F3F4F6] text-[#374151] hover:bg-[#E5E7EB]"
                 disabled={isSubmitting}
                 onClick={() => {
                   setError("");
