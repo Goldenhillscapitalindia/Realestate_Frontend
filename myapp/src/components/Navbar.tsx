@@ -15,8 +15,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -167,8 +165,6 @@ const Navbar = () => {
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
-                <DropdownMenuLabel className="truncate">{profileName}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => setLogoutDialogOpen(true)}
                   className="cursor-pointer text-red-600 focus:text-red-600 data-[highlighted]:bg-slate-100 data-[highlighted]:text-red-600"
