@@ -1,9 +1,10 @@
 import { ScrollReveal } from "./ScrollReveal";
 import { Button } from "../components/ui/button";
-import { useNavigate } from "react-router-dom";
+import AccessBlockedModal from "./AccessBlockedModal";
+import { useLoginGuard } from "@/hooks/use-login-guard";
 
 const CTASection = () => {
-  const navigate = useNavigate();
+  const { isModalOpen, setIsModalOpen, guardNavigation, goToLogin } = useLoginGuard();
   return (
     <section className="section-padding" id="demo">
       <div className="max-w-4xl mx-auto">
@@ -21,7 +22,7 @@ const CTASection = () => {
                 variant="secondary"
                 size="xl"
                 className="bg-[#1ebc9a] text-white shadow-xl px-8 py-3"
-                onClick={() => navigate("/portfolio_intelligence")}
+                onClick={() => guardNavigation("/portfolio_intelligence")}
               >
                Demo
               </Button>
@@ -29,6 +30,11 @@ const CTASection = () => {
           </div>
         </ScrollReveal>
       </div>
+      <AccessBlockedModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onGoToLogin={goToLogin}
+      />
     </section>
   );
 };

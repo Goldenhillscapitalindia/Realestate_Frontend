@@ -1,9 +1,10 @@
 import { ScrollReveal } from "./ScrollReveal";
 import { Brain, Radar, Search } from "lucide-react";
-import { Route, useNavigate } from "react-router-dom";
 import portfolioDashboard from "../assets/portfoli_intelligence.png";
 import marketRadar from "../assets/market_signal_radar.png";
 import dealLens from "../assets/deal_lens.png";
+import AccessBlockedModal from "./AccessBlockedModal";
+import { useLoginGuard } from "@/hooks/use-login-guard";
 
 const features = [
   {
@@ -57,7 +58,7 @@ subheading:"AI-powered underwriting that turns financials into insight.Analyze T
 ];
 
 const PlatformFeatures = () => {
-  const navigate = useNavigate();
+  const { isModalOpen, setIsModalOpen, guardNavigation, goToLogin } = useLoginGuard();
   return (
     <section className="section-padding section-soft" id="platform">
       <div className="max-w-7xl mx-auto">
@@ -78,7 +79,7 @@ const PlatformFeatures = () => {
                 <button
                   key={tab.label}
                   type="button"
-                  onClick={() => tab.route && navigate(tab.route)}
+                  onClick={() => tab.route && guardNavigation(tab.route)}
                   className="inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-200 border border-border text-sm font-medium text-foreground transition hover:border-foreground/40"
                 >
                   {tab.label}
@@ -126,7 +127,7 @@ const PlatformFeatures = () => {
                     className={`flex-1 w-full rounded-xl overflow-hidden float-shadow border border-border ${isMarketRadar ? "cursor-pointer" : ""}`}
                     onClick={() => {
                       if (isMarketRadar) {
-                        navigate("/market_radar");
+                        guardNavigation("/market_radar");
                       }
                     }}
                     role={isMarketRadar ? "button" : undefined}
@@ -136,7 +137,7 @@ const PlatformFeatures = () => {
                       isMarketRadar
                         ? (event) => {
                           if (event.key === "Enter" || event.key === " ") {
-                            navigate("/market_radar");
+                            guardNavigation("/market_radar");
                           }
                         }
                         : undefined
@@ -155,6 +156,11 @@ const PlatformFeatures = () => {
           })}
         </div>
       </div>
+      <AccessBlockedModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onGoToLogin={goToLogin}
+      />
     </section>
   );
 };

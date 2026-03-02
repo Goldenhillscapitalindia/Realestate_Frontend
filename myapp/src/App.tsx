@@ -10,6 +10,9 @@ import MarketRadarView from "./components/market-radar-view/components/MarketRad
 import PfDemo from "./components/portfolio_intelligence/pf_demo";
 import PfPropertyInsights from "./components/portfolio_intelligence/pf_property_insights";
 import RealEstateUploader from "./components/deal_lens/RealEstateUploader";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 
 const queryClient = new QueryClient();
@@ -22,18 +25,50 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
-          <Route path="/portfolio_intelligence" element={<PfDemo />} />
+          <Route
+            path="/portfolio_intelligence"
+            element={
+              <ProtectedRoute>
+                <PfDemo />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/portfolio_intelligence/property-insights"
-            element={<PfPropertyInsights />}
+            element={
+              <ProtectedRoute>
+                <PfPropertyInsights />
+              </ProtectedRoute>
+            }
           />
-          <Route path="/market_radar" element={<MarketRadar />} />
-          <Route path="/market_radar_view/:sub_market_name" element={<MarketRadarView />} />
-          <Route path="/deal_lens" element={<RealEstateUploader />} />
-
-
+          <Route
+            path="/market_radar"
+            element={
+              <ProtectedRoute>
+                <MarketRadar />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/market_radar_view/:sub_market_name"
+            element={
+              <ProtectedRoute>
+                <MarketRadarView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/deal_lens"
+            element={
+              <ProtectedRoute>
+                <RealEstateUploader />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
