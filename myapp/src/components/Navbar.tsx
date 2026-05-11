@@ -178,6 +178,20 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
         </div>
 
         <div className="hidden lg:flex items-center gap-3">
+          {loggedIn ? (
+            <Button
+              variant="heroOutline"
+              size="default"
+              onClick={() => {
+                setDemoMode(false);
+                return navigate(productRoutes.propertyIntelligence, {
+                  state: { activeTab: "Properties" },
+                });
+              }}
+            >
+              My Properties
+            </Button>
+          ) : null}
           <Button
             variant="hero"
             size="default"
@@ -262,6 +276,22 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
               {link.label}
             </button>
           ))}
+          {loggedIn ? (
+            <Button
+              variant="heroOutline"
+              size="lg"
+              className="w-full"
+              onClick={() => {
+                setMobileOpen(false);
+                setDemoMode(false);
+                navigate(productRoutes.propertyIntelligence, {
+                  state: { activeTab: "Properties" },
+                });
+              }}
+            >
+              My Properties
+            </Button>
+          ) : null}
           <Button
             variant="hero"
             size="lg"

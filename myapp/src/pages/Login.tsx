@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
@@ -7,7 +7,6 @@ import { setAuthSession, setAuthUser } from "@/lib/auth";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import PasswordInput from "@/components/auth/PasswordInput";
-import { productRoutes } from "@/lib/product-routes";
 import { setDemoMode } from "@/lib/demo-mode";
 
 const REMEMBERED_LOGIN_KEY = "remembered_login_identifier";
@@ -15,8 +14,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const fromPath = (location.state as { from?: string } | null)?.from ?? productRoutes.portfolioIntelligence;
   const [identifier, setIdentifier] = useState("");
 
   const [password, setPassword] = useState("");
@@ -86,7 +83,7 @@ const Login = () => {
       setAuthUser(user);
       setDemoMode(false);
 
-      navigate(fromPath, { replace: true });
+      navigate("/", { replace: true });
     } catch (err) {
       setError(getApiErrorMessage("Login failed. Please try again.", err));
     } finally {

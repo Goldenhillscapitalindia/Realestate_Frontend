@@ -1,11 +1,6 @@
+import { AlertTriangle, Heart, RefreshCw, TrendingDown, Wind } from "lucide-react";
+
 import { ScrollReveal } from "./ScrollReveal";
-import {
-  RefreshCw,
-  AlertTriangle,
-  TrendingDown,
-  Wind,
-  Heart,
-} from "lucide-react";
 
 const capabilities = [
   { icon: RefreshCw, label: "Rollover risk visibility" },
@@ -17,62 +12,38 @@ const capabilities = [
 
 const AILayer = () => {
   return (
-    <section className="section-padding bg-card" id="ai">
+    <section className="section-padding section-soft-alt" id="ai">
       <div className="max-w-7xl mx-auto">
-        <ScrollReveal>
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
-              AI Layer — Beyond Dashboards
+        <ScrollReveal variant="up">
+          <div className="max-w-3xl mx-auto mb-14 text-center">
+            <p className="mb-3 text-base font-semibold uppercase tracking-widest text-indigo-500">
+              AI Layer - Beyond Dashboards
             </p>
 
-            <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground mb-6">
+            <h2 className="mb-5 font-display text-[2rem] font-extrabold text-foreground md:text-[2.35rem] lg:text-[2.8rem]">
               Real Estate-Specific Intelligence
             </h2>
 
-            <p className="text-lg text-muted-foreground leading-relaxed">
-Asset72 analyzes structured financial data to surface patterns in lease exposure, revenue alignment, and operating efficiency - Insights that manual spreadsheets simply miss            </p>
+            <p className="text-base leading-7 text-muted-foreground">
+              Asset72 analyzes structured financial data to surface patterns in lease exposure,
+              revenue alignment, and operating efficiency - Insights that manual spreadsheets simply
+              miss
+            </p>
           </div>
         </ScrollReveal>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 items-stretch">
-          {capabilities.map((cap, i) => (
-            <ScrollReveal key={cap.label} delay={i * 60}>
-              <div
-                className="relative h-full flex flex-col items-center
-                           p-8 rounded-2xl
-                           bg-white/60 backdrop-blur-sm
-                           border border-border/40
-                           shadow-sm hover:shadow-lg
-                           hover:-translate-y-1
-                           transition-all duration-300
-                           group overflow-hidden"
-              >
-                {/* Left Accent */}
-                <div
-                  className="absolute left-0 top-0 h-full w-[3px]
-                             bg-[#8c22a5] opacity-60
-                             group-hover:opacity-100
-                             transition-opacity duration-300"
-                />
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-5 items-stretch">
+          {capabilities.map((capability, index) => (
+            <ScrollReveal key={capability.label} delay={index * 60} variant="scale">
+              <div className="premium-panel-light group relative flex h-full flex-col items-center overflow-hidden p-8 text-center">
+                <div className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-[#1ebc9a] to-transparent opacity-80" />
 
-                <div className="pl-4 flex flex-col items-center flex-grow text-center">
-                  {/* Icon */}
-                  <div
-                    className="w-14 h-14 rounded-2xl
-                               bg-[#8c22a5]/10
-                               flex items-center justify-center
-                               mb-6
-                               group-hover:scale-105
-                               transition-transform duration-300"
-                  >
-                    <cap.icon className="w-6 h-6 text-[#8c22a5]" />
+                <div className="flex flex-col items-center flex-grow text-center">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0f4b8a]/10 transition-transform duration-300 group-hover:scale-105">
+                    <capability.icon className="h-6 w-6 text-[#0f4b8a]" />
                   </div>
 
-                  {/* Label */}
-                  <p className="text-sm font-semibold text-black leading-snug">
-                    {cap.label}
-                  </p>
+                  <p className="text-sm font-semibold leading-snug text-foreground">{capability.label}</p>
                 </div>
               </div>
             </ScrollReveal>

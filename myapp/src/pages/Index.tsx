@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useLocation } from "react-router";
 import AILayer from "../components/AILayer";
 import CTASection from "../components/CTASection";
@@ -9,7 +9,6 @@ import HowItWorks from "../components/HowItWorks";
 import Navbar from "../components/Navbar";
 import PlatformExperience from "../components/PlatformExperience";
 import PlatformFeatures from "../components/PlatformFeatures";
-import SocialProof from "../components/SocialProof";
 import UseCases from "../components/UseCases";
 import WhyChooseAsset72 from "../components/WhyChooseAsset72";
 import WhyAsset72 from "../components/WhyAsset72";
@@ -27,19 +26,6 @@ const scrollToSection = (sectionId: string) => {
 const Index = () => {
   const location = useLocation();
   const isLoggedIn = isUserLoggedIn();
-  const [theme, setTheme] = useState<"light" | "dark">(() => {
-    if (typeof window === "undefined") return "light";
-    return (localStorage.getItem("home-theme") as "light" | "dark") || "light";
-  });
-  const toggleTheme = () => {
-    setTheme((prev) => {
-      const next = prev === "light" ? "dark" : "light";
-      try {
-        localStorage.setItem("home-theme", next);
-      } catch {}
-      return next;
-    });
-  };
   useEffect(() => {
   const isLoggedIn = isUserLoggedIn();
 
@@ -80,8 +66,8 @@ const Index = () => {
 }, [location]);
 
   return (
-    <div className={`min-h-screen ${theme === "dark" ? "home-theme-dark" : ""}`}>
-      <Navbar theme={theme} onToggleTheme={toggleTheme} />
+    <div className="min-h-screen">
+      <Navbar />
 
       <div>
         <HeroSection />

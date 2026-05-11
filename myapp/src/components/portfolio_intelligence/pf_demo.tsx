@@ -155,6 +155,18 @@ const PfDemo: React.FC = () => {
           <aside
             className="sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"
           >
+            {isAuthenticatedUserView && activeTab === "Properties" ? (
+              <div className="mb-4">
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="flex items-center gap-2 whitespace-nowrap text-[22px] leading-none text-white"
+                >
+                  <ArrowLeft className="h-5 w-5" />
+                  <span>Back</span>
+                </button>
+              </div>
+            ) : null}
             {!isAuthenticatedUserView ? (
               <div className="mb-4">
                 <button

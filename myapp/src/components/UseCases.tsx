@@ -1,4 +1,5 @@
-import { TrendingUp, Shield, BarChart3, Landmark } from "lucide-react";
+import { BarChart3, Landmark, Shield, TrendingUp } from "lucide-react";
+
 import { ScrollReveal } from "./ScrollReveal";
 
 const cases = [
@@ -26,57 +27,42 @@ const cases = [
 
 const UseCases = () => {
   return (
-    <section className="section-padding section-soft-alt" id="use-cases">
-      <div className="max-w-7xl mx-auto">
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
+    <section className="section-padding section-dark section-dark-grid" id="use-cases">
+      <div className="absolute left-[10%] bottom-16 h-44 w-44 rounded-full bg-[#16365f] opacity-70 blur-3xl" />
+      <div className="absolute right-[8%] top-20 h-52 w-52 rounded-full bg-emerald/10 blur-3xl" />
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <ScrollReveal variant="up">
+          <div className="mb-14 text-center">
+            <p className="mb-3 text-base font-semibold uppercase tracking-widest text-emerald-light">
               Real Use Cases
             </p>
-            <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground">
+            <h2 className="font-display text-[2rem] font-extrabold text-white md:text-[2.35rem] lg:text-[2.8rem]">
               Designed for Institutional Real Estate
             </h2>
           </div>
         </ScrollReveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 items-stretch">          {cases.map((c, i) => (
-          <ScrollReveal key={c.title} delay={i * 80}>
-            <div className="relative h-full flex flex-col 
-                p-8 rounded-2xl bg-white/60 backdrop-blur-sm 
-                border border-border/40 shadow-sm 
-                hover:shadow-xl hover:-translate-y-1 
-                transition-all duration-300 
-                group overflow-hidden">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 items-stretch">
+          {cases.map((item, index) => (
+            <ScrollReveal key={item.title} delay={index * 80} variant={index % 2 === 0 ? "left" : "right"}>
+              <div className="premium-panel-dark group relative flex h-full flex-col overflow-hidden p-7">
+                <div className="absolute inset-y-0 left-0 w-[4px] bg-gradient-to-b from-emerald-light via-[#7eb8ff] to-emerald-light opacity-80 transition-opacity duration-300 group-hover:opacity-100" />
 
-              {/* Left Accent Line */}
-              <div className="absolute left-0 top-0 h-full w-[4px] 
-                  bg-gradient-to-b from-indigo-500 via-purple-500 to-indigo-500 
-                  opacity-70 group-hover:opacity-100 transition-opacity" />
+                <div className="pl-4 flex flex-col flex-grow">
+                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-white/10 bg-white/8 transition-transform duration-300 group-hover:scale-105">
+                    <item.icon className="h-6 w-6 text-emerald-light" />
+                  </div>
 
-              {/* Content wrapper to add spacing from accent */}
-              <div className="pl-4 flex flex-col flex-grow">
+                  <h3 className="mb-3 font-display text-xl font-semibold tracking-tight text-white">
+                    {item.title}
+                  </h3>
 
-                {/* Icon */}
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br 
-                  from-indigo-50 to-indigo-100 
-                  flex items-center justify-center mb-6">
-                  <c.icon className="w-6 h-6 text-indigo-600" />
+                  <p className="text-sm leading-relaxed text-white/68">{item.description}</p>
                 </div>
-
-                {/* Title */}
-                <h3 className="font-display font-semibold text-xl text-foreground mb-3 tracking-tight">
-                  {c.title}
-                </h3>
-
-                {/* Description */}
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {c.description}
-                </p>
-
               </div>
-            </div>
-          </ScrollReveal>
-        ))}
+            </ScrollReveal>
+          ))}
         </div>
       </div>
     </section>

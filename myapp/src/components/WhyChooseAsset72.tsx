@@ -2,38 +2,27 @@ import { ScrollReveal } from "./ScrollReveal";
 
 const WhyChooseAsset72 = () => {
   return (
-    <section className="section-padding bg-card" id="solutions">
-      <div className="max-w-7xl mx-auto">
-        <ScrollReveal>
-          <div className="max-w-3xl mx-auto text-center mb-16">
-            <p className="text-lg font-semibold text-indigo-500 uppercase tracking-widest mb-3">
+    <section className="section-padding section-dark section-dark-grid" id="solutions">
+      <div className="absolute left-[8%] top-24 h-44 w-44 rounded-full bg-emerald/10 blur-3xl" />
+      <div className="absolute right-[10%] bottom-20 h-52 w-52 rounded-full bg-gold-warm/10 blur-3xl" />
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <ScrollReveal variant="up">
+          <div className="mx-auto mb-14 max-w-4xl premium-panel-dark px-7 py-10 text-center md:px-10">
+            <p className="mb-3 text-base font-semibold uppercase tracking-widest text-emerald-light">
               Why Choose Asset72?
             </p>
-            <h2 className="font-display font-extrabold text-3xl md:text-4xl lg:text-5xl text-foreground mb-6 leading-tight">
-              Stop Explaining Last Month —{" "}
-              <span className="gradient-text">Start Controlling Next Quarter</span>
+            <h2 className="mb-5 font-display text-[1.9rem] font-extrabold leading-[1.12] text-white md:text-[2.2rem] lg:text-[2.55rem]">
+              Stop Explaining Last Month -
+              <br />
+              <span className="text-[#7eb8ff]">Start Controlling Next Quarter</span>
             </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              From lease expirations to revenue lift projections, Asset72 turns raw property data into forward-looking decisions.
+            <p className="text-base leading-7 text-white/72">
+              From lease expirations to revenue lift projections, Asset72 turns raw property data into
+              forward-looking decisions.
             </p>
           </div>
         </ScrollReveal>
-
-        {/* Logo Carousel Placeholder */}
-        {/* <ScrollReveal delay={100}>
-          <div className="border border-border rounded-xl bg-muted/50 py-8 px-6">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest text-center mb-6">
-              Trusted by teams at leading firms
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-14 opacity-40">
-              {["Blackstone", "Brookfield", "Starwood", "Prologis", "CBRE", "JLL"].map((name) => (
-                <span key={name} className="font-display font-bold text-lg text-foreground">
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </ScrollReveal> */}
       </div>
     </section>
   );
