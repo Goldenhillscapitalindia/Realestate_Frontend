@@ -20,6 +20,7 @@ const queryClient = new QueryClient();
 const MarketRadarView = lazy(() => import("./components/market-radar-view/components/MarketRadarView"));
 const PfDemo = lazy(() => import("./components/portfolio_intelligence/pf_demo"));
 const PfPropertyInsights = lazy(() => import("./components/portfolio_intelligence/pf_property_insights"));
+const AssistantWidget = lazy(() => import("./components/aiassistantwidget"));
 
 const withProtectedSuspense = (element: ReactNode) => (
   <Suspense fallback={null}>{element}</Suspense>
@@ -129,6 +130,16 @@ const App = () => {
             withProtectedSuspense(
               <ProtectedRoute>
                 <MarketRadarView />
+              </ProtectedRoute>,
+            )
+          }
+        />
+        <Route
+          path="/assistant"
+          element={
+            withProtectedSuspense(
+              <ProtectedRoute>
+                <AssistantWidget mode="page" />
               </ProtectedRoute>,
             )
           }
