@@ -531,12 +531,11 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
   const loadProperties = useCallback(async (isActive = true) => {
     setStatus("loading");
     try {
-      const fetchAll = (url: string) =>
-        authClient.post<{ data: PropertyRecord[] }>(url, { fetch: "all" });
-
-      const response = await fetchAll(
-        isDemoMode() ? "/api/get_property_model_data/" : "/api/get_property_model_data_user_view/"
-      );
+      const response = isDemoMode()
+        ? await authClient.post<{ data: PropertyRecord[] }>("/api/get_property_model_data/", { fetch: "all" })
+        : await authClient.get<{ data: PropertyRecord[] }>("/api/get_property_model_data_user_view/", {
+            params: { fetch: "all" },
+          });
 
       if (isActive) {
         setData(response.data?.data ?? []);
@@ -751,6 +750,7 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
           </table>
         </div>
       </div>
+
     </section>
   );
 };

@@ -883,9 +883,23 @@ function isRawDemoDealRecord(
 }
 
 async function loadUserDealUnderwriting(propertyNames?: string[]) {
+  const params = propertyNames?.length ? { property_names: propertyNames } : undefined;
+  const response = await authClient.get<{ data?: DealUnderwritingApiRecord[] }>(
+    "/api/dealunderwriting_demouser/",
+    { params }
+  );
+  const cachedRecords = response.data?.data ?? [];
+
+  if (cachedRecords.length) {
+    return cachedRecords;
+  }
+
   const payload = propertyNames?.length ? { property_names: propertyNames } : {};
-  const response = await authClient.post<{ data?: DealUnderwritingApiRecord[] }>("/api/dealunderwriting_demouser/", payload);
-  return response.data?.data ?? [];
+  const fallbackResponse = await authClient.post<{ data?: DealUnderwritingApiRecord[] }>(
+    "/api/dealunderwriting_demouser/",
+    payload
+  );
+  return fallbackResponse.data?.data ?? [];
 }
 
 export async function deleteUserDealUnderwriting(propertyName: string) {

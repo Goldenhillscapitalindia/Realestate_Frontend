@@ -14,7 +14,13 @@ import {
   Building2,
   TrendingUp,
   FileText,
+  History,
   Landmark,
+  MessageSquare,
+  PanelRightClose,
+  PanelRightOpen,
+  SlidersHorizontal,
+  Sparkles,
 } from "lucide-react";
 import MarketRadar from "../market_radar/MarketRadar";
 import PfDemoIcMemo from "./pf_demo_ic_memo";
@@ -22,6 +28,7 @@ import { productRoutes } from "@/lib/product-routes";
 import { isDemoMode } from "@/lib/demo-mode";
 import { isUserLoggedIn } from "@/lib/auth";
 import DealUnderwritingLens from "../dealunderwriting/DealUnderwritingLens";
+import AssistantWidget from "../aiassistantwidget";
 
 const tabs = [
   "Portfolio Analytics",
@@ -32,6 +39,14 @@ const tabs = [
   "Deal Underwriting Lens",
 ] as const;
 type DemoTab = (typeof tabs)[number];
+type AssistantModule = "property_analytics" | "portfolio_intelligence" | "deal_lens" | "ic_memo";
+
+const aiRailButtons = [
+  { label: "AI Assistant", icon: Sparkles },
+  { label: "Chat", icon: MessageSquare },
+  { label: "History", icon: History },
+  { label: "Controls", icon: SlidersHorizontal },
+] as const;
 
 const routeToTab: Record<string, DemoTab> = {
   "/portfolio_intelligence": "Portfolio Analytics",
@@ -52,12 +67,71 @@ const PfDemo: React.FC = () => {
   const [isPortfolioMenuOpen, setIsPortfolioMenuOpen] = useState(true);
   const [isIcMemoStarted, setIsIcMemoStarted] = useState(false);
   const [dealLensScreen, setDealLensScreen] = useState<"library" | "upload" | "detail">("library");
+  const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(true);
   const mainScrollRef = useRef<HTMLElement | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
   const isDealLensTab = activeTab === "Deal Underwriting Lens";
   const hidePortfolioSidebar = isDealLensTab && dealLensScreen === "detail";
   const isAuthenticatedUserView = isUserLoggedIn() && !isDemoMode();
+
+  const assistantContext = useMemo<{
+    module: AssistantModule;
+    propertyName?: string;
+    title: string;
+    contextLabel: string;
+  } | null>(() => {
+    if (activeTab === "Portfolio Analytics") {
+      const subTabLabel =
+        portfolioAnalyticsTabDefinitions.find((tab) => tab.id === portfolioSubTab)?.label ??
+        "Portfolio Analytics";
+      return {
+        module: "portfolio_intelligence",
+        title: "Portfolio AI Analyst",
+        contextLabel: subTabLabel,
+      };
+    }
+
+    if (activeTab === "Properties") {
+      return {
+        module: "property_analytics",
+        propertyName: selectedProperty?.property_name,
+        title: "Property AI Analyst",
+        contextLabel: selectedProperty
+          ? `${selectedProperty.property_name}${selectedProperty.submarket ? ` · ${selectedProperty.submarket}` : ""}`
+          : "Property Intelligence",
+      };
+    }
+
+    if (activeTab === "IC Memo") {
+      return {
+        module: "ic_memo",
+        title: "IC Memo AI Analyst",
+        contextLabel: "Investment Committee Memo",
+      };
+    }
+
+    if (activeTab === "Deal Underwriting Lens") {
+      return {
+        module: "deal_lens",
+        title: "Deal Lens AI Analyst",
+        contextLabel: "Deal Underwriting Lens",
+      };
+    }
+
+    if (activeTab === "AI Rent Intelligence") {
+      return {
+        module: "property_analytics",
+        title: "Rent Intelligence AI Analyst",
+        contextLabel: "AI Rent Intelligence",
+      };
+    }
+
+    return null;
+  }, [activeTab, portfolioSubTab, selectedProperty]);
+
+  const showAiSidebar = Boolean(assistantContext);
+  const isAiSidebarVisible = showAiSidebar && isAiSidebarOpen;
 
   const handleSidebarBack = () => {
     if (isAuthenticatedUserView) {
@@ -144,7 +218,9 @@ const PfDemo: React.FC = () => {
 
   return (
     <section
-      className="h-screen overflow-hidden text-black"
+      className={`h-screen overflow-hidden text-black ${
+        isAiSidebarVisible ? "xl:pr-[492px]" : showAiSidebar ? "xl:pr-[72px]" : ""
+      }`}
       style={{
         background:
           "radial-gradient(1200px 600px at 10% 0%, rgba(232,239,250,0.85) 0%, rgba(241,246,252,0.95) 40%, rgba(248,251,255,1) 100%)",
@@ -302,6 +378,71 @@ const PfDemo: React.FC = () => {
           </div>
         </main>
       </div>
+
+      {showAiSidebar && assistantContext ? (
+        <aside
+          className={`fixed right-0 top-0 z-40 hidden h-screen border-l border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.16)] xl:flex ${
+            isAiSidebarVisible ? "w-[492px]" : "w-[72px]"
+          }`}
+        >
+          {isAiSidebarVisible ? (
+            <div className="h-full w-[420px] min-w-0 border-r border-slate-200">
+              <AssistantWidget
+                mode="sidebar"
+                module={assistantContext.module}
+                propertyName={assistantContext.propertyName}
+                title={assistantContext.title}
+                contextLabel={assistantContext.contextLabel}
+              />
+            </div>
+          ) : null}
+
+          <div className="flex h-full w-[72px] shrink-0 flex-col items-center bg-white">
+            <button
+              type="button"
+              onClick={() => setIsAiSidebarOpen((prev) => !prev)}
+              className="mt-6 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+              aria-label={isAiSidebarVisible ? "Close AI sidebar" : "Open AI sidebar"}
+              title={isAiSidebarVisible ? "Close AI sidebar" : "Open AI sidebar"}
+            >
+              {isAiSidebarVisible ? (
+                <PanelRightClose className="h-5 w-5" />
+              ) : (
+                <PanelRightOpen className="h-5 w-5" />
+              )}
+            </button>
+
+            <div className="mt-8 flex flex-col items-center gap-3">
+              {aiRailButtons.map(({ label, icon: Icon }, index) => {
+                const isPrimary = index === 0;
+
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => setIsAiSidebarOpen(true)}
+                    className={`flex h-10 w-10 items-center justify-center rounded-xl border transition ${
+                      isPrimary
+                        ? "border-sky-200 bg-sky-50 text-sky-600 shadow-sm hover:border-sky-300"
+                        : "border-transparent bg-white text-slate-500 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
+                    }`}
+                    aria-label={`Open AI ${label}`}
+                    title={label}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="mb-8 mt-auto">
+              <span className="block rotate-180 [writing-mode:vertical-rl] text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">
+                Asset72 AI
+              </span>
+            </div>
+          </div>
+        </aside>
+      ) : null}
     </section>
   );
 };
