@@ -93,6 +93,8 @@ type LinkBlock = BaseBlock & {
 type SuggestedQuestionsBlock = {
   type: "suggested_questions";
   questions: string[];
+  row?: number;
+  column?: number;
 };
 
 type AssistantBlock =
@@ -423,10 +425,12 @@ const BlocksRenderer = ({
   blocks,
   isDark,
   compact = false,
+  animationDelayStep = 0.25,
 }: {
   blocks: AssistantBlock[];
   isDark: boolean;
   compact?: boolean;
+  animationDelayStep?: number;
 }) => {
   const rows = groupBlocksByRow(blocks);
 
@@ -458,7 +462,7 @@ const BlocksRenderer = ({
                   key={`${row}-${block.type}-${index}`}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: orderIndex * 0.25, duration: 0.45, ease: "easeOut" }}
+                  transition={{ delay: orderIndex * animationDelayStep, duration: 0.45, ease: "easeOut" }}
                   className="min-w-0 max-lg:col-span-full"
                 >
                   {block.type === "text" && <TextRenderer block={block as TextBlock} isDark={isDark} />}
@@ -476,6 +480,57 @@ const BlocksRenderer = ({
   );
 };
 
+const StaggeredBlocksRenderer = ({
+  blocks,
+  isDark,
+  compact = false,
+}: {
+  blocks: AssistantBlock[];
+  isDark: boolean;
+  compact?: boolean;
+}) => {
+  const [visibleCount, setVisibleCount] = useState(() => (blocks.length > 0 ? 1 : 0));
+  const blocksKey = useMemo(
+    () =>
+      blocks
+        .map((block, index) => `${index}-${block.type}-${block.row ?? ""}-${block.column ?? ""}`)
+        .join("|"),
+    [blocks],
+  );
+
+  useEffect(() => {
+    if (blocks.length === 0) {
+      setVisibleCount(0);
+      return;
+    }
+
+    setVisibleCount(1);
+
+    if (blocks.length === 1) return;
+
+    let nextCount = 1;
+    const timer = window.setInterval(() => {
+      nextCount += 1;
+      setVisibleCount(Math.min(nextCount, blocks.length));
+
+      if (nextCount >= blocks.length) {
+        window.clearInterval(timer);
+      }
+    }, 550);
+
+    return () => window.clearInterval(timer);
+  }, [blocks.length, blocksKey]);
+
+  return (
+    <BlocksRenderer
+      blocks={blocks.slice(0, visibleCount)}
+      isDark={isDark}
+      compact={compact}
+      animationDelayStep={0}
+    />
+  );
+};
+
 const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   module,
   propertyName,
@@ -489,7 +544,7 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   const latestQuestion = useRef("");
   const turnCounterRef = useRef(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const latestTurnRef = useRef<HTMLDivElement | null>(null);
 
   const suggestedQuestions = useMemo(() => {
     const fromAnswer = answer.find(isSuggestedQuestionsBlock)?.questions;
@@ -510,13 +565,12 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   }, []);
 
   useEffect(() => {
-    // Keep the newest chat turn visible after each question or response update.
-    if (chatTurns.length > 0 || loading) {
+    if (chatTurns.length > 0) {
       requestAnimationFrame(() => {
-        chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+        latestTurnRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
-  }, [chatTurns, loading]);
+  }, [chatTurns.length]);
 
   const handleSubmit = async (e?: React.FormEvent | Event, customQuestion?: string) => {
     if (e?.preventDefault) e.preventDefault();
@@ -624,11 +678,15 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
         )}
 
         <div className="space-y-5">
-          {chatTurns.map((turn) => {
+          {chatTurns.map((turn, index) => {
             const visibleBlocks = turn.blocks.filter((block) => !isSuggestedQuestionsBlock(block));
 
             return (
-              <div key={turn.id} className="space-y-3">
+              <div
+                key={turn.id}
+                ref={index === chatTurns.length - 1 ? latestTurnRef : null}
+                className="scroll-mt-4 space-y-3"
+              >
                 <div className="flex justify-end">
                   <div className="max-w-[86%] rounded-2xl rounded-tr-md border border-slate-200 bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-950 shadow-sm">
                     {turn.question}
@@ -650,13 +708,12 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
                   ) : null}
 
                   {!turn.isLoading && !turn.error && visibleBlocks.length > 0 ? (
-                    <BlocksRenderer blocks={visibleBlocks} isDark={false} compact />
+                    <StaggeredBlocksRenderer blocks={visibleBlocks} isDark={false} compact />
                   ) : null}
                 </div>
               </div>
             );
           })}
-          <div ref={chatEndRef} />
         </div>
 
         {!loading && suggestedQuestions.length > 0 ? (
