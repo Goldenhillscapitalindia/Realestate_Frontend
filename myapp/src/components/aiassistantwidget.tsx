@@ -109,6 +109,14 @@ type AssistantResponse = {
   details?: string;
 };
 
+type ChatTurn = {
+  id: string;
+  question: string;
+  blocks: AssistantBlock[];
+  isLoading?: boolean;
+  error?: string;
+};
+
 const fallbackSuggestedQuestionsByModule: Record<AssistantModule | "general_asset72", string[]> = {
   property_analytics: [
     "What drove revenue changes over the last 12 months?",
@@ -476,22 +484,17 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
 }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState<AssistantBlock[]>([]);
+  const [chatTurns, setChatTurns] = useState<ChatTurn[]>([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [hasInteracted, setHasInteracted] = useState(false);
   const latestQuestion = useRef("");
+  const turnCounterRef = useRef(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const responseTopRef = useRef<HTMLElement | null>(null);
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   const suggestedQuestions = useMemo(() => {
     const fromAnswer = answer.find(isSuggestedQuestionsBlock)?.questions;
     return fromAnswer && fromAnswer.length >= 3 ? fromAnswer : getFallbackSuggestedQuestions(module);
   }, [answer, module]);
-
-  const visibleBlocks = useMemo(
-    () => answer.filter((block) => !isSuggestedQuestionsBlock(block)),
-    [answer],
-  );
 
   const updateQuestion = (value: string) => {
     latestQuestion.current = value;
@@ -507,23 +510,32 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   }, []);
 
   useEffect(() => {
-    // When the response first arrives (or while loading/error), scroll to the
-    // TOP of the response area so the user sees blocks animate in from the start —
-    // not the bottom of the page.
-    if (loading || error || visibleBlocks.length > 0) {
-      responseTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    // Keep the newest chat turn visible after each question or response update.
+    if (chatTurns.length > 0 || loading) {
+      requestAnimationFrame(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      });
     }
-  }, [error, loading, visibleBlocks.length]);
+  }, [chatTurns, loading]);
 
   const handleSubmit = async (e?: React.FormEvent | Event, customQuestion?: string) => {
     if (e?.preventDefault) e.preventDefault();
     const query = (customQuestion ?? latestQuestion.current ?? question).trim();
     if (!query || loading) return;
 
-    setHasInteracted(true);
+    const turnId = `turn-${Date.now()}-${turnCounterRef.current}`;
+    turnCounterRef.current += 1;
     setLoading(true);
-    setError(null);
-    setAnswer([]);
+    setChatTurns((prev) => [
+      ...prev,
+      {
+        id: turnId,
+        question: query,
+        blocks: [],
+        isLoading: true,
+      },
+    ]);
+    updateQuestion("");
 
     try {
       const user = await getCurrentUser();
@@ -550,14 +562,37 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
         throw new Error("Invalid assistant response.");
       }
 
-      setAnswer(normalizeBlocks(response.data.answer));
+      const normalizedAnswer = normalizeBlocks(response.data.answer);
+      setAnswer(normalizedAnswer);
+      setChatTurns((prev) =>
+        prev.map((turn) =>
+          turn.id === turnId
+            ? {
+                ...turn,
+                blocks: normalizedAnswer,
+                isLoading: false,
+              }
+            : turn,
+        ),
+      );
     } catch (err: any) {
       const message =
         err?.response?.data?.error ||
         err?.response?.data?.details ||
         err?.message ||
         "Failed to fetch assistant response.";
-      setError(message);
+      setChatTurns((prev) =>
+        prev.map((turn) =>
+          turn.id === turnId
+            ? {
+                ...turn,
+                blocks: [],
+                isLoading: false,
+                error: message,
+              }
+            : turn,
+        ),
+      );
     } finally {
       setLoading(false);
     }
@@ -576,7 +611,7 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-        {!hasInteracted && (
+        {chatTurns.length === 0 && (
           <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
               Ask AI
@@ -588,24 +623,41 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
           </div>
         )}
 
-        {loading ? (
-          <div className="mt-4 flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-3 text-sm text-sky-700">
-            <Loader2 className="h-4 w-4 animate-spin" />
-            Reviewing Asset72 data...
-          </div>
-        ) : null}
+        <div className="space-y-5">
+          {chatTurns.map((turn) => {
+            const visibleBlocks = turn.blocks.filter((block) => !isSuggestedQuestionsBlock(block));
 
-        {error ? (
-          <div className="mt-4 rounded-xl border border-rose-200 bg-rose-50 px-3 py-3 text-sm text-rose-700">
-            {error}
-          </div>
-        ) : null}
+            return (
+              <div key={turn.id} className="space-y-3">
+                <div className="flex justify-end">
+                  <div className="max-w-[86%] rounded-2xl rounded-tr-md border border-slate-200 bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-950 shadow-sm">
+                    {turn.question}
+                  </div>
+                </div>
 
-        {!loading && !error && visibleBlocks.length > 0 ? (
-          <div className="mt-4">
-            <BlocksRenderer blocks={visibleBlocks} isDark={false} compact />
-          </div>
-        ) : null}
+                <div className="min-w-0">
+                  {turn.isLoading ? (
+                    <div className="flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-3 text-sm text-sky-700">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Reviewing Asset72 data...
+                    </div>
+                  ) : null}
+
+                  {turn.error ? (
+                    <div className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-3 text-sm text-rose-700">
+                      {turn.error}
+                    </div>
+                  ) : null}
+
+                  {!turn.isLoading && !turn.error && visibleBlocks.length > 0 ? (
+                    <BlocksRenderer blocks={visibleBlocks} isDark={false} compact />
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+          <div ref={chatEndRef} />
+        </div>
 
         {!loading && suggestedQuestions.length > 0 ? (
           <div className="mt-4 space-y-2">
