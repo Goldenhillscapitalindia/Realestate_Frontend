@@ -167,17 +167,13 @@ const PfDemoAiRentIntelligence: React.FC<PfDemoAiRentIntelligenceProps> = ({
     setLoading(true);
     setError(null);
     try {
-      const fetchFrom = async (url: string) => {
-        const response = await authClient.post(url, payload);
-        const responseData = response.data?.data;
-        return Array.isArray(responseData) ? responseData : responseData ? [responseData] : [];
-      };
-
-      const fetched = await fetchFrom(
-        isDemoMode()
-          ? "/api/get_ai_rent_intelligence_data/"
-          : "/api/get_ai_rent_intelligence_data_user_view/"
-      );
+      const response = isDemoMode()
+        ? await authClient.post("/api/get_ai_rent_intelligence_data/", payload)
+        : await authClient.get("/api/get_ai_rent_intelligence_data_user_view/", {
+            params: payload,
+          });
+      const responseData = response.data?.data;
+      const fetched = Array.isArray(responseData) ? responseData : responseData ? [responseData] : [];
 
       setProperties(fetched);
       if (payload.property_name && fetched.length) {

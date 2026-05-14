@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "axios";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
 import SnapshotTab from "./tabs/snapshot_tab";
@@ -32,10 +31,6 @@ type PfDemoPortfolioAnalyticsProps = {
 
 type PortfolioAnalyticsListResponse = {
   data?: PortfolioAnalyticsRecord[];
-};
-
-type PortfolioAnalyticsSingleResponse = {
-  data?: PortfolioAnalyticsRecord;
 };
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -74,9 +69,9 @@ const PfDemoPortfolioAnalytics: React.FC<PfDemoPortfolioAnalyticsProps> = ({
             `${API_URL}/api/get_portfolio_analytics_model_data/`,
             { fetch: "all" }
           )
-        : await authClient.post<PortfolioAnalyticsListResponse>(
+        : await authClient.get<PortfolioAnalyticsListResponse>(
             "/api/get_portfolio_analytics_model_data_user_view/",
-            { fetch: "all" }
+            { params: { fetch: "all" } }
           );
 
       if (!isMounted) return;
@@ -84,63 +79,7 @@ const PfDemoPortfolioAnalytics: React.FC<PfDemoPortfolioAnalyticsProps> = ({
       const baseRecord = response.data?.data?.[0] ?? null;
       setSelectedRecord(baseRecord);
       setStatus("idle");
-      setInsightsStatus("loading");
-
-      const insightsRequest = demoMode
-        ? axios.post<PortfolioAnalyticsListResponse>(
-            `${API_URL}/api/get_portfolio_analytics_model_data/`,
-            { fetch: "all" }
-          )
-        : authClient.post<PortfolioAnalyticsSingleResponse>(
-            "/api/get_portfolio_insights/",
-            {}
-          );
-
-      insightsRequest
-        .then((res) => {
-          if (!isMounted) return;
-
-          const insights = demoMode
-            ? (res.data as PortfolioAnalyticsListResponse).data?.[0] ?? null
-            : (res.data as PortfolioAnalyticsSingleResponse).data;
-          if (!insights) {
-            setInsightsStatus("error");
-            return;
-          }
-
-          setSelectedRecord((prev) => {
-            if (!prev) return prev;
-
-            return {
-              ...prev,
-              portfolio_analytics_response: {
-                ...prev.portfolio_analytics_response,
-                ...insights.portfolio_analytics_response,
-              },
-              performance_drivers_response: {
-                ...prev.performance_drivers_response,
-                ...insights.performance_drivers_response,
-              },
-              revenue_leases_response: {
-                ...prev.revenue_leases_response,
-                ...insights.revenue_leases_response,
-              },
-              expense_intel_response: {
-                ...prev.expense_intel_response,
-                ...insights.expense_intel_response,
-              },
-              risk_stability_response: {
-                ...prev.risk_stability_response,
-                ...insights.risk_stability_response,
-              },
-            };
-          });
-          setInsightsStatus("idle");
-        })
-        .catch(() => {
-          if (!isMounted) return;
-          setInsightsStatus("error");
-        });
+      setInsightsStatus("idle");
     } catch {
       if (isMounted) {
         setStatus("error");

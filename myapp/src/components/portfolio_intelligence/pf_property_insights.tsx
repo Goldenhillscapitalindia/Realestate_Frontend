@@ -348,33 +348,44 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
 
       setStatus("loading");
       try {
-        const fetchSpecific = async (url: string) => {
+        const params = {
+          fetch: "specific",
+          property_name: propertyName,
+          ...(submarket ? { submarket } : {}),
+          ...(region ? { region } : {}),
+        };
+        const fallbackParams = {
+          fetch: "specific",
+          property_name: propertyName,
+        };
+
+        const fetchSpecificPost = async (url: string) => {
           try {
-            return await authClient.post<{ data: PropertyRecord }>(url, {
-              fetch: "specific",
-              property_name: propertyName,
-              ...(submarket ? { submarket } : {}),
-              ...(region ? { region } : {}),
-            });
+            return await authClient.post<{ data: PropertyRecord }>(url, params);
           } catch {
-            return await authClient.post<{ data: PropertyRecord }>(url, {
-              fetch: "specific",
-              property_name: propertyName,
-            });
+            return await authClient.post<{ data: PropertyRecord }>(url, fallbackParams);
+          }
+        };
+
+        const fetchSpecificGet = async (url: string) => {
+          try {
+            return await authClient.get<{ data: PropertyRecord }>(url, { params });
+          } catch {
+            return await authClient.get<{ data: PropertyRecord }>(url, { params: fallbackParams });
           }
         };
 
         const response = isDemoMode()
-          ? await fetchSpecific("/api/get_property_model_data/")
+          ? await fetchSpecificPost("/api/get_property_model_data/")
           : await (async () => {
               try {
-                const userResponse = await fetchSpecific("/api/get_property_model_data_user_view/");
+                const userResponse = await fetchSpecificGet("/api/get_property_model_data_user_view/");
                 if (!userResponse.data?.data) {
                   throw new Error("No user data");
                 }
                 return userResponse;
               } catch {
-                return fetchSpecific("/api/get_property_model_data/");
+                return fetchSpecificPost("/api/get_property_model_data/");
               }
             })();
 
