@@ -1,10 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router";
 import { ChevronLeft, ChevronRight, MapPin, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
-import aiBotVideo from "@/assets/aibot.mp4";
 import {
   Select,
   SelectContent,
@@ -525,7 +523,6 @@ function AddPropertyForm({ onBack }: { onBack: () => void }) {
 
 const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty }) => {
   const { toast } = useToast();
-  const navigate = useNavigate();
   const [data, setData] = useState<PropertyRecord[]>([]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
@@ -755,22 +752,6 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
         </div>
       </div>
 
-      {/* Floating AI Assistant Bot — opens /assistant page on click */}
-      <button
-        type="button"
-        onClick={() => navigate("/assistant")}
-        aria-label="Open Asset72 AI assistant"
-        className="fixed bottom-5 right-5 z-[9999] h-14 w-14 overflow-hidden rounded-full bg-black shadow-[0_12px_30px_rgba(0,0,0,0.35)] transition hover:scale-105"
-      >
-        <video
-          src={aiBotVideo}
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="h-full w-full rounded-full object-cover"
-        />
-      </button>
     </section>
   );
 };
