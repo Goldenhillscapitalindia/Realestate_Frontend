@@ -114,6 +114,8 @@ type AssistantResponse = {
 type ChatTurn = {
   id: string;
   question: string;
+  title: string;
+  contextLabel?: string;
   blocks: AssistantBlock[];
   isLoading?: boolean;
   error?: string;
@@ -545,6 +547,9 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   const turnCounterRef = useRef(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const latestTurnRef = useRef<HTMLDivElement | null>(null);
+  const latestTurn = chatTurns[chatTurns.length - 1];
+  const headerTitle = latestTurn?.title ?? title;
+  const headerContextLabel = latestTurn?.contextLabel ?? contextLabel;
 
   const suggestedQuestions = useMemo(() => {
     const fromAnswer = answer.find(isSuggestedQuestionsBlock)?.questions;
@@ -585,6 +590,8 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
       {
         id: turnId,
         question: query,
+        title,
+        contextLabel,
         blocks: [],
         isLoading: true,
       },
@@ -657,10 +664,10 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
       <header className="border-b border-slate-200 px-4 py-4">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-sky-600" />
-          <h2 className="text-sm font-semibold text-slate-950">{title}</h2>
+          <h2 className="text-sm font-semibold text-slate-950">{headerTitle}</h2>
         </div>
-        {contextLabel ? (
-          <p className="mt-2 text-xs leading-5 text-slate-500">{contextLabel}</p>
+        {headerContextLabel ? (
+          <p className="mt-2 text-xs leading-5 text-slate-500">{headerContextLabel}</p>
         ) : null}
       </header>
 
