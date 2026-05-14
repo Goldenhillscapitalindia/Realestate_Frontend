@@ -36,7 +36,7 @@ const navLinks = [
   { label: "Solutions", id: "solutions" },
   { label: "Use Cases", id: "use-cases" },
   { label: "AI Intelligence", id: "ai" },
-  { label: "Why Asset72", id: "why" },
+  { label: "Why Asset72", id: "why", branded: true },
   { label: "About Us", id: "about" },
 ];
 

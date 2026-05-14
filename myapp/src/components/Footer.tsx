@@ -4,6 +4,7 @@ import { ArrowUpRight, Linkedin, Mail } from "lucide-react";
 import asset72FooterLogo from "@/assets/asset72-footer-logo.svg";
 import { productRoutes } from "@/lib/product-routes";
 
+
 const footerLinks = {
   Product: [
     "Portfolio Intelligence",

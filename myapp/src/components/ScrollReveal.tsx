@@ -21,7 +21,8 @@ export const ScrollReveal = ({
       ([entry]) => {
         if (entry.isIntersecting) {
           setTimeout(() => setIsVisible(true), delay);
-          observer.unobserve(entry.target);
+        } else {
+          setIsVisible(false);
         }
       },
       { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }

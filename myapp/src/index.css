@@ -422,3 +422,37 @@ body:has(.home-theme-dark) {
     transform: translate(-14px, 14px) scale(0.97);
   }
 }
+
+@keyframes particleDrift {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.2;
+  }
+  25% {
+    transform: translate(12px, -8px) scale(1.1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translate(-6px, 14px) scale(0.9);
+    opacity: 0.3;
+  }
+  75% {
+    transform: translate(8px, 6px) scale(1.05);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate(-4px, -10px) scale(0.95);
+    opacity: 0.25;
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.5);
+  }
+}

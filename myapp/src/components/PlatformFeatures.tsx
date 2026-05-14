@@ -44,11 +44,10 @@ const features = [
 const TOTAL = features.length;
 const NAV = ["DEAL LENS", "PROPERTY ANALYTICS", "PORTFOLIO INTELLIGENCE", "IC MEMO"];
 const contentSide = (f: number) => (f % 2 === 0 ? "right" : "left");
-const buildingX = (f: number) => (f % 2 === 0 ? -30 : 30);
+const buildingX = (f: number) => (f % 2 === 0 ? -40 : 40);
 
-/* ── Seeded window positions for each floor (matching reference: small scattered dots) ── */
+/* ── Seeded window positions for each floor ── */
 const WINDOW_SETS = [
-  // Each entry: [left%, top%, width, height] — small random rectangles
   [[8,38,10,6],[16,42,8,5],[28,35,12,7],[38,44,8,4],[52,36,10,6],[62,42,8,5],[74,38,12,6],[86,44,8,4]],
   [[6,36,8,5],[18,44,10,6],[30,38,8,4],[42,42,12,7],[54,36,8,5],[66,44,10,6],[78,38,8,4],[88,42,10,5]],
   [[10,40,8,5],[22,36,10,6],[34,44,8,4],[44,38,12,7],[56,42,8,5],[68,36,10,6],[80,44,8,4],[90,38,8,5]],
@@ -69,79 +68,79 @@ function Floor({ fi, activeFloor }: { fi: number; activeFloor: number }) {
       <div
         className="relative transition-all duration-700 overflow-hidden"
         style={{
-          height: "105px",
+          height: "115px",
           background: isCurrent
             ? "linear-gradient(180deg, #0e2a3a 0%, #0a1e2c 100%)"
             : isLit
             ? "linear-gradient(180deg, #0c2230 0%, #091a26 100%)"
-            : "linear-gradient(180deg, #0a1820 0%, #081420 100%)",
-          boxShadow: isCurrent ? "inset 0 0 50px rgba(30,188,154,0.06)" : "none",
+            : "linear-gradient(180deg, #080e18 0%, #060c16 100%)",
+          boxShadow: isCurrent ? "inset 0 0 60px rgba(30,188,154,0.07)" : "none",
         }}
       >
         {isCurrent && (
           <motion.div
             className="absolute inset-0 pointer-events-none"
-            animate={{ opacity: [0.08, 0.2, 0.08] }}
+            animate={{ opacity: [0.06, 0.18, 0.06] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            style={{ background: "linear-gradient(90deg, transparent 5%, rgba(30,188,154,0.05) 50%, transparent 95%)" }}
+            style={{ background: "linear-gradient(90deg, transparent 5%, rgba(30,188,154,0.06) 50%, transparent 95%)" }}
           />
         )}
 
-        {/* Floor label — italic serif */}
+        {/* Floor label — italic serif, matches reference */}
         <span
-          className="absolute top-2.5 left-4 text-[14px] italic transition-colors duration-700"
-          style={{ color: isLit ? "rgba(30,188,154,0.75)" : "rgba(255,255,255,0.04)", fontFamily: "Georgia, serif" }}
+          className="absolute top-3 left-4 text-[13px] italic transition-colors duration-700"
+          style={{ color: isLit ? "rgba(30,188,154,0.80)" : "rgba(255,255,255,0.03)", fontFamily: "Georgia, serif" }}
         >
           {feat.title} {feat.titleAccent}
         </span>
         <span
           className="absolute top-3 right-4 text-[11px] italic font-mono transition-colors duration-700"
-          style={{ color: isLit ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.03)" }}
+          style={{ color: isLit ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.03)" }}
         >
           {feat.floorLabel}
         </span>
 
-        {/* Windows — small scattered rectangles like reference */}
+        {/* Windows — small scattered LED rectangles */}
         {wins.map((w, wi) => (
           <motion.div
             key={wi}
             className="absolute rounded-[1px] transition-all duration-700"
-            animate={isCurrent ? { opacity: [0.5, 1, 0.6] } : {}}
+            animate={isCurrent ? { opacity: [0.5, 1, 0.55] } : {}}
             transition={{ duration: 2.5 + wi * 0.3, repeat: Infinity, repeatType: "mirror", delay: wi * 0.12 }}
             style={{
               left: `${w[0]}%`, top: `${w[1]}%`,
               width: `${w[2]}px`, height: `${w[3]}px`,
-              background: isLit ? "#1ebc9a" : "#0b1520",
-              boxShadow: isLit ? "0 0 6px rgba(30,188,154,0.4)" : "none",
-              opacity: isLit ? (isCurrent ? 1 : 0.6) : 0.08,
+              background: isLit ? "#1ebc9a" : "#04080f",
+              boxShadow: isLit ? "0 0 8px rgba(30,188,154,0.5)" : "none",
+              opacity: isLit ? (isCurrent ? 1 : 0.55) : 0.06,
             }}
           />
         ))}
       </div>
 
-      {/* Ruler ticks */}
-      <div className="flex justify-center gap-[1.5px] px-1 py-[1px]" style={{ background: "rgba(0,0,0,0.3)" }}>
-        {Array.from({ length: 70 }).map((_, t) => (
+      {/* Ruler ticks — matches reference density */}
+      <div className="flex justify-center gap-[1.5px] px-1 py-[1px]" style={{ background: "rgba(0,0,0,0.4)" }}>
+        {Array.from({ length: 80 }).map((_, t) => (
           <div key={t} style={{
-            width: "3.5px", height: t % 5 === 0 ? "5px" : "2.5px",
-            background: isLit ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.04)",
+            width: "3px", height: t % 5 === 0 ? "6px" : "3px",
+            background: isLit ? "rgba(255,255,255,0.18)" : "rgba(255,255,255,0.03)",
             transition: "all 0.5s",
           }} />
         ))}
       </div>
       {/* Concrete beam */}
       <div className="transition-all duration-700" style={{
-        height: "7px",
+        height: "8px",
         background: isLit
-          ? "linear-gradient(180deg, rgba(180,195,210,0.4) 0%, rgba(140,155,170,0.25) 50%, rgba(180,195,210,0.35) 100%)"
-          : "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
-        boxShadow: isLit ? "0 2px 6px rgba(0,0,0,0.25)" : "none",
+          ? "linear-gradient(180deg, rgba(180,200,220,0.35) 0%, rgba(140,160,180,0.2) 50%, rgba(180,200,220,0.3) 100%)"
+          : "linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.015) 100%)",
+        boxShadow: isLit ? "0 2px 8px rgba(0,0,0,0.35)" : "none",
       }} />
     </div>
   );
 }
 
-/* ───── Content panel ───── */
+/* ───── Content panel — dark theme ───── */
 function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" | "right" }) {
   const { guardNavigation } = useLoginGuard();
   return (
@@ -149,44 +148,58 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       initial={{ opacity: 0, x: side === "right" ? 50 : -50 }}
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: side === "right" ? 30 : -30 }}
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-md"
+      transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+      className="max-w-[400px]"
     >
-      <p className="text-[11px] font-mono tracking-[0.25em] uppercase mb-2 text-[#1ebc9a]">
+      {/* Module label */}
+      <p className="text-[10px] font-mono tracking-[0.28em] uppercase mb-3" style={{ color: "#1ebc9a" }}>
         {feat.floorLabel} — {feat.category}
       </p>
-      <h3 className="font-display font-bold text-3xl md:text-4xl lg:text-[2.6rem] text-[#0f1d2f] leading-tight">
+
+      {/* Title — large serif feel, white */}
+      <h3 className="font-display font-bold text-[2.2rem] md:text-[2.6rem] leading-[1.05]" style={{ color: "#FAFAF7" }}>
         {feat.title}
       </h3>
-      <h3 className="font-display font-bold text-3xl md:text-4xl lg:text-[2.6rem] italic text-[#1ebc9a] leading-tight mb-4">
+      <h3 className="font-display font-bold text-[2.2rem] md:text-[2.6rem] italic leading-[1.05] mb-4" style={{ color: "#1ebc9a" }}>
         {feat.titleAccent}
       </h3>
-      <p className="text-slate-500 text-[15px] leading-relaxed mb-5">{feat.desc}</p>
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-2.5 mb-6">
+      {/* Description */}
+      <p className="text-[14px] leading-relaxed mb-5" style={{ color: "rgba(250,250,247,0.52)" }}>
+        {feat.desc}
+      </p>
+
+      {/* Bullets — 2 col */}
+      <div className="grid grid-cols-2 gap-x-5 gap-y-2.5 mb-6">
         {feat.bullets.map((b, i) => (
-          <div key={i} className="flex items-center gap-2 text-sm text-slate-500">
-            <span className="text-[#1ebc9a]">—</span> {b}
+          <div key={i} className="flex items-center gap-2 text-[13px]" style={{ color: "rgba(250,250,247,0.50)" }}>
+            <span style={{ color: "#1ebc9a" }}>—</span> {b}
           </div>
         ))}
       </div>
 
-      <div className="flex gap-10 pt-4 mb-5 border-t border-slate-100">
+      {/* Metadata separator + rows */}
+      <div className="flex gap-10 pt-4 mb-5 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
         <div>
-          <p className="text-[9px] tracking-[0.18em] uppercase text-slate-400 mb-0.5 font-mono">{feat.m1L}</p>
-          <p className="text-sm font-mono italic text-[#0f1d2f]">{feat.m1V}</p>
+          <p className="text-[9px] tracking-[0.2em] uppercase mb-0.5 font-mono" style={{ color: "rgba(255,255,255,0.28)" }}>{feat.m1L}</p>
+          <p className="text-[13px] font-mono italic" style={{ color: "#1ebc9a" }}>{feat.m1V}</p>
         </div>
         <div>
-          <p className="text-[9px] tracking-[0.18em] uppercase text-slate-400 mb-0.5 font-mono">{feat.m2L}</p>
-          <p className="text-sm font-mono italic text-[#0f1d2f]">{feat.m2V}</p>
+          <p className="text-[9px] tracking-[0.2em] uppercase mb-0.5 font-mono" style={{ color: "rgba(255,255,255,0.28)" }}>{feat.m2L}</p>
+          <p className="text-[13px] font-mono italic" style={{ color: "#1ebc9a" }}>{feat.m2V}</p>
         </div>
       </div>
 
+      {/* CTA — teal filled on dark bg */}
       <button
         type="button"
         onClick={() => guardNavigation(feat.route)}
-        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 bg-[#0f1d2f] hover:bg-[#162840]"
-        style={{ boxShadow: "0 4px 16px rgba(15,29,47,0.2)" }}
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 hover:brightness-110"
+        style={{
+          background: "linear-gradient(135deg, #1ebc9a, #15a382)",
+          color: "#fff",
+          boxShadow: "0 4px 18px rgba(30,188,154,0.28)",
+        }}
       >
         Open Product <ArrowRight className="w-4 h-4" />
       </button>
@@ -216,28 +229,43 @@ const PlatformFeatures = () => {
   const side = contentSide(activeFloor);
 
   return (
-    <section ref={sectionRef} className="relative" id="platform" style={{ height: "420vh" }}>
+    <section
+      ref={sectionRef}
+      className="relative"
+      id="platform"
+      style={{ height: "420vh", background: "#090F1E" }}
+    >
       {/* Sticky viewport */}
-      <div className="sticky top-0 h-screen overflow-hidden flex items-center justify-center bg-white">
+      <div
+        className="sticky top-0 h-screen overflow-hidden flex items-center justify-center"
+        style={{ background: "#090F1E" }}
+      >
+        {/* Subtle ambient radial */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(30,188,154,0.04) 0%, transparent 70%)",
+          }}
+        />
 
         {/* Header */}
         <div className="absolute top-10 left-0 right-0 text-center z-10 pointer-events-none">
-          <p className="text-[11px] font-semibold tracking-[0.3em] uppercase text-[#1ebc9a] mb-2">
+          <p className="text-[10px] font-semibold tracking-[0.35em] uppercase mb-2" style={{ color: "#1ebc9a" }}>
             What Asset72 Does
           </p>
-          <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-4xl text-[#0f1d2f]">
+          <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-[2rem]" style={{ color: "#FAFAF7" }}>
             Built floor by floor for
           </h2>
-          <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-4xl italic text-slate-400">
+          <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-[2rem] italic" style={{ color: "rgba(250,250,247,0.30)" }}>
             institutional real estate.
           </h2>
         </div>
 
         {/* 3-zone layout */}
-        <div className="relative z-10 flex items-center gap-8 lg:gap-12 w-full max-w-7xl mx-auto px-8 mt-10">
+        <div className="relative z-10 flex items-center gap-6 lg:gap-10 w-full max-w-[1400px] mx-auto px-6 mt-10">
 
           {/* LEFT content */}
-          <div className="hidden lg:flex flex-1 justify-end pr-4">
+          <div className="hidden lg:flex flex-1 justify-end pr-6">
             <AnimatePresence mode="wait">
               {side === "left" && <ContentPanel key={`l-${activeFloor}`} feat={activeFeat} side="left" />}
             </AnimatePresence>
@@ -247,74 +275,89 @@ const PlatformFeatures = () => {
           <motion.div
             className="flex-shrink-0"
             animate={{ x: buildingX(activeFloor) }}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
-            style={{ width: "440px" }}
+            transition={{ type: "spring", stiffness: 90, damping: 22 }}
+            style={{ width: "clamp(360px, 34vw, 500px)" }}
           >
-            <div className="rounded-sm overflow-hidden"
+            <div
+              className="rounded-sm overflow-hidden"
               style={{
-                border: "1px solid rgba(15,29,47,0.15)",
-                background: "#091420",
-                boxShadow: "0 20px 60px rgba(0,0,0,0.15), 0 4px 20px rgba(0,0,0,0.08)",
+                border: "1px solid rgba(250,250,247,0.10)",
+                background: "#060c16",
+                boxShadow: "0 30px 80px rgba(0,0,0,0.6), 0 6px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(30,188,154,0.04)",
               }}
             >
-              {/* Antenna */}
-              <div className="flex justify-center py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
+              {/* Antenna bar */}
+              <div className="flex justify-center py-2.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
                 <div className="flex items-center gap-2">
-                  <div className="w-14 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(30,188,154,0.3))" }} />
+                  <div className="w-16 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(30,188,154,0.25))" }} />
                   <motion.div
-                    animate={{ opacity: [0.3, 1, 0.3] }}
+                    animate={{ opacity: [0.25, 1, 0.25] }}
                     transition={{ duration: 2, repeat: Infinity }}
-                    className="w-1.5 h-1.5 rounded-full bg-[#1ebc9a]"
-                    style={{ boxShadow: "0 0 8px rgba(30,188,154,0.8)" }}
+                    className="w-1.5 h-1.5 rounded-full"
+                    style={{ background: "#1ebc9a", boxShadow: "0 0 10px rgba(30,188,154,0.9)" }}
                   />
-                  <div className="w-14 h-px" style={{ background: "linear-gradient(90deg, rgba(30,188,154,0.3), transparent)" }} />
+                  <div className="w-16 h-px" style={{ background: "linear-gradient(90deg, rgba(30,188,154,0.25), transparent)" }} />
                 </div>
               </div>
 
-              {/* Floors */}
+              {/* Floors — rendered top-to-bottom (fi=0 is top = N°04, fi=3 is bottom = N°01) */}
               {Array.from({ length: TOTAL }).map((_, fi) => (
                 <Floor key={fi} fi={fi} activeFloor={activeFloor} />
               ))}
 
-              {/* Ground bar — bright teal */}
-              <div className="transition-all duration-700" style={{
-                height: "12px",
+              {/* Ground bar — bright teal accent */}
+              <div style={{
+                height: "14px",
                 background: "linear-gradient(180deg, #1ebc9a 0%, #0f9a7a 100%)",
-                boxShadow: "0 0 20px rgba(30,188,154,0.3), 0 4px 12px rgba(30,188,154,0.15)",
+                boxShadow: "0 0 24px rgba(30,188,154,0.4), 0 4px 14px rgba(30,188,154,0.2)",
               }} />
             </div>
 
-            {/* Scroll hint */}
-            <motion.p animate={{ opacity: [0.3, 0.7, 0.3] }} transition={{ duration: 3, repeat: Infinity }}
-              className="text-center text-[10px] tracking-[0.25em] uppercase mt-4 font-mono text-slate-400">
-              Scroll to Assemble
-            </motion.p>
-            <p className="text-center text-[10px] font-mono text-slate-300 mt-1">
-              N° {String(activeFloor + 1).padStart(2, "0")} / 0{TOTAL}
-            </p>
+            {/* Counter below building */}
+            <div className="flex items-center justify-center gap-3 mt-4">
+              <motion.p
+                animate={{ opacity: [0.25, 0.6, 0.25] }}
+                transition={{ duration: 3, repeat: Infinity }}
+                className="text-[9px] tracking-[0.3em] uppercase font-mono"
+                style={{ color: "rgba(255,255,255,0.35)" }}
+              >
+                Scroll to Assemble
+              </motion.p>
+              <span style={{ color: "rgba(255,255,255,0.12)", fontSize: "9px" }}>·</span>
+              <p className="text-[9px] font-mono" style={{ color: "rgba(30,188,154,0.55)" }}>
+                N° {String(activeFloor + 1).padStart(2, "0")} / 0{TOTAL}
+              </p>
+            </div>
           </motion.div>
 
           {/* RIGHT content */}
-          <div className="hidden lg:flex flex-1 justify-start pl-4">
+          <div className="hidden lg:flex flex-1 justify-start pl-6">
             <AnimatePresence mode="wait">
               {side === "right" && <ContentPanel key={`r-${activeFloor}`} feat={activeFeat} side="right" />}
             </AnimatePresence>
           </div>
 
-          {/* Nav dots */}
-          <div className="hidden xl:flex flex-col gap-4 flex-shrink-0">
+          {/* Nav dots — far right */}
+          <div className="hidden xl:flex flex-col gap-5 flex-shrink-0 ml-2">
             {NAV.map((label, i) => {
               const isAct = i === activeFloor;
               const isPast = i < activeFloor;
               return (
-                <div key={label} className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full transition-all duration-300" style={{
-                    background: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.35)" : "transparent",
-                    border: isAct ? "none" : isPast ? "1px solid rgba(30,188,154,0.3)" : "1px solid rgba(15,29,47,0.15)",
-                    boxShadow: isAct ? "0 0 6px rgba(30,188,154,0.5)" : "none",
-                  }} />
-                  <span className="text-[9px] font-mono tracking-[0.12em] whitespace-nowrap transition-colors duration-300"
-                    style={{ color: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.5)" : "rgba(15,29,47,0.3)" }}>
+                <div key={label} className="flex items-center gap-2.5">
+                  <div
+                    className="w-2 h-2 rounded-full transition-all duration-400"
+                    style={{
+                      background: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.3)" : "transparent",
+                      border: isAct ? "none" : isPast ? "1px solid rgba(30,188,154,0.28)" : "1px solid rgba(255,255,255,0.15)",
+                      boxShadow: isAct ? "0 0 8px rgba(30,188,154,0.7)" : "none",
+                    }}
+                  />
+                  <span
+                    className="text-[8px] font-mono tracking-[0.15em] whitespace-nowrap transition-colors duration-300"
+                    style={{
+                      color: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.45)" : "rgba(255,255,255,0.18)",
+                    }}
+                  >
                     {label}
                   </span>
                 </div>
@@ -326,12 +369,19 @@ const PlatformFeatures = () => {
         {/* Mobile content */}
         <div className="lg:hidden absolute bottom-6 left-0 right-0 px-6">
           <AnimatePresence mode="wait">
-            <motion.div key={activeFloor} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-              <p className="text-[10px] font-mono tracking-widest text-[#1ebc9a] mb-1">{activeFeat.floorLabel}</p>
-              <h4 className="font-display font-bold text-xl text-[#0f1d2f]">
-                {activeFeat.title} <span className="italic text-[#1ebc9a]">{activeFeat.titleAccent}</span>
+            <motion.div
+              key={activeFloor}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <p className="text-[10px] font-mono tracking-widest mb-1" style={{ color: "#1ebc9a" }}>{activeFeat.floorLabel}</p>
+              <h4 className="font-display font-bold text-xl" style={{ color: "#FAFAF7" }}>
+                {activeFeat.title}{" "}
+                <span className="italic" style={{ color: "#1ebc9a" }}>{activeFeat.titleAccent}</span>
               </h4>
-              <p className="text-sm text-slate-500 mt-1">{activeFeat.desc}</p>
+              <p className="text-sm mt-1" style={{ color: "rgba(250,250,247,0.45)" }}>{activeFeat.desc}</p>
             </motion.div>
           </AnimatePresence>
         </div>

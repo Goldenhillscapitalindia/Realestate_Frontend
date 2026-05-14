@@ -155,18 +155,18 @@ const PfDemo: React.FC = () => {
           <aside
             className="sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"
           >
-            {isAuthenticatedUserView && activeTab === "Properties" ? (
-              <div className="mb-4">
-                <button
-                  type="button"
-                  onClick={() => navigate("/")}
-                  className="flex items-center gap-2 whitespace-nowrap text-[22px] leading-none text-white"
-                >
-                  <ArrowLeft className="h-5 w-5" />
-                  <span>Back</span>
-                </button>
-              </div>
-            ) : null}
+            {isAuthenticatedUserView ? (
+            <div className="mb-4">
+              <button
+                type="button"
+                onClick={() => navigate("/")}
+                className="flex items-center gap-2 whitespace-nowrap text-[22px] leading-none text-white"
+              >
+                <ArrowLeft className="h-5 w-5" />
+                <span>Back</span>
+              </button>
+            </div>
+          ) : null}
             {!isAuthenticatedUserView ? (
               <div className="mb-4">
                 <button
@@ -185,15 +185,32 @@ const PfDemo: React.FC = () => {
             <nav className="space-y-2">
               <button
                 type="button"
-                onClick={() => setActiveTab("IC Memo")}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "IC Memo"
+                onClick={() => setActiveTab("Deal Underwriting Lens")}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Deal Underwriting Lens"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
                   }`}
               >
-                <Landmark className="h-4 w-4" />
-                <span className="flex-1">IC Memo</span>
+                <FileText className="h-4 w-4" />
+                <span className="flex-1">Deal Lens</span>
               </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setActiveTab("Properties");
+                  setSelectedProperty(null);
+                }}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Properties"
+                    ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
+                    : "bg-white/5 text-blue-100 hover:bg-white/10"
+                  }`}
+              >
+                <Building2 className="h-4 w-4" />
+                <span className="flex-1">Property Intelligence</span>
+              </button>
+
+              
 
               <div>
                 <button
@@ -247,22 +264,7 @@ const PfDemo: React.FC = () => {
                 )}
               </div>
 
-              <button
-                type="button"
-                onClick={() => {
-                  setActiveTab("Properties");
-                  setSelectedProperty(null);
-                }}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Properties"
-                    ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
-                    : "bg-white/5 text-blue-100 hover:bg-white/10"
-                  }`}
-              >
-                <Building2 className="h-4 w-4" />
-                <span className="flex-1">Property Intelligence</span>
-              </button>
-
-              <button
+              {/* <button
                 type="button"
                 onClick={() => setActiveTab("Market Signal Radar")}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Market Signal Radar"
@@ -272,19 +274,20 @@ const PfDemo: React.FC = () => {
               >
                 <TrendingUp className="h-4 w-4" />
                 <span className="flex-1">Market Signal Radar</span>
-              </button>
-
+              </button> */}
+              
               <button
                 type="button"
-                onClick={() => setActiveTab("Deal Underwriting Lens")}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Deal Underwriting Lens"
+                onClick={() => setActiveTab("IC Memo")}
+                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "IC Memo"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
                   }`}
               >
-                <FileText className="h-4 w-4" />
-                <span className="flex-1">Deal Lens</span>
+                <Landmark className="h-4 w-4" />
+                <span className="flex-1">IC Memo</span>
               </button>
+              
             </nav>
           </aside>
         ) : null}

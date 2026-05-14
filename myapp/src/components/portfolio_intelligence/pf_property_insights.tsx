@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router";
 import { Bar, Line } from "react-chartjs-2";
 import { authClient } from "@/lib/auth-api";
 import PfDemoAiRentIntelligence from "./pf_demo_ai_rent_intelligence";
+import PfCompAnalysis from "./pf_comp_analysis";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -430,7 +431,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
   }, [riskAlert?.avgTenure, riskAlert?.avgTenureMonths]);
 
   type InsightKey = "review" | "market";
-  type ViewMode = "property_analytics" | "ai_rent_intelligence";
+  type ViewMode = "property_analytics" | "ai_rent_intelligence" | "comp_analysis";
   const [viewMode, setViewMode] = useState<ViewMode>("property_analytics");
   const [selectedInsight, setSelectedInsight] = useState<InsightKey>("review");
 
@@ -683,7 +684,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           Back
         </button>
 
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <button
             type="button"
             onClick={() => setViewMode("property_analytics")}
@@ -695,6 +696,18 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           >
             {/* <p className="text-[13px] font-semibold uppercase tracking-[0.14em]">Property Analytics</p> */}
             <p className="mt-2 text-2xl font-semibold">Property Analytics</p>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setViewMode("comp_analysis")}
+            className={`rounded-[22px] border p-5 text-center transition ${
+              viewMode === "comp_analysis"
+                ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"
+                : "border-[#d8e4f5] bg-white text-[#162a4c] hover:border-[#a9bddf]"
+            }`}
+          >
+            <p className="mt-2 text-2xl font-semibold">Comp Analysis</p>
           </button>
 
           <button
@@ -718,6 +731,10 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
               embedded
             />
           </div>
+        ) : null}
+
+        {viewMode === "comp_analysis" ? (
+          <PfCompAnalysis propertyName={record.property_name} />
         ) : null}
 
         {viewMode === "property_analytics" ? (
