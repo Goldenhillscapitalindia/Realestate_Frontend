@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
+import type { DealCompAnalysisPayload } from "./DealCompAnalysis";
 
 export type DealSignal = "Strong Buy" | "Buy" | "Neutral" | "Avoid";
 
@@ -157,6 +158,7 @@ type DealUnderwritingApiRecord = {
   deal_t12_response?: unknown;
   dealRentrollResponse?: unknown;
   deal_rentroll_response?: unknown;
+  compAnalysis?: DealCompAnalysisPayload | null;
 };
 
 export interface Deal {
@@ -228,6 +230,7 @@ export interface Deal {
     "tenantMix" | "rentVsMarket" | "noiProjection" | "revenueVsExpenses" | "expenseBreakdown" | "expenseDistribution" | "leaseExpirations" | "occupancyVacancy",
     { insight: string; impact: string; drives: string }
   >;
+  compAnalysis?: DealCompAnalysisPayload | null;
 }
 
 type DealDataState = {
@@ -855,6 +858,7 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       leaseExpirations: mergeChartInsight(defaultChartInsights.leaseExpirations, record.performanceAnalytics.leaseExpirationInsights),
       occupancyVacancy: mergeChartInsight(defaultChartInsights.occupancyVacancy, record.performanceAnalytics.occupancyVsVacancyInsights),
     },
+    compAnalysis: record.compAnalysis ?? null,
   };
 }
 

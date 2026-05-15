@@ -11,6 +11,7 @@ import { KeyMetrics } from "./KeyMetrics";
 import { RisksOpportunities } from "./RisksOpportunities";
 import { WhatMovesTheDeal } from "./WhatMovesTheDeal";
 import { deleteUserDealUnderwriting, getDealById, useDealUnderwritingData } from "./data";
+import DealCompAnalysis from "./DealCompAnalysis";
 import PfDealUnderwritingUpload from "./pf_dealunderwriting_upload";
 import { Search, Trash2 } from "lucide-react";
 import { isDemoMode } from "@/lib/demo-mode";
@@ -344,6 +345,12 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
               <DealCharts deal={activeDeal} />
 
               <div className="pdf-flow-block space-y-6">
+                {activeDeal.compAnalysis ? (
+                  <DealCompAnalysis
+                    propertyName={activeDeal.name}
+                    payload={activeDeal.compAnalysis}
+                  />
+                ) : null}
                 <RisksOpportunities deal={activeDeal} />
               </div>
             </div>
