@@ -390,6 +390,7 @@ const PfDemo: React.FC = () => {
               <AssistantWidget
                 mode="sidebar"
                 module={assistantContext.module}
+                dataScope={isAuthenticatedUserView ? "user" : "demo"}
                 propertyName={assistantContext.propertyName}
                 title={assistantContext.title}
                 contextLabel={assistantContext.contextLabel}

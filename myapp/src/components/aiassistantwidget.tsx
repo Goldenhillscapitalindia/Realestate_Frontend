@@ -42,10 +42,12 @@ ChartJS.register(
 );
 
 type AssistantModule = "property_analytics" | "portfolio_intelligence" | "deal_lens" | "ic_memo";
+type AssistantDataScope = "user" | "demo";
 
 type AssistantWidgetProps = {
   mode?: "widget" | "page" | "sidebar";
   module?: AssistantModule;
+  dataScope?: AssistantDataScope;
   propertyName?: string;
   title?: string;
   contextLabel?: string;
@@ -535,6 +537,7 @@ const StaggeredBlocksRenderer = ({
 
 const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   module,
+  dataScope = "user",
   propertyName,
   title = "Asset72 AI Analyst",
   contextLabel,
@@ -609,6 +612,7 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
       const payload: Record<string, string> = {
         email,
         question: query,
+        data_scope: dataScope,
       };
       if (module) payload.module = module;
       if (propertyName?.trim()) payload.property_name = propertyName.trim();
