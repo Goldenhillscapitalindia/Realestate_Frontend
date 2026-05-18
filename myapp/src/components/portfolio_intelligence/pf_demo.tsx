@@ -381,12 +381,12 @@ const PfDemo: React.FC = () => {
 
       {showAiSidebar && assistantContext ? (
         <aside
-          className={`fixed right-0 top-0 z-40 hidden h-screen border-l border-slate-200 bg-white shadow-[0_24px_80px_rgba(15,23,42,0.16)] xl:flex ${
+          className={`fixed right-0 top-0 z-40 hidden h-screen border-l border-[#DCE6F2] bg-white shadow-[0_24px_80px_rgba(8,27,92,0.18)] xl:flex ${
             isAiSidebarVisible ? "w-[492px]" : "w-[72px]"
           }`}
         >
           {isAiSidebarVisible ? (
-            <div className="h-full w-[420px] min-w-0 border-r border-slate-200">
+            <div className="h-full w-[420px] min-w-0 border-r border-[#DCE6F2]">
               <AssistantWidget
                 mode="sidebar"
                 module={assistantContext.module}
@@ -398,11 +398,11 @@ const PfDemo: React.FC = () => {
             </div>
           ) : null}
 
-          <div className="flex h-full w-[72px] shrink-0 flex-col items-center bg-white">
+          <div className="flex h-full w-[72px] shrink-0 flex-col items-center bg-[#F8FAFC]">
             <button
               type="button"
               onClick={() => setIsAiSidebarOpen((prev) => !prev)}
-              className="mt-6 flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 hover:text-sky-700"
+              className="mt-6 flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE6F2] bg-white text-[#64748B] shadow-[0_2px_6px_rgba(8,27,92,0.06)] transition-all duration-200 hover:-translate-y-[1px] hover:border-[#102A7A] hover:text-[#081B5C] hover:shadow-[0_6px_16px_rgba(8,27,92,0.12)]"
               aria-label={isAiSidebarVisible ? "Close AI sidebar" : "Open AI sidebar"}
               title={isAiSidebarVisible ? "Close AI sidebar" : "Open AI sidebar"}
             >
@@ -414,19 +414,13 @@ const PfDemo: React.FC = () => {
             </button>
 
             <div className="mt-8 flex flex-col items-center gap-3">
-              {aiRailButtons.map(({ label, icon: Icon }, index) => {
-                const isPrimary = index === 0;
-
+              {aiRailButtons.map(({ label, icon: Icon }) => {
                 return (
                   <button
                     key={label}
                     type="button"
                     onClick={() => setIsAiSidebarOpen(true)}
-                    className={`flex h-10 w-10 items-center justify-center rounded-xl border transition ${
-                      isPrimary
-                        ? "border-sky-200 bg-sky-50 text-sky-600 shadow-sm hover:border-sky-300"
-                        : "border-transparent bg-white text-slate-500 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700"
-                    }`}
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#DCE6F2] bg-white text-[#64748B] shadow-[0_2px_6px_rgba(8,27,92,0.06)] transition-all duration-200 hover:-translate-y-[1px] hover:border-[#102A7A] hover:text-[#081B5C] hover:shadow-[0_6px_16px_rgba(8,27,92,0.12)]"
                     aria-label={`Open AI ${label}`}
                     title={label}
                   >
@@ -437,7 +431,7 @@ const PfDemo: React.FC = () => {
             </div>
 
             <div className="mb-8 mt-auto">
-              <span className="block rotate-180 [writing-mode:vertical-rl] text-[10px] font-bold uppercase tracking-[0.24em] text-slate-400">
+              <span className="block rotate-180 [writing-mode:vertical-rl] text-[10px] font-bold uppercase tracking-[0.24em] text-[#081B5C]">
                 Asset72 AI
               </span>
             </div>
