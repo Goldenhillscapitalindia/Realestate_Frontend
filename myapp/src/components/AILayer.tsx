@@ -24,7 +24,7 @@ const AILayer = () => {
     if (isPaused) return;
     const t = setInterval(() => {
       setActiveIndex(p => (p + 1) % capabilities.length);
-    }, 3500);
+    }, 2000);
     return () => clearInterval(t);
   }, [isPaused]);
 
