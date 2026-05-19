@@ -5,7 +5,6 @@ import AccessBlockedModal from "./AccessBlockedModal";
 import { useLoginGuard } from "@/hooks/use-login-guard";
 import { productRoutes } from "@/lib/product-routes";
 
-/* ───── Feature data (bottom → top in building) ───── */
 const features = [
   {
     icon: Search, floorLabel: "N° 01", category: "Acquisition",
@@ -42,133 +41,219 @@ const features = [
 ];
 
 const TOTAL = features.length;
-const NAV = ["DEAL LENS", "PROPERTY ANALYTICS", "PORTFOLIO INTELLIGENCE", "IC MEMO"];
+const NAV   = ["DEAL LENS", "PROPERTY ANALYTICS", "PORTFOLIO INTELLIGENCE", "IC MEMO"];
 const contentSide = (f: number) => (f % 2 === 0 ? "right" : "left");
-const buildingX = (f: number) => (f % 2 === 0 ? -40 : 40);
+const buildingX   = (f: number) => (f % 2 === 0 ? -40 : 40);
 
-/* ── Window positions for each floor: [left%, top%, width, height] ── */
-const WINDOW_SETS = [
-  [[12,32,14,7],[20,55,10,5],[34,38,14,7],[34,62,10,5],[50,45,8,5],[54,32,14,7],[68,55,10,5],[82,38,10,5]],
-  [[10,35,12,6],[22,58,10,5],[32,35,14,7],[46,55,8,5],[56,38,14,7],[56,62,10,5],[72,35,10,5],[84,55,12,6]],
-  [[14,38,12,6],[24,55,10,5],[36,32,14,7],[48,58,8,5],[52,38,14,7],[62,55,10,5],[76,38,12,6],[86,58,10,5]],
-  [[10,38,14,7],[22,55,10,5],[38,35,14,7],[38,62,10,5],[54,38,8,5],[60,55,14,7],[74,38,10,5],[86,55,12,6]],
+/* Window lights — single horizontal row at 52%, same rhythm every floor */
+type LightColor = "warm" | "warm2" | "teal";
+type Light = { l: string; t: string; c: LightColor };
+const LIGHTS: Light[][] = [
+  // fi=0 — IC Memo
+  [
+    { l: "10%", t: "52%", c: "warm"  },
+    { l: "30%", t: "52%", c: "warm2" },
+    { l: "48%", t: "52%", c: "teal"  },
+    { l: "66%", t: "52%", c: "warm"  },
+    { l: "85%", t: "52%", c: "warm2" },
+  ],
+  // fi=1 — Portfolio Intelligence
+  [
+    { l: "12%", t: "52%", c: "warm2" },
+    { l: "30%", t: "52%", c: "warm"  },
+    { l: "48%", t: "52%", c: "warm2" },
+    { l: "68%", t: "52%", c: "teal"  },
+    { l: "84%", t: "52%", c: "warm"  },
+  ],
+  // fi=2 — Property Analytics
+  [
+    { l: "11%", t: "52%", c: "warm"  },
+    { l: "30%", t: "52%", c: "warm2" },
+    { l: "48%", t: "52%", c: "warm"  },
+    { l: "67%", t: "52%", c: "warm2" },
+    { l: "85%", t: "52%", c: "warm"  },
+  ],
+  // fi=3 — Deal Lens
+  [
+    { l: "10%", t: "52%", c: "warm2" },
+    { l: "30%", t: "52%", c: "warm"  },
+    { l: "48%", t: "52%", c: "teal"  },
+    { l: "68%", t: "52%", c: "warm2" },
+    { l: "85%", t: "52%", c: "warm"  },
+  ],
 ];
 
-/* ───── Single building floor ───── */
+const LIGHT_CSS: Record<LightColor, { bg: string; glow: string }> = {
+  warm:  { bg: "linear-gradient(180deg, #f3c98d, #b58044)", glow: "0 0 10px rgba(255,200,120,0.70)" },
+  warm2: { bg: "linear-gradient(180deg, #ffd9a3, #c48a4a)", glow: "0 0 10px rgba(255,200,120,0.70)" },
+  teal:  { bg: "linear-gradient(180deg, #3fd6b5, #1EBC9A)",  glow: "0 0 10px rgba(63,214,181,0.60)"  },
+};
+
+/* Mullion grid shared across all floors — strong dark dividers so they survive filter dimming */
+const MULLION_BG = [
+  "repeating-linear-gradient(90deg, transparent 0, transparent 13px, rgba(0,0,0,0.95) 13px, rgba(0,0,0,0.95) 14px)",
+  "repeating-linear-gradient(90deg, rgba(30,188,154,0.25) 0, rgba(30,188,154,0.25) 7px, rgba(30,188,154,0.05) 7px, rgba(30,188,154,0.05) 14px)",
+].join(", ");
+
+/* Base navy-green wall color (diagonal mix as reference specifies) */
+const WALL_BASE = "linear-gradient(135deg, #0a1530 0%, #0c2336 35%, #0a2a2f 65%, #0a1530 100%)";
+
+const SLAB_ACTIVE   = "linear-gradient(180deg, #FAFAF7 0%, #d8d6cf 55%, #b8b6af 100%)";
+const SLAB_INACTIVE = "linear-gradient(180deg, #7a8ca4 0%, #63768e 55%, #526070 100%)";
+
+/* ───────────────────────────────────────────── Floor ── */
 function Floor({ fi, activeFloor }: { fi: number; activeFloor: number }) {
-  const feat = features[TOTAL - 1 - fi];
+  const feat       = features[TOTAL - 1 - fi];
   const fromBottom = TOTAL - 1 - fi;
-  const isLit = activeFloor >= fromBottom;
-  const isCurrent = activeFloor === fromBottom;
-  const wins = WINDOW_SETS[TOTAL - 1 - fi] || WINDOW_SETS[0];
+  const isOverview = activeFloor === -1;
+  const isCurrent  = !isOverview && activeFloor === fromBottom;
+  /* isLit = any non-active floor while scrolling → dimmed via filter, NOT color change */
+  const isLit      = !isOverview && !isCurrent;
+
+  /* Active floor: add teal radial blobs on top of the shared mullion grid */
+  const wallBg = isCurrent
+    ? [
+        MULLION_BG,
+        "radial-gradient(ellipse 60% 80% at 18% 60%, rgba(30,188,154,0.28), transparent 65%)",
+        "radial-gradient(ellipse 50% 70% at 75% 55%, rgba(63,214,181,0.18), transparent 65%)",
+        WALL_BASE,
+      ].join(", ")
+    : [MULLION_BG, WALL_BASE].join(", ");
+
+  /* §07 — dim with CSS filter, not opacity — keeps wall dark, not pale */
+  const floorFilter = isLit ? "brightness(0.42) saturate(0.65)" : "none";
+
+  const slabBg     = isCurrent ? SLAB_ACTIVE : SLAB_INACTIVE;
+  const slabShadow = isCurrent
+    ? "0 3px 0 rgba(0,0,0,0.50), inset 0 1px 0 rgba(255,255,255,0.72), inset 0 -1px 0 rgba(0,0,0,0.30)"
+    : "0 2px 0 rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.18)";
+
+  /* LEDs: overview = 55% opacity; active = 1 (animated); isLit = 1 but filter dims them */
+  const ledOpacity = isOverview ? 0.55 : 1.0;
+  const showGlow   = isCurrent || isOverview;
+
+  const labelColor = isCurrent ? "#1ebc9a" : "rgba(200,225,255,0.55)";
+  const numColor   = isCurrent ? "rgba(255,255,255,0.68)" : "rgba(200,225,255,0.38)";
 
   return (
-    <div className="relative">
-      {/* Glass floor panel */}
+    /* §07 — filter applied to entire floor block (slab + balusters + wall) */
+    <div style={{ filter: floorFilter, transition: "filter 0.5s" }}>
+
+      {/* §02 SLAB — full container width, cantilevering 22px over the inset wall */}
       <div
-        className="relative overflow-hidden transition-all duration-700"
         style={{
-          height: "110px",
-          background: isCurrent
-            ? "linear-gradient(180deg, #0d3040 0%, #0a2535 40%, #0b2838 100%)"
-            : isLit
-            ? "linear-gradient(180deg, #0b2a38 0%, #091e2c 40%, #0a2230 100%)"
-            : "linear-gradient(180deg, #060d16 0%, #050b12 40%, #060d16 100%)",
-          borderLeft: `1px solid ${isLit ? "rgba(30,188,154,0.08)" : "rgba(255,255,255,0.02)"}`,
-          borderRight: `1px solid ${isLit ? "rgba(30,188,154,0.08)" : "rgba(255,255,255,0.02)"}`,
+          height: "16px",
+          transition: "background 0.55s, box-shadow 0.55s",
+          background: slabBg,
+          boxShadow: slabShadow,
         }}
-      >
-        {/* Vertical grid lines on glass */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          backgroundImage: `repeating-linear-gradient(90deg, ${isLit ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.01)"} 0px, ${isLit ? "rgba(255,255,255,0.03)" : "rgba(255,255,255,0.01)"} 1px, transparent 1px, transparent 48px)`,
-        }} />
+      />
 
-        {/* Active floor shimmer */}
-        {isCurrent && (
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            animate={{ opacity: [0.04, 0.12, 0.04] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
-            style={{ background: "linear-gradient(90deg, transparent 5%, rgba(30,188,154,0.08) 50%, transparent 95%)" }}
-          />
-        )}
+      {/* §06 Balcony balusters — vertical hash marks just below slab, 18px wider than wall */}
+      <div
+        style={{
+          height: "6px",
+          margin: "0 4px",
+          backgroundImage: "repeating-linear-gradient(90deg, rgba(250,250,247,0.65) 0, rgba(250,250,247,0.65) 1px, transparent 1px, transparent 5px)",
+          opacity: 0.85,
+        }}
+      />
 
-        {/* Floor label — italic serif */}
-        <span
-          className="absolute top-3 left-4 text-[13px] italic transition-colors duration-700"
-          style={{
-            color: isLit ? "rgba(30,188,154,0.85)" : "rgba(255,255,255,0.04)",
-            fontFamily: "Georgia, 'Times New Roman', serif",
-            letterSpacing: "0.02em",
-          }}
+      {/* §01 WALL — inset 22px each side; §01 height 78px (shorter floor) */}
+      <div style={{ margin: "0 22px" }}>
+        <div
+          className="relative overflow-hidden"
+          style={{ height: "78px", background: wallBg, transition: "background 0.65s" }}
         >
-          {feat.title} {feat.titleAccent}
-        </span>
-        <span
-          className="absolute top-3 right-4 text-[11px] italic font-mono transition-colors duration-700"
-          style={{ color: isLit ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.04)", letterSpacing: "0.12em" }}
-        >
-          {feat.floorLabel}
-        </span>
-
-        {/* Window LEDs — scattered glowing rectangles */}
-        {wins.map((w, wi) => (
-          <motion.div
-            key={wi}
-            className="absolute rounded-[1px] transition-all duration-700"
-            animate={isCurrent ? { opacity: [0.55, 1, 0.55] } : {}}
-            transition={{ duration: 2 + wi * 0.4, repeat: Infinity, repeatType: "mirror", delay: wi * 0.15 }}
+          {/* Transom architectural line at 30% from top */}
+          <div
             style={{
-              left: `${w[0]}%`, top: `${w[1]}%`,
-              width: `${w[2]}px`, height: `${w[3]}px`,
-              background: isLit
-                ? (wi % 3 === 0 ? "#d4a853" : "#1ebc9a")
-                : "#060a10",
-              boxShadow: isLit
-                ? `0 0 ${wi % 3 === 0 ? "10px rgba(212,168,83,0.6)" : "10px rgba(30,188,154,0.5)"}`
-                : "none",
-              opacity: isLit ? (isCurrent ? 1 : 0.5) : 0.05,
+              position: "absolute", left: 0, right: 0, top: "30%", height: "1px",
+              background: "rgba(255,255,255,0.10)",
             }}
           />
-        ))}
-      </div>
 
-      {/* Ruler tick marks between floors */}
-      <div
-        className="flex justify-center items-end px-1"
-        style={{
-          height: "8px",
-          background: isLit
-            ? "rgba(8,14,24,0.7)"
-            : "rgba(4,8,14,0.9)",
-        }}
-      >
-        {Array.from({ length: 80 }).map((_, t) => (
-          <div key={t} style={{
-            width: "2.5px",
-            height: t % 5 === 0 ? "7px" : "3px",
-            marginRight: "2px",
-            background: isLit ? "rgba(255,255,255,0.15)" : "rgba(255,255,255,0.03)",
-            transition: "all 0.5s",
-          }} />
-        ))}
-      </div>
+          {/* §08 Window lights — single horizontal row */}
+          <div style={{ position: "absolute", inset: 0, zIndex: 1, pointerEvents: "none" }}>
+            {LIGHTS[fi].map((w, j) => {
+              const lc = LIGHT_CSS[w.c];
+              return (
+                <motion.div
+                  key={j}
+                  animate={isCurrent ? { opacity: [0.70, 1, 0.70] } : {}}
+                  transition={{ duration: 2 + j * 0.28, repeat: Infinity, repeatType: "mirror", delay: j * 0.14 }}
+                  style={{
+                    position: "absolute",
+                    left: w.l, top: w.t,
+                    width: "14px", height: "8px",
+                    borderRadius: "1px",
+                    opacity: ledOpacity,
+                    background: lc.bg,
+                    boxShadow: showGlow ? lc.glow : "none",
+                    transition: "opacity 0.5s, box-shadow 0.5s",
+                  }}
+                />
+              );
+            })}
+          </div>
 
-      {/* Concrete beam divider */}
-      <div className="transition-all duration-700" style={{
-        height: "10px",
-        background: isLit
-          ? "linear-gradient(180deg, rgba(200,215,230,0.40) 0%, rgba(160,178,195,0.25) 40%, rgba(190,205,220,0.35) 100%)"
-          : "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.02) 100%)",
-        boxShadow: isLit
-          ? "0 1px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)"
-          : "none",
-      }} />
+          {/* Floor label — italic serif, top-left */}
+          <span
+            style={{
+              position: "absolute", top: "7px", left: "10px",
+              fontFamily: "Georgia, 'Times New Roman', serif",
+              fontSize: "12px", fontStyle: "italic", letterSpacing: "0.025em",
+              color: labelColor,
+              textShadow: isCurrent ? "0 0 20px rgba(30,188,154,0.65)" : "none",
+              transition: "color 0.5s, text-shadow 0.5s",
+              pointerEvents: "none",
+            }}
+          >
+            {feat.title} {feat.titleAccent}
+          </span>
+
+          {/* Floor number — mono, top-right */}
+          <span
+            style={{
+              position: "absolute", top: "7px", right: "10px",
+              fontFamily: "monospace", fontSize: "10px", letterSpacing: "0.16em",
+              color: numColor, transition: "color 0.5s",
+              pointerEvents: "none",
+            }}
+          >
+            {feat.floorLabel}
+          </span>
+
+          {/* Active: teal rim border (inset, not clipped by overflow:hidden) */}
+          {isCurrent && (
+            <div
+              style={{
+                position: "absolute", inset: 0,
+                border: "1px solid rgba(63,214,181,0.55)",
+                pointerEvents: "none", zIndex: 10,
+              }}
+            />
+          )}
+
+          {/* Active: teal breath pulse */}
+          {isCurrent && (
+            <motion.div
+              className="absolute inset-0 pointer-events-none"
+              animate={{ opacity: [0, 0.18, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+              style={{
+                background: "linear-gradient(90deg, transparent 5%, rgba(30,188,154,0.18) 50%, transparent 95%)",
+                zIndex: 2,
+              }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }
 
-/* ───── Content panel ───── */
+/* ─────────────────────────────────────── ContentPanel ── */
 function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" | "right" }) {
   const { guardNavigation } = useLoginGuard();
   return (
@@ -177,44 +262,35 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: side === "right" ? 30 : -30 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-[420px]"
+      className="max-w-[380px]"
     >
-      {/* Module label */}
       <p className="text-[10px] font-mono tracking-[0.3em] uppercase mb-4" style={{ color: "#1ebc9a" }}>
         {feat.floorLabel} — {feat.category}
       </p>
-
-      {/* Title */}
       <h3
         className="font-display font-bold leading-[1.05] mb-1"
-        style={{ color: "#FAFAF7", fontSize: "clamp(2rem, 3.2vw, 2.8rem)" }}
+        style={{ color: "#FAFAF7", fontSize: "clamp(1.8rem, 2.8vw, 2.6rem)" }}
       >
         {feat.title}
       </h3>
       <h3
         className="font-display font-bold italic leading-[1.05] mb-5"
-        style={{ color: "#1ebc9a", fontSize: "clamp(2rem, 3.2vw, 2.8rem)" }}
+        style={{ color: "#1ebc9a", fontSize: "clamp(1.8rem, 2.8vw, 2.6rem)" }}
       >
         {feat.titleAccent}
       </h3>
-
-      {/* Description */}
-      <p className="text-[14.5px] leading-[1.7] mb-6" style={{ color: "rgba(250,250,247,0.50)" }}>
+      <p className="text-[14px] leading-[1.7] mb-6" style={{ color: "rgba(250,250,247,0.55)" }}>
         {feat.desc}
       </p>
-
-      {/* Bullets — 2 column */}
       <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-7">
         {feat.bullets.map((b, i) => (
-          <div key={i} className="flex items-center gap-2.5 text-[13px]" style={{ color: "rgba(250,250,247,0.48)" }}>
-            <span className="flex-shrink-0 w-1 h-1 rounded-full" style={{ background: "#1ebc9a" }} />
+          <div key={i} className="flex items-center gap-2.5 text-[13px]" style={{ color: "rgba(250,250,247,0.50)" }}>
+            <span style={{ display: "inline-block", width: "8px", height: "1.5px", background: "#1ebc9a", flexShrink: 0 }} />
             {b}
           </div>
         ))}
       </div>
-
-      {/* Metadata */}
-      <div className="flex gap-12 pt-5 mb-6 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+      <div className="flex gap-10 pt-5 mb-6 border-t" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
         <div>
           <p className="text-[9px] tracking-[0.22em] uppercase mb-1 font-mono" style={{ color: "rgba(255,255,255,0.25)" }}>{feat.m1L}</p>
           <p className="text-[13px] font-mono italic" style={{ color: "#1ebc9a" }}>{feat.m1V}</p>
@@ -224,8 +300,6 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
           <p className="text-[13px] font-mono italic" style={{ color: "#1ebc9a" }}>{feat.m2V}</p>
         </div>
       </div>
-
-      {/* CTA */}
       <button
         type="button"
         onClick={() => guardNavigation(feat.route)}
@@ -242,11 +316,11 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
   );
 }
 
-/* ═══════════════════════════════════════════ */
+/* ══════════════════════════════════════ PlatformFeatures ══ */
 const PlatformFeatures = () => {
-  const { isModalOpen, setIsModalOpen, guardNavigation, goToLogin } = useLoginGuard();
+  const { isModalOpen, setIsModalOpen, goToLogin } = useLoginGuard();
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeFloor, setActiveFloor] = useState(0);
+  const [activeFloor, setActiveFloor] = useState(-1);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -254,14 +328,16 @@ const PlatformFeatures = () => {
   });
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
-    if (v < 0.25) setActiveFloor(0);
-    else if (v < 0.5) setActiveFloor(1);
-    else if (v < 0.75) setActiveFloor(2);
-    else setActiveFloor(3);
+    if      (v < 0.20) setActiveFloor(-1);
+    else if (v < 0.40) setActiveFloor(0);
+    else if (v < 0.60) setActiveFloor(1);
+    else if (v < 0.80) setActiveFloor(2);
+    else               setActiveFloor(3);
   });
 
-  const activeFeat = features[activeFloor];
-  const side = contentSide(activeFloor);
+  const activeFeat = activeFloor >= 0 ? features[activeFloor] : null;
+  const side       = activeFloor >= 0 ? contentSide(activeFloor) : null;
+  const bX         = activeFloor >= 0 ? buildingX(activeFloor) : 0;
 
   return (
     <section
@@ -270,17 +346,13 @@ const PlatformFeatures = () => {
       id="platform"
       style={{ height: "420vh", background: "#090F1E" }}
     >
-      {/* Sticky viewport */}
       <div
         className="sticky top-0 h-screen overflow-hidden flex items-center justify-center"
         style={{ background: "#090F1E" }}
       >
-        {/* Ambient glow */}
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(30,188,154,0.03) 0%, transparent 70%)",
-          }}
+          style={{ background: "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(30,188,154,0.03) 0%, transparent 70%)" }}
         />
 
         {/* Header */}
@@ -291,93 +363,101 @@ const PlatformFeatures = () => {
           <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-[2rem]" style={{ color: "#FAFAF7" }}>
             Built floor by floor for
           </h2>
-          <h2 className="font-display font-bold text-2xl md:text-3xl lg:text-[2rem] italic" style={{ color: "rgba(250,250,247,0.28)" }}>
+          <h2
+            className="font-display font-bold text-2xl md:text-3xl lg:text-[2rem] italic"
+            style={{ color: "rgba(250,250,247,0.28)" }}
+          >
             institutional real estate.
           </h2>
         </div>
 
-        {/* 3-zone layout */}
-        <div className="relative z-10 flex items-center gap-6 lg:gap-10 w-full max-w-[1400px] mx-auto px-6 mt-10">
-
-          {/* LEFT content */}
+        <div
+          className="relative z-10 flex items-center gap-6 lg:gap-10 w-full max-w-[1400px] mx-auto mt-10"
+          style={{ paddingLeft: "196px", paddingRight: "196px" }}
+        >
+          {/* LEFT panel */}
           <div className="hidden lg:flex flex-1 justify-end pr-8">
             <AnimatePresence mode="wait">
-              {side === "left" && <ContentPanel key={`l-${activeFloor}`} feat={activeFeat} side="left" />}
+              {side === "left" && activeFeat && (
+                <ContentPanel key={`l-${activeFloor}`} feat={activeFeat} side="left" />
+              )}
             </AnimatePresence>
           </div>
 
-          {/* CENTER: Building */}
+          {/* CENTER — building */}
           <motion.div
             className="flex-shrink-0"
-            animate={{ x: buildingX(activeFloor) }}
+            animate={{ x: bX }}
             transition={{ type: "spring", stiffness: 90, damping: 22 }}
-            style={{ width: "clamp(340px, 32vw, 480px)" }}
+            style={{ width: "clamp(320px, 30vw, 460px)" }}
           >
+            {/* §05 — no border, no outer rectangle */}
             <div
               className="rounded-sm overflow-hidden"
               style={{
-                border: "1px solid rgba(250,250,247,0.10)",
-                background: "#050a14",
-                boxShadow: "0 30px 80px rgba(0,0,0,0.65), 0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(30,188,154,0.03)",
+                background: "#03070e",
+                boxShadow: "0 32px 80px rgba(0,0,0,0.90), 0 8px 32px rgba(0,0,0,0.55)",
               }}
             >
-              {/* ── Roof / Antenna structure ── */}
-              <div style={{ background: "#060c16" }}>
-                {/* Top dark bar */}
-                <div className="flex justify-center pt-3 pb-1">
-                  <div style={{
-                    width: "55%", height: "5px",
-                    background: "linear-gradient(90deg, rgba(255,255,255,0.06), rgba(255,255,255,0.12), rgba(255,255,255,0.06))",
-                    borderRadius: "1px",
-                  }} />
-                </div>
-                {/* Antenna signal line + dot */}
-                <div className="flex justify-center items-center gap-2 pb-2.5">
-                  <div className="w-20 h-px" style={{ background: "linear-gradient(90deg, transparent, rgba(30,188,154,0.30))" }} />
-                  <motion.div
-                    animate={{ opacity: [0.3, 1, 0.3] }}
-                    transition={{ duration: 2.2, repeat: Infinity }}
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: "#1ebc9a", boxShadow: "0 0 10px rgba(30,188,154,0.9)" }}
+              {/* §04 ROOF — narrow centered parapet cap, not full-width */}
+              <div style={{ background: "#040911" }}>
+                <div style={{ display: "flex", justifyContent: "center", paddingTop: "8px" }}>
+                  <div
+                    style={{
+                      width: "24%",
+                      height: "10px",
+                      background: "linear-gradient(180deg, #FAFAF7, #c9c7c0)",
+                      boxShadow: "0 1px 0 rgba(0,0,0,0.4)",
+                    }}
                   />
-                  <div className="w-20 h-px" style={{ background: "linear-gradient(90deg, rgba(30,188,154,0.30), transparent)" }} />
                 </div>
-                {/* Ruler ticks under antenna */}
-                <div className="flex justify-center items-end px-1" style={{ height: "6px" }}>
-                  {Array.from({ length: 80 }).map((_, t) => (
-                    <div key={t} style={{
-                      width: "2.5px", height: t % 5 === 0 ? "5px" : "2px",
-                      marginRight: "2px",
-                      background: "rgba(255,255,255,0.08)",
-                    }} />
-                  ))}
+                {/* Pulsing antenna dot in roof deck area */}
+                <div className="flex items-center justify-center gap-3" style={{ height: "22px" }}>
+                  <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, transparent, rgba(30,188,154,0.40))" }} />
+                  <motion.div
+                    animate={{ opacity: [0.28, 1, 0.28], scale: [0.88, 1.12, 0.88] }}
+                    transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
+                    style={{
+                      width: "5px", height: "5px", borderRadius: "50%", flexShrink: 0,
+                      background: "#1ebc9a",
+                      boxShadow: "0 0 12px rgba(30,188,154,1), 0 0 24px rgba(30,188,154,0.55)",
+                    }}
+                  />
+                  <div style={{ width: "60px", height: "1px", background: "linear-gradient(90deg, rgba(30,188,154,0.40), transparent)" }} />
                 </div>
-                {/* Top concrete beam */}
-                <div style={{
-                  height: "8px",
-                  background: "linear-gradient(180deg, rgba(180,195,210,0.25) 0%, rgba(140,158,175,0.15) 100%)",
-                }} />
               </div>
 
-              {/* ── Floors — rendered top-to-bottom ── */}
+              {/* ── Floors: IC Memo (top) → Deal Lens (bottom) ── */}
               {Array.from({ length: TOTAL }).map((_, fi) => (
                 <Floor key={fi} fi={fi} activeFloor={activeFloor} />
               ))}
 
-              {/* ── Ground / Foundation bar ── */}
-              <div style={{
-                height: "16px",
-                background: "linear-gradient(180deg, #22d4a8 0%, #18b892 30%, #13a07e 100%)",
-                boxShadow: "0 0 30px rgba(30,188,154,0.40), 0 4px 14px rgba(30,188,154,0.25)",
-              }}>
-                {/* Tiny blocks pattern on ground bar */}
+              {/* Ground slab — closes off the last floor */}
+              <div
+                style={{
+                  height: "16px",
+                  background: SLAB_INACTIVE,
+                  boxShadow: "0 3px 0 rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.18)",
+                }}
+              />
+
+              {/* Lobby / Foundation bar */}
+              <div
+                style={{
+                  height: "16px",
+                  background: "linear-gradient(180deg, #1de0b0 0%, #16c49a 30%, #10a880 70%, #0d9070 100%)",
+                  boxShadow: "0 0 36px rgba(30,188,154,0.55), 0 4px 18px rgba(30,188,154,0.30)",
+                }}
+              >
                 <div className="flex items-center justify-center h-full gap-[3px] px-2">
                   {Array.from({ length: 40 }).map((_, i) => (
-                    <div key={i} style={{
-                      width: "8px", height: "10px",
-                      background: `rgba(255,255,255,${i % 3 === 0 ? "0.15" : "0.06"})`,
-                      borderRadius: "1px",
-                    }} />
+                    <div
+                      key={i}
+                      style={{
+                        width: "8px", height: "10px", borderRadius: "1px",
+                        background: `rgba(255,255,255,${i % 3 === 0 ? "0.18" : "0.07"})`,
+                      }}
+                    />
                   ))}
                 </div>
               </div>
@@ -391,68 +471,79 @@ const PlatformFeatures = () => {
                 className="text-[9px] tracking-[0.3em] uppercase font-mono"
                 style={{ color: "rgba(255,255,255,0.30)" }}
               >
-                Scroll to Assemble
+                {activeFloor === -1 ? "Scroll to Explore" : "Scroll to Assemble"}
               </motion.p>
               <span style={{ color: "rgba(255,255,255,0.10)", fontSize: "9px" }}>·</span>
               <p className="text-[9px] font-mono" style={{ color: "rgba(30,188,154,0.50)" }}>
-                N° {String(activeFloor + 1).padStart(2, "0")} / 0{TOTAL}
+                {activeFloor >= 0 ? `N° ${String(activeFloor + 1).padStart(2, "0")} / 0${TOTAL}` : `— / 0${TOTAL}`}
               </p>
             </div>
           </motion.div>
 
-          {/* RIGHT content */}
+          {/* RIGHT panel */}
           <div className="hidden lg:flex flex-1 justify-start pl-8">
             <AnimatePresence mode="wait">
-              {side === "right" && <ContentPanel key={`r-${activeFloor}`} feat={activeFeat} side="right" />}
+              {side === "right" && activeFeat && (
+                <ContentPanel key={`r-${activeFloor}`} feat={activeFeat} side="right" />
+              )}
             </AnimatePresence>
           </div>
+        </div>
 
-          {/* Nav dots — far right */}
-          <div className="hidden xl:flex flex-col gap-5 flex-shrink-0 ml-2">
-            {NAV.map((label, i) => {
-              const isAct = i === activeFloor;
-              const isPast = i < activeFloor;
-              return (
-                <div key={label} className="flex items-center gap-2.5">
-                  <div
-                    className="w-2 h-2 rounded-full transition-all duration-400"
-                    style={{
-                      background: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.3)" : "transparent",
-                      border: isAct ? "none" : isPast ? "1px solid rgba(30,188,154,0.28)" : "1px solid rgba(255,255,255,0.15)",
-                      boxShadow: isAct ? "0 0 8px rgba(30,188,154,0.7)" : "none",
-                    }}
-                  />
-                  <span
-                    className="text-[8px] font-mono tracking-[0.15em] whitespace-nowrap transition-colors duration-300"
-                    style={{
-                      color: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.45)" : "rgba(255,255,255,0.18)",
-                    }}
-                  >
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+        {/* Nav dots — absolutely positioned, never overlaps content panels */}
+        <div
+          className="absolute z-20 hidden xl:flex flex-col gap-5"
+          style={{ right: "32px", top: "50%", transform: "translateY(-50%)" }}
+        >
+          {NAV.map((label, i) => {
+            const isAct  = i === activeFloor;
+            const isPast = activeFloor > 0 && i < activeFloor;
+            return (
+              <div key={label} className="flex items-center gap-2.5">
+                <div
+                  style={{
+                    width: "8px", height: "8px", borderRadius: "50%",
+                    transition: "background 0.4s, box-shadow 0.4s, border 0.4s",
+                    background: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.30)" : "transparent",
+                    border: isAct ? "none" : isPast ? "1px solid rgba(30,188,154,0.28)" : "1px solid rgba(255,255,255,0.15)",
+                    boxShadow: isAct ? "0 0 8px rgba(30,188,154,0.70)" : "none",
+                  }}
+                />
+                <span
+                  className="text-[8px] font-mono tracking-[0.15em] whitespace-nowrap"
+                  style={{
+                    transition: "color 0.3s",
+                    color: isAct ? "#1ebc9a" : isPast ? "rgba(30,188,154,0.45)" : "rgba(255,255,255,0.18)",
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         {/* Mobile content */}
         <div className="lg:hidden absolute bottom-6 left-0 right-0 px-6">
           <AnimatePresence mode="wait">
-            <motion.div
-              key={activeFloor}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <p className="text-[10px] font-mono tracking-widest mb-1" style={{ color: "#1ebc9a" }}>{activeFeat.floorLabel}</p>
-              <h4 className="font-display font-bold text-xl" style={{ color: "#FAFAF7" }}>
-                {activeFeat.title}{" "}
-                <span className="italic" style={{ color: "#1ebc9a" }}>{activeFeat.titleAccent}</span>
-              </h4>
-              <p className="text-sm mt-1" style={{ color: "rgba(250,250,247,0.45)" }}>{activeFeat.desc}</p>
-            </motion.div>
+            {activeFeat && (
+              <motion.div
+                key={activeFloor}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <p className="text-[10px] font-mono tracking-widest mb-1" style={{ color: "#1ebc9a" }}>
+                  {activeFeat.floorLabel}
+                </p>
+                <h4 className="font-display font-bold text-xl" style={{ color: "#FAFAF7" }}>
+                  {activeFeat.title}{" "}
+                  <span className="italic" style={{ color: "#1ebc9a" }}>{activeFeat.titleAccent}</span>
+                </h4>
+                <p className="text-sm mt-1" style={{ color: "rgba(250,250,247,0.45)" }}>{activeFeat.desc}</p>
+              </motion.div>
+            )}
           </AnimatePresence>
         </div>
       </div>
