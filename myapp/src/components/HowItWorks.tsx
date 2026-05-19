@@ -59,7 +59,7 @@ const HowItWorks = () => {
       ref={sectionRef}
       className="relative overflow-hidden py-16 lg:py-20"
       id="workflow"
-      style={{ background: "linear-gradient(180deg, #0a0f1f 0%, #0e1628 50%, #0a0f1f 100%)" }}
+      style={{ background: "linear-gradient(180deg, #0d0f2b 0%, #111438 50%, #0d0f2b 100%)" }}
     >
       {/* Grid background */}
       <div

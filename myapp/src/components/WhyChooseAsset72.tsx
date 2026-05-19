@@ -2,7 +2,7 @@ import { ScrollReveal } from "./ScrollReveal";
 
 const WhyChooseAsset72 = () => {
   return (
-    <section className="section-padding section-dark section-dark-grid" id="solutions">
+    <section className="section-padding section-dark section-dark-grid" id="solutions" style={{ background: "linear-gradient(180deg, #0a1f20 0%, #0d2828 52%, #0a1f20 100%)" }}>
       <div className="absolute left-[8%] top-24 h-44 w-44 rounded-full bg-emerald/10 blur-3xl" />
       <div className="absolute right-[10%] bottom-20 h-52 w-52 rounded-full bg-gold-warm/10 blur-3xl" />
 

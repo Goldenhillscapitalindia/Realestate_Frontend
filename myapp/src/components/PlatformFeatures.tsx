@@ -274,10 +274,10 @@ const PlatformFeatures = () => {
     <section
       ref={sectionRef}
       id="platform"
-      style={{ height: "420vh", background: "#090F1E", position: "relative" }}
+      style={{ height: "420vh", background: "#1a2535", position: "relative" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 110%, #0a1430 0%, #08101f 35%, #090F1E 75%)" }}
+        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 110%, #1e2d40 0%, #1a2535 40%, #1c2a3a 100%)" }}
       >
         {/* ── STAMP TL ── */}
         <div className="absolute z-20 pointer-events-none" style={{ top: "120px", left: "40px" }}>
