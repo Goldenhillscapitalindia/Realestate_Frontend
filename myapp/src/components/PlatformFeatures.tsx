@@ -310,9 +310,9 @@ const PlatformFeatures = () => {
         <div className="absolute left-0 right-0 z-10 text-center pointer-events-none"
           style={{ bottom: "70px", padding: "0 40px", opacity: headBotVis, transform: `translateY(${(1 - headBotVis) * 16}px)`, transition: "opacity 0.1s, transform 0.1s" }}
         >
-          <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "540px", margin: "0 auto 18px" }}>
+          {/* <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "540px", margin: "0 auto 18px" }}>
             From acquisition underwriting to active asset management — four disciplines, one operating system. Scroll to assemble the platform.
-          </p>
+          </p> */}
           <div style={{ color: "rgba(250,250,247,0.5)", fontSize: "10px", letterSpacing: "0.32em", textTransform: "uppercase", display: "inline-flex", flexDirection: "column", alignItems: "center", gap: "10px" }}>
             <span>Scroll</span>
             <motion.span
