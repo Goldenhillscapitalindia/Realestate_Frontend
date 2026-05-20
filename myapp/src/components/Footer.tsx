@@ -37,7 +37,7 @@ const footerIcons: Record<string, typeof Linkedin> = {
 
 const Footer = () => {
   return (
-    <footer className="relative overflow-hidden bg-[#040a15] text-background">
+    <footer className="relative overflow-hidden text-background" style={{ background: "linear-gradient(180deg, #0c1a3a 0%, #0f2045 50%, #0c1a3a 100%)" }}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_12%_18%,rgba(30,188,154,0.16),transparent_24%),radial-gradient(circle_at_88%_12%,rgba(78,122,214,0.18),transparent_22%)]" />
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/18 to-transparent" />
 

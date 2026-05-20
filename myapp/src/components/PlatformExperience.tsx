@@ -22,7 +22,7 @@ const PlatformExperience = () => {
   const [active, setActive] = useState(0);
 
   return (
-    <section className="section-padding section-dark section-dark-grid">
+    <section className="section-padding section-dark section-dark-grid" style={{ background: "linear-gradient(180deg, #0b1a3a 0%, #0e1d35 50%, #0b1a3a 100%)" }}>
       <div className="absolute left-[7%] top-20 h-56 w-56 rounded-full bg-[#17345a] opacity-65 blur-3xl" />
       <div className="absolute right-[10%] bottom-16 h-60 w-60 rounded-full bg-emerald/10 blur-3xl" />
 

@@ -1,7 +1,7 @@
 import { AlertTriangle, Heart, RefreshCw, TrendingDown, Wind } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, px } from "framer-motion";
 
 const capabilities = [
   { icon: RefreshCw,     label: "Rollover risk visibility",       detail: "Track lease expirations before they impact NOI" },
@@ -14,6 +14,7 @@ const capabilities = [
 const CARD_W  = 360;
 const CARD_H  = 300;
 const STEP    = 400;
+const CARD_BG = "#0B1A3A";
 
 const AILayer = () => {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -125,10 +126,10 @@ const AILayer = () => {
                   }}
                 >
                   <div
-                    className="group relative flex h-full flex-col items-center overflow-hidden text-center rounded-2xl transition-shadow duration-500"
+                    className="group relative flex h-full flex-col items-center justify-center overflow-hidden text-center rounded-2xl transition-shadow duration-500"
                     style={{
-                      background: "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,255,0.82) 100%)",
-                      border: "1px solid rgba(15,28,62,0.08)",
+                      background: CARD_BG,
+                      border: "1px solid rgba(255,255,255,0.12)",
                       backdropFilter: "blur(16px)",
                       WebkitBackdropFilter: "blur(16px)",
                       boxShadow: isCtr
@@ -151,23 +152,23 @@ const AILayer = () => {
                     <div
                       className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl"
                       style={{
-                        background: "rgba(15,75,138,0.08)",
-                        border: "1px solid rgba(15,75,138,0.06)",
+                        background: "rgba(255,255,255,0.08)",
+                        border: "1px solid rgba(255,255,255,0.12)",
                       }}
                     >
                       <capability.icon
                         className="h-6 w-6"
-                        style={{ color: isCtr ? "#1ebc9a" : "#0f4b8a", transition: "color 0.4s" }}
+                        style={{ color: isCtr ? "#1ebc9a" : "rgba(255,255,255,0.65)", transition: "color 0.4s" }}
                       />
                     </div>
 
                     {/* Label */}
-                    <p className="text-sm font-semibold leading-snug text-[#0f1d2f] mb-2">
+                    <p className="text-lg font-semibold leading-snug text-white mb-2">
                       {capability.label}
                     </p>
 
                     {/* Detail */}
-                    <p className="text-[12px] leading-relaxed text-slate-400 mt-auto">
+                    <p className="text-[12px] leading-relaxed text-white/70">
                       {capability.detail}
                     </p>
                   </div>

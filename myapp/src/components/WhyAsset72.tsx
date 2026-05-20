@@ -94,8 +94,8 @@ const WhyAsset72 = () => {
                 <div
                   className="group relative flex h-full flex-col items-center overflow-hidden text-center rounded-2xl transition-all duration-500 hover:-translate-y-1.5"
                   style={{
-                    background: "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(248,250,255,0.82) 100%)",
-                    border: "1px solid rgba(15,28,62,0.08)",
+                    background: "linear-gradient(180deg, #0F213D 0%, #0b1a33 100%)",
+                    border: "1px solid rgba(255,255,255,0.08)",
                     backdropFilter: "blur(16px)",
                     WebkitBackdropFilter: "blur(16px)",
                     boxShadow: "0 20px 54px -36px rgba(11,20,38,0.22)",
@@ -113,22 +113,22 @@ const WhyAsset72 = () => {
 
                   {/* Numbered step indicator */}
                   <div
-                    className="mb-4 flex h-7 w-7 items-center justify-center rounded-full border border-[#0f4b8a]/15 text-[11px] font-bold font-mono transition-all duration-500 group-hover:bg-[#1ebc9a] group-hover:border-[#1ebc9a] group-hover:text-white"
-                    style={{ color: "#0f4b8a" }}
+                    className="mb-4 flex h-7 w-7 items-center justify-center rounded-full border border-white/20 text-[11px] font-bold font-mono transition-all duration-500 group-hover:bg-[#1ebc9a] group-hover:border-[#1ebc9a] group-hover:text-white"
+                    style={{ color: "rgba(255,255,255,0.55)" }}
                   >
                     {String(index + 1).padStart(2, "0")}
                   </div>
 
                   {/* Icon */}
-                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0f4b8a]/8 border border-[#0f4b8a]/6 transition-all duration-500 group-hover:scale-110 group-hover:bg-[#0f4b8a]/12 group-hover:border-[#0f4b8a]/15">
-                    <benefit.icon className="h-6 w-6 text-[#0f4b8a] transition-all duration-500 group-hover:text-[#1ebc9a]" />
+                  <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/8 border border-white/12 transition-all duration-500 group-hover:scale-110 group-hover:bg-white/12 group-hover:border-[#1ebc9a]/30">
+                    <benefit.icon className="h-6 w-6 text-white/70 transition-all duration-500 group-hover:text-[#1ebc9a]" />
                   </div>
 
                   {/* Title */}
-                  <p className="text-sm font-semibold leading-snug text-[#0f1d2f] mb-2">{benefit.title}</p>
+                  <p className="text-sm font-semibold leading-snug text-white mb-2">{benefit.title}</p>
 
                   {/* Description */}
-                  <p className="text-[12px] leading-relaxed text-slate-400 mt-auto">{benefit.description}</p>
+                  <p className="text-[12px] leading-relaxed text-white/55 mt-auto">{benefit.description}</p>
                 </div>
               </ScrollReveal>
             ))}

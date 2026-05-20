@@ -22,7 +22,14 @@ const CTASection = () => {
   const { isModalOpen, setIsModalOpen, goToLogin } = useLoginGuard();
 
   return (
-    <section className="section-padding section-dark section-dark-grid relative" id="demo">
+    <section
+      className="section-padding relative overflow-hidden"
+      id="demo"
+      style={{
+        background:
+          "linear-gradient(rgb(218, 225, 233) 0%, rgb(233, 238, 247) 52%, rgb(217, 219, 225) 100%)",
+      }}
+    >
       {/* ── Particle Dots Layer ── */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         {PARTICLES.map((p) => (

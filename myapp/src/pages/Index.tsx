@@ -73,8 +73,8 @@ const Index = () => {
         <HeroSection />
         {/* <WhyChooseAsset72 /> */}
         <PlatformFeatures />
-        <HowItWorks />
         <UseCases />
+        <HowItWorks />
         <AILayer />
         <PlatformExperience />
         <WhyAsset72 />

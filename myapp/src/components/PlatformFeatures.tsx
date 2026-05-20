@@ -8,7 +8,7 @@ import { productRoutes } from "@/lib/product-routes";
 const features = [
   {
     icon: Search, floorLabel: "N° 01", category: "Acquisition",
-    title: "Deal", titleAccent: "Lens.",
+    title: "Deal", titleAccent: "Lens",
     desc: "A pre-underwriting decision tool. Quickly assess whether a property is worth pursuing — before you build a full model.",
     bullets: ["Rent vs market", "Occupancy indicators", "Lease visibility", "Risk identification"],
     m1L: "DECISION", m1V: "Pursue or pass", m2L: "INPUTS", m2V: "T12 · RR · OM",
@@ -16,7 +16,7 @@ const features = [
   },
   {
     icon: LineChart, floorLabel: "N° 02", category: "Asset Level",
-    title: "Property", titleAccent: "Analytics.",
+    title: "Property", titleAccent: "Analytics",
     desc: "Clear visibility into how each asset is actually performing — occupancy, NOI, and where rent is leaking against the market.",
     bullets: ["Occupancy & NOI tracking", "Rent vs market", "Risk alerts", "Cost control signals"],
     m1L: "COVERAGE", m1V: "Unit · Plan · Asset", m2L: "REFRESH", m2V: "Daily",
@@ -24,7 +24,7 @@ const features = [
   },
   {
     icon: Brain, floorLabel: "N° 03", category: "Portfolio Level",
-    title: "Portfolio", titleAccent: "Intelligence.",
+    title: "Portfolio", titleAccent: "Intelligence",
     desc: "Aggregated visibility across the book. Identify underperformance, prioritize the right actions, and improve NOI with conviction.",
     bullets: ["Aggregated portfolio view", "Underperformance signals", "Action prioritization", "Forward-looking risk"],
     m1L: "HORIZON", m1V: "T+90 / T+360", m2L: "SIGNAL", m2V: "Forward",
@@ -32,7 +32,7 @@ const features = [
   },
   {
     icon: Radar, floorLabel: "N° 04", category: "Capital Decision",
-    title: "IC", titleAccent: "Memo.",
+    title: "IC", titleAccent: "Memo",
     desc: "Turns insights into decision-ready IC reports. Performance, risks, opportunities, and recommended actions — structured, sourced, and ready to sign.",
     bullets: ["Auto-generated summaries", "Standardized structure", "Performance & risk", "Recommended actions"],
     m1L: "OUTPUT", m1V: "Memo · Deck", m2L: "CONFIDENCE", m2V: "IC-grade",
@@ -202,7 +202,7 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: side === "right" ? 30 : -30 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-[440px]"
+      className="max-w-[520px]"
     >
       <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", color: "#3fd6b5", fontSize: "13px", letterSpacing: "0.18em", marginBottom: "16px" }}>
         {feat.floorLabel} — {feat.category}
@@ -213,7 +213,7 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontStyle: "italic", fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#3fd6b5", marginBottom: "18px" }}>
         {feat.titleAccent}
       </h2>
-      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "400px", marginBottom: "22px" }}>
+      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "500px", marginBottom: "22px" }}>
         {feat.desc}
       </p>
       <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 22px", marginBottom: "22px", padding: 0 }}>
@@ -277,7 +277,7 @@ const PlatformFeatures = () => {
       style={{ height: "420vh", background: "#1a2535", position: "relative" }}
     >
       <div className="sticky top-0 h-screen overflow-hidden"
-        style={{ background: "radial-gradient(ellipse 80% 60% at 50% 110%, #1e2d40 0%, #1a2535 40%, #1c2a3a 100%)" }}
+        style={{ background: "#0F213D" }}
       >
         {/* ── STAMP TL ── */}
         <div className="absolute z-20 pointer-events-none" style={{ top: "120px", left: "40px" }}>
