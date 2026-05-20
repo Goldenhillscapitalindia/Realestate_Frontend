@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 import { ArrowRight, Play, Building2, Radar, Briefcase } from "lucide-react";
 import { Button } from "./ui/button";
 import RequestDemoForm from "./RequestDemoForm";
@@ -37,7 +37,7 @@ const stats = [
 
 const trustLogos = ["CBRE", "JLL", "CUSHMAN & WAKEFIELD", "NEWMARK", "TRANSWESTERN"];
 
-/* ── Glass Card ── */
+/* ── Glass Card (entry animation) ── */
 const GlassCard = ({ children, className = "", delay = 0 }: {
   children: React.ReactNode; className?: string; delay?: number;
 }) => (
@@ -50,6 +50,45 @@ const GlassCard = ({ children, className = "", delay = 0 }: {
     {children}
   </motion.div>
 );
+
+/* ── Orbit Card (no entry animation, same glass style) ── */
+const OrbitCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
+  <div className={`rounded-2xl border border-white/50 bg-white/55 backdrop-blur-2xl shadow-[0_8px_40px_rgba(15,23,42,0.1)] ${className}`}>
+    {children}
+  </div>
+);
+
+/* ── Orbit Wrapper: smooth circular motion via useAnimationFrame ── */
+const OrbitWrapper = ({ children, radius, startAngle, duration = 22, fadeDelay = 0.7 }: {
+  children: React.ReactNode;
+  radius: number;
+  startAngle: number;
+  duration?: number;
+  fadeDelay?: number;
+}) => {
+  const x = useMotionValue(radius * Math.sin(startAngle));
+  const y = useMotionValue(-radius * Math.cos(startAngle));
+
+  useAnimationFrame((t) => {
+    const angle = startAngle + (t / (duration * 1000)) * 2 * Math.PI;
+    x.set(radius * Math.sin(angle));
+    y.set(-radius * Math.cos(angle));
+  });
+
+  return (
+    <motion.div
+      className="absolute overflow-visible z-10"
+      style={{ left: "50%", top: "50%", width: 0, height: 0, x, y }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8, delay: fadeDelay }}
+    >
+      <div className="absolute -translate-x-1/2 -translate-y-1/2">
+        {children}
+      </div>
+    </motion.div>
+  );
+};
 
 /* ══════════════════════════════════════ */
 const HeroSection = () => {
@@ -181,7 +220,7 @@ const HeroSection = () => {
                     <div className="text-xl font-extrabold text-[#0f213d] font-display leading-none">
                       <StatNum target={s.value} suffix={s.suffix} />
                     </div>
-                    <div className="text-[10px] text-slate-400 font-medium mt-0.5">{s.label}</div>
+                    <div className="text-[10px] text-slate-500 font-medium mt-0.5">{s.label}</div>
                   </div>
                 </div>
               ))}
@@ -193,7 +232,7 @@ const HeroSection = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.95 }}
             >
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-400 mb-3">
+              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-3">
                 Trusted by Leading Real Estate Teams
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
@@ -204,96 +243,117 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* ── RIGHT: Glassmorphism Cards (floating over background image) ── */}
+          {/* ── RIGHT: Orbital Card Display ── */}
           <div className="relative hidden lg:block h-[70vh] min-h-[500px]">
+            <div className="absolute inset-0 flex items-center justify-center">
 
-            {/* Portfolio Overview */}
-            <GlassCard className="absolute top-[4%] right-[2%] w-[265px] p-4" delay={0.7}>
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold text-slate-700">Portfolio Overview</span>
-                <span className="text-[10px] text-slate-400">Q2 2024 ▾</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <div>
-                  <div className="text-[10px] text-slate-400 mb-0.5">Total Value</div>
-                  <div className="text-2xl font-extrabold text-[#0f213d] font-display">$2.48B</div>
-                  <div className="text-[10px] text-emerald-600 font-medium mt-0.5">↑ 8.6% vs Q1 2024</div>
-                </div>
-                <div className="relative w-16 h-16 flex-shrink-0">
-                  <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#1e3a5f" strokeWidth="3.5" strokeDasharray="47.5 40.5" strokeLinecap="round" />
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#64748b" strokeWidth="3.5" strokeDasharray="21 67" strokeDashoffset="-47.5" strokeLinecap="round" />
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="#94a3b8" strokeWidth="3.5" strokeDasharray="12 76" strokeDashoffset="-68.5" strokeLinecap="round" />
+              {/* Outer dashed orbit ring */}
+              <div className="absolute w-[316px] h-[316px] rounded-full border border-dashed border-slate-300/70 pointer-events-none" />
+              {/* Inner solid ring */}
+              <div className="absolute w-[316px] h-[316px] rounded-full border border-slate-200/60 pointer-events-none" />
+              {/* Center dot */}
+              <div className="absolute w-3 h-3 rounded-full bg-slate-200/80 border border-slate-300/60 pointer-events-none" />
+
+              {/* ── Orbit Card 1: Portfolio Overview (starts at top, 0°) ── */}
+              <OrbitWrapper radius={158} startAngle={0} duration={22} fadeDelay={0.7}>
+                <OrbitCard className="w-[210px] p-3.5">
+                  <div className="flex items-center justify-between mb-2.5">
+                    <span className="text-xs font-semibold text-slate-700">Portfolio Overview</span>
+                    <span className="text-[10px] text-slate-400">Q2 2024 ▾</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div>
+                      <div className="text-[10px] text-slate-400 mb-0.5">Total Value</div>
+                      <div className="text-xl font-extrabold text-[#0f213d] font-display">$2.48B</div>
+                      <div className="text-[10px] text-emerald-600 font-medium mt-0.5">↑ 8.6% vs Q1 2024</div>
+                    </div>
+                    <div className="relative w-12 h-12 flex-shrink-0">
+                      <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="#1e3a5f" strokeWidth="3.5" strokeDasharray="47.5 40.5" strokeLinecap="round" />
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="#64748b" strokeWidth="3.5" strokeDasharray="21 67" strokeDashoffset="-47.5" strokeLinecap="round" />
+                        <circle cx="18" cy="18" r="14" fill="none" stroke="#94a3b8" strokeWidth="3.5" strokeDasharray="12 76" strokeDashoffset="-68.5" strokeLinecap="round" />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-xs font-extrabold text-[#0f213d]">42</span>
+                        <span className="text-[7px] text-slate-400">Assets</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-2.5 text-[8px] text-slate-500">
+                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1e3a5f] mr-0.5" />Office 54%</span>
+                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#64748b] mr-0.5" />Ind. 24%</span>
+                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#94a3b8] mr-0.5" />Retail 14%</span>
+                  </div>
+                </OrbitCard>
+              </OrbitWrapper>
+
+              {/* ── Orbit Card 2: Occupancy Trend (starts at bottom-right, 120°) ── */}
+              <OrbitWrapper radius={158} startAngle={(2 * Math.PI) / 3} duration={22} fadeDelay={0.9}>
+                <OrbitCard className="w-[195px] p-3.5">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-semibold text-slate-700">Occupancy Trend</span>
+                    <span className="text-[10px] text-slate-400">12 mo ▾</span>
+                  </div>
+                  <div className="flex items-baseline gap-2 mb-2">
+                    <span className="text-2xl font-extrabold text-[#0f213d] font-display">93.7%</span>
+                    <span className="text-xs font-semibold text-emerald-600">↑ 2.1%</span>
+                  </div>
+                  <svg viewBox="0 0 160 35" className="w-full h-7" fill="none">
+                    <path d="M0,30 Q16,26 32,24 T64,18 T96,14 T128,10 T160,6" stroke="#1ebc9a" strokeWidth="2" fill="none" strokeLinecap="round" />
+                    <path d="M0,30 Q16,26 32,24 T64,18 T96,14 T128,10 T160,6 V35 H0 Z" fill="url(#sparkGrad2)" opacity="0.12" />
+                    <defs>
+                      <linearGradient id="sparkGrad2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#1ebc9a" />
+                        <stop offset="100%" stopColor="#1ebc9a" stopOpacity="0" />
+                      </linearGradient>
+                    </defs>
                   </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-sm font-extrabold text-[#0f213d]">42</span>
-                    <span className="text-[7px] text-slate-400">Assets</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-3 text-[9px] text-slate-500">
-                <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1e3a5f] mr-1" />Office 54%</span>
-                <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#64748b] mr-1" />Industrial 24%</span>
-                <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#94a3b8] mr-1" />Retail 14%</span>
-              </div>
-            </GlassCard>
+                </OrbitCard>
+              </OrbitWrapper>
 
-            {/* Occupancy Trend */}
-            <GlassCard className="absolute top-[40%] right-[-3%] w-[245px] p-4" delay={1.0}>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-700">Occupancy Trend</span>
-                <span className="text-[10px] text-slate-400">12 Months ▾</span>
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl font-extrabold text-[#0f213d] font-display">93.7%</span>
-                <span className="text-xs font-semibold text-emerald-600">↑ 2.1%</span>
-              </div>
-              <svg viewBox="0 0 200 40" className="w-full h-8" fill="none">
-                <path d="M0,35 Q20,30 40,28 T80,22 T120,18 T160,12 T200,8" stroke="#1ebc9a" strokeWidth="2" fill="none" strokeLinecap="round" />
-                <path d="M0,35 Q20,30 40,28 T80,22 T120,18 T160,12 T200,8 V40 H0 Z" fill="url(#sparkGrad)" opacity="0.15" />
-                <defs><linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#1ebc9a" /><stop offset="100%" stopColor="#1ebc9a" stopOpacity="0" /></linearGradient></defs>
-              </svg>
-            </GlassCard>
+              {/* ── Orbit Card 3: NOI Growth + Risk Score (starts at bottom-left, 240°) ── */}
+              <OrbitWrapper radius={158} startAngle={(4 * Math.PI) / 3} duration={22} fadeDelay={1.1}>
+                <OrbitCard className="w-[210px] p-3.5">
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <div className="text-[9px] text-slate-400 mb-1">NOI Growth <span className="text-[7px]">(LTM)</span></div>
+                      <div className="text-lg font-extrabold text-[#0f213d] font-display">$184.2M</div>
+                      <div className="text-[9px] text-emerald-600 font-medium">↑ 6.2%</div>
+                      <div className="mt-1.5 h-1 rounded-full bg-slate-100 overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: "72%" }} transition={{ duration: 1.5, delay: 1.8 }} className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
+                      </div>
+                    </div>
+                    <div className="w-px bg-slate-100" />
+                    <div className="flex-1">
+                      <div className="text-[9px] text-slate-400 mb-1">Risk Score</div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-lg font-extrabold text-[#0f213d] font-display">24</span>
+                        <span className="text-[9px] text-slate-400">/ 100</span>
+                      </div>
+                      <div className="text-[9px] text-emerald-600 font-semibold">Low Risk</div>
+                      <div className="mt-1.5 w-7 h-7 rounded-full border-2 border-emerald-400 flex items-center justify-center">
+                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4.5L3.5 7L9 1" stroke="#1ebc9a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                </OrbitCard>
+              </OrbitWrapper>
 
-            {/* NOI Growth + Risk Score */}
-            <GlassCard className="absolute bottom-[16%] right-[0%] w-[265px] p-3.5" delay={1.3}>
-              <div className="flex gap-3">
-                <div className="flex-1">
-                  <div className="text-[10px] text-slate-400 mb-1">NOI Growth <span className="text-[8px]">(LTM)</span></div>
-                  <div className="text-lg font-extrabold text-[#0f213d] font-display">$184.2M</div>
-                  <div className="text-[10px] text-emerald-600 font-medium">↑ 6.2%</div>
-                  <div className="mt-1.5 h-1 rounded-full bg-slate-100 overflow-hidden">
-                    <motion.div initial={{ width: 0 }} animate={{ width: "72%" }} transition={{ duration: 1.5, delay: 1.8 }} className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
-                  </div>
+              {/* Market Heat — static at bottom */}
+              <GlassCard className="absolute bottom-[3%] left-[3%] right-[3%] p-3.5" delay={1.6}>
+                <div className="text-xs font-semibold text-slate-700 mb-2">Market Heat</div>
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-500">
+                  <span className="font-medium text-slate-600">Top Markets</span>
+                  {[{ city: "Dallas", c: "#1ebc9a" }, { city: "Austin", c: "#1ebc9a" }, { city: "Nashville", c: "#60a5fa" }, { city: "Phoenix", c: "#60a5fa" }, { city: "Atlanta", c: "#fbbf24" }].map((m) => (
+                    <span key={m.city} className="flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.c }} />{m.city}
+                    </span>
+                  ))}
                 </div>
-                <div className="w-px bg-slate-100" />
-                <div className="flex-1">
-                  <div className="text-[10px] text-slate-400 mb-1">Risk Score</div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-lg font-extrabold text-[#0f213d] font-display">24</span>
-                    <span className="text-[10px] text-slate-400">/ 100</span>
-                  </div>
-                  <div className="text-[10px] text-emerald-600 font-semibold">Low Risk</div>
-                  <div className="mt-1.5 w-7 h-7 rounded-full border-2 border-emerald-400 flex items-center justify-center">
-                    <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4.5L3.5 7L9 1" stroke="#1ebc9a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </div>
-                </div>
-              </div>
-            </GlassCard>
+              </GlassCard>
 
-            {/* Market Heat */}
-            <GlassCard className="absolute bottom-[2%] left-[5%] right-[5%] p-3.5" delay={1.6}>
-              <div className="text-xs font-semibold text-slate-700 mb-2">Market Heat</div>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-500">
-                <span className="font-medium text-slate-600">Top Markets</span>
-                {[{ city: "Dallas", c: "#1ebc9a" }, { city: "Austin", c: "#1ebc9a" }, { city: "Nashville", c: "#60a5fa" }, { city: "Phoenix", c: "#60a5fa" }, { city: "Atlanta", c: "#fbbf24" }].map((m) => (
-                  <span key={m.city} className="flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.c }} />{m.city}
-                  </span>
-                ))}
-              </div>
-            </GlassCard>
+            </div>
           </div>
         </div>
       </div>
