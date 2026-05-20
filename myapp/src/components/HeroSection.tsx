@@ -60,11 +60,11 @@ const HeroSection = () => {
 
       {/* ══ FULL BACKGROUND IMAGE ══ */}
       <div className="absolute inset-0">
-        <img
+        {/* <img
           src="/hero-building.png"
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center"
-        />
+        /> */}
         {/* Left-to-right gradient overlay for text readability */}
         <div
           className="absolute inset-0"

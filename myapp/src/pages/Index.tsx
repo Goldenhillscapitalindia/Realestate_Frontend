@@ -71,7 +71,7 @@ const Index = () => {
 
       <div>
         <HeroSection />
-        <WhyChooseAsset72 />
+        {/* <WhyChooseAsset72 /> */}
         <PlatformFeatures />
         <HowItWorks />
         <UseCases />
