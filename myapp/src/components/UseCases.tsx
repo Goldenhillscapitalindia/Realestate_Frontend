@@ -66,9 +66,6 @@ const UseCases = () => {
         ))}
       </div>
 
-      {/* Ambient orbs */}
-      <div className="absolute right-[6%] top-16 h-56 w-56 rounded-full bg-[#13c9b4]/10 blur-3xl" />
-
       <div className="relative z-10 max-w-7xl mx-auto">
         <ScrollReveal variant="up">
           <div className="mb-16 text-center">

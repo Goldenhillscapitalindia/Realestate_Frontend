@@ -3,6 +3,7 @@ import { motion, useMotionValue, useAnimationFrame } from "framer-motion";
 import { ArrowRight, Play, Building2, Radar, Briefcase } from "lucide-react";
 import { Button } from "./ui/button";
 import RequestDemoForm from "./RequestDemoForm";
+import heroSkyline from "../assets/skyline-sky-replaced.jpg";
 
 /* ── Slow stat counter ── */
 const StatNum = ({ target, suffix }: { target: number; suffix: string }) => {
@@ -99,22 +100,21 @@ const HeroSection = () => {
 
       {/* ══ FULL BACKGROUND IMAGE ══ */}
       <div className="absolute inset-0">
-        {/* <img
-          src="/hero-building.png"
+        <img
+          src={heroSkyline}
           alt=""
           className="absolute inset-0 w-full h-full object-cover object-center"
-        /> */}
+        />
         {/* Left-to-right gradient overlay for text readability */}
         <div
           className="absolute inset-0"
           style={{
             background: `linear-gradient(
               to right,
-              rgba(244,248,252,0.97) 0%,
-              rgba(244,248,252,0.92) 25%,
-              rgba(244,248,252,0.75) 42%,
-              rgba(244,248,252,0.35) 58%,
-              rgba(244,248,252,0.08) 75%,
+              rgba(244,248,252,0.55) 0%,
+              rgba(244,248,252,0.38) 22%,
+              rgba(244,248,252,0.18) 40%,
+              rgba(244,248,252,0.06) 58%,
               transparent 100%
             )`,
           }}
@@ -122,12 +122,12 @@ const HeroSection = () => {
         {/* Top gradient for navbar area */}
         <div
           className="absolute inset-x-0 top-0 h-28"
-          style={{ background: "linear-gradient(to bottom, rgba(244,248,252,0.9), transparent)" }}
+          style={{ background: "linear-gradient(to bottom, rgba(244,248,252,0.35), transparent)" }}
         />
         {/* Bottom subtle fade */}
         <div
           className="absolute inset-x-0 bottom-0 h-20"
-          style={{ background: "linear-gradient(to top, rgba(244,248,252,0.8), transparent)" }}
+          style={{ background: "linear-gradient(to top, rgba(244,248,252,0.20), transparent)" }}
         />
         {/* Subtle grid pattern over everything */}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.012)_1px,transparent_1px),linear-gradient(rgba(15,23,42,0.012)_1px,transparent_1px)] bg-[size:44px_44px]" />
@@ -174,7 +174,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
-              className="text-[0.95rem] md:text-base leading-relaxed text-slate-500 max-w-[420px] mb-7"
+              className="text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-7"
             >
               Analyze assets, surface risk, and present investment-grade
               property insights with clarity. Built for acquisitions,
@@ -231,13 +231,14 @@ const HeroSection = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.95 }}
+              className="w-fit max-w-full rounded-2xl border border-white bg-[#ffffff80] px-5 py-4 backdrop-blur-md shadow-[0_2px_12px_rgba(15,23,42,0.05)]"
             >
-              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-500 mb-3">
+              <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-slate-600 mb-3">
                 Trusted by Leading Real Estate Teams
               </p>
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 {trustLogos.map((name) => (
-                  <span key={name} className="text-[13px] font-extrabold text-slate-300 tracking-wide hover:text-slate-500 transition-colors duration-300 cursor-default">{name}</span>
+                  <span key={name} className="text-[13px] font-extrabold text-slate-400 tracking-wide hover:text-slate-600 transition-colors duration-300 cursor-default">{name}</span>
                 ))}
               </div>
             </motion.div>
