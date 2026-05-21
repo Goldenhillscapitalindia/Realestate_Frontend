@@ -135,7 +135,7 @@ const HeroSection = () => {
 
       {/* ══ CONTENT ══ */}
       <div className="relative z-10 mx-auto max-w-[1320px] px-6 pt-28 lg:pt-32 pb-8 min-h-screen flex items-center">
-        <div className="grid lg:grid-cols-2 gap-8 w-full items-center">
+        <div className="grid lg:grid-cols-2 gap-8 w-full items-center -mt-10">
 
           {/* ── LEFT: Text Content ── */}
           <div className="lg:pr-4">
@@ -227,7 +227,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Trust logos */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.95 }}
@@ -241,7 +241,7 @@ const HeroSection = () => {
                   <span key={name} className="text-[13px] font-extrabold text-slate-400 tracking-wide hover:text-slate-600 transition-colors duration-300 cursor-default">{name}</span>
                 ))}
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
 
           {/* ── RIGHT: Orbital Card Display ── */}
