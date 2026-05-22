@@ -4,29 +4,29 @@ import { ScrollReveal } from "./ScrollReveal";
 const cases = [
   {
     icon: TrendingUp,
-    title: "Private Equity Funds",
-    description: "Monitor portfolio exposure + acquisition upside in one view.",
+    title: "Acquisition Intelligence",
+    description: "Screen opportunities, identify pricing dislocations, and prioritize underwriting workflows.",
     stat: "42+",
     statLabel: "Active Funds",
   },
   {
     icon: Shield,
-    title: "Institutional Owners",
-    description: "Ensure revenue resilience and operational consistency.",
+    title: "Asset Operations",
+    description: "Monitor occupancy behavior, operational drift, and revenue performance across assets.",
     stat: "3,200+",
     statLabel: "Units Tracked",
   },
   {
     icon: BarChart3,
-    title: "Asset Managers",
-    description: "Prioritize risk, optimize lease strategy, and improve performance.",
+    title: "Portfolio Oversight",
+    description: "Aggregate asset-level intelligence into portfolio-wide risk and allocation visibility.",
     stat: "$2.4B",
     statLabel: "AUM Managed",
   },
   {
     icon: Landmark,
-    title: "Developers & Capital Markets",
-    description: "Align market timing with deal execution.",
+    title: "Investment Committee Workflows",
+    description: "Transform fragmented reporting into standardized, decision-ready investment narratives.",
     stat: "18+",
     statLabel: "Markets Covered",
   },
@@ -73,7 +73,7 @@ const UseCases = () => {
             <div className="flex items-center justify-center gap-4 mb-4">
               <div className="h-px w-12 bg-gradient-to-r from-transparent to-[#20d6bd]/50" />
               <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#20d6bd]">
-                Real Use Cases
+                INVESTMENT WORKFLOWS
               </p>
               <div className="h-px w-12 bg-gradient-to-l from-transparent to-[#20d6bd]/50" />
             </div>

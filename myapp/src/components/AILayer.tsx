@@ -1,14 +1,14 @@
-import { AlertTriangle, Heart, RefreshCw, TrendingDown, Wind } from "lucide-react";
+import { Activity, GitBranch, Layers, Target } from "lucide-react";
 import { ScrollReveal } from "./ScrollReveal";
 import { useState, useEffect } from "react";
 import { motion, px } from "framer-motion";
 
 const capabilities = [
-  { icon: RefreshCw,     label: "Rollover risk visibility",       detail: "Track lease expirations before they impact NOI" },
-  { icon: AlertTriangle, label: "Revenue variance detection",     detail: "Spot deviations between forecast and actuals" },
-  { icon: TrendingDown,  label: "Expense outlier identification", detail: "Flag above-market operating costs instantly" },
-  { icon: Wind,          label: "Competitive rent positioning",   detail: "Benchmark rents against real-time market data" },
-  { icon: Heart,         label: "AI Guided Recommendations",      detail: "Actionable insights delivered to your workflow" },
+  { icon: Activity,   label: "Structured for Continuous Investment Intelligence", detail: "Continuous Signal Detection, Surface operational, leasing, and portfolio-level deterioration before it impacts returns." },
+  { icon: Layers,     label: "Unified Investment Intelligence",                  detail: "Connect acquisition, asset management, portfolio oversight, and IC workflows within one intelligence layer." },
+  { icon: GitBranch,  label: "Institutional Workflow Architecture",              detail: "Designed around how investment, asset management, and operating teams actually make decisions" },
+  { icon: Target,     label: "Decision-Oriented Outputs",                        detail: "Deliver structured recommendations, risk visibility, and investment-ready narratives — not fragmented dashboards." },
+  // { icon: Heart,         label: "AI Guided Recommendations",      detail: "Actionable insights delivered to your workflow" },
 ];
 
 const CARD_W  = 360;
@@ -82,12 +82,13 @@ const AILayer = () => {
             </div>
 
             <h2 className="mb-5 font-display text-[2rem] font-extrabold text-[#0f1d2f] tracking-tight md:text-[2.35rem] lg:text-[2.8rem]">
-              Real Estate–Specific Intelligence
+              Real Estate Intelligence Infrastructure
             </h2>
 
             <p className="text-[15px] leading-7 text-slate-500 max-w-2xl mx-auto">
-              Asset72 analyzes structured financial data to surface patterns in lease exposure,
-              revenue alignment, and operating efficiency — Insights that manual spreadsheets simply miss
+              <span>Transform fragmented rent rolls, T12s, and operational reporting into</span>
+              <br />
+              <span>continuous institutional intelligence.</span>
             </p>
           </div>
         </ScrollReveal>
