@@ -7,44 +7,44 @@ import { productRoutes } from "@/lib/product-routes";
 
 const features = [
   {
-    icon: Search, floorLabel: "N° 01", category: "Acquisition",
+    icon: Search, floorLabel: "N° 01", category: "Early-stage Acquisition Screening",
     title: "Deal", titleAccent: "Lens",
-    desc: "A pre-underwriting decision tool. Quickly assess whether a property is worth pursuing — before you build a full model.",
-    bullets: ["Rent vs market", "Occupancy indicators", "Lease visibility", "Risk identification"],
-    m1L: "DECISION", m1V: "Pursue or pass", m2L: "INPUTS", m2V: "T12 · RR · OM",
+    desc: "Pre-underwriting intelligence designed to identify viable opportunities before full diligence begins.",
+    bullets: ["Lease rollover exposure", "In-place vs market rents", "Occupancy volatility", "Revenue concentration", "Expense pressure", "Market positioning"],
+    m1L: "OUTPUT", m1V: "Investment viability assessment", m2L: "INGESTED DATA", m2V: "T12 · Rent Roll · Offering Memo · Market Data", m3L: "DECISION SUPPORT", m3V: "Prioritize · Underwrite · Decline",
     route: productRoutes.dealLens,
   },
   {
-    icon: LineChart, floorLabel: "N° 02", category: "Asset Level",
-    title: "Property", titleAccent: "Analytics",
-    desc: "Clear visibility into how each asset is actually performing — occupancy, NOI, and where rent is leaking against the market.",
-    bullets: ["Occupancy & NOI tracking", "Rent vs market", "Risk alerts", "Cost control signals"],
-    m1L: "COVERAGE", m1V: "Unit · Plan · Asset", m2L: "REFRESH", m2V: "Daily",
+    icon: LineChart, floorLabel: "N° 02", category: "Asset Level Operational Intelligence",
+    title: "Property", titleAccent: "Intelligence",
+    desc: "Transform fragmented property reporting into continuous operational visibility.",
+    bullets: ["Leasing performance", "Revenue quality", "Expense drift", "Occupancy trends","Rent positioning","Asset risk indicators"],
+    m1L: "DATA GRANULARITY", m1V: "Unit · Lease · Asset", m2L: "LIVE DATA STATUS", m2V: "Updated daily · Change from refresh ", m3L: "", m3V: "",
     route: productRoutes.propertyIntelligence,
   },
   {
-    icon: Brain, floorLabel: "N° 03", category: "Portfolio Level",
+    icon: Brain, floorLabel: "N° 03", category: "Cross Asset Portfolio Monitoring",
     title: "Portfolio", titleAccent: "Intelligence",
-    desc: "Aggregated visibility across the book. Identify underperformance, prioritize the right actions, and improve NOI with conviction.",
-    bullets: ["Aggregated portfolio view", "Underperformance signals", "Action prioritization", "Forward-looking risk"],
-    m1L: "HORIZON", m1V: "T+90 / T+360", m2L: "SIGNAL", m2V: "Forward",
+    desc: "Designed for portfolio managers overseeing asset performance, operational exposure, and forward-looking portfolio risk.",
+    bullets: ["Concentration exposure", "Revenue deterioration", "Asset-level volatility", "Market underperformance", "Operational drift","Forward-looking risk "],
+    m1L: "ANALYSIS HORIZON", m1V: "Near-Term → Long-Term", m2L: "OUTPUT", m2V: "Predictive Portfolio Signals", m3L: "", m3V: "",
     route: productRoutes.portfolioIntelligence,
   },
   {
-    icon: Radar, floorLabel: "N° 04", category: "Capital Decision",
-    title: "IC", titleAccent: "Memo",
-    desc: "Turns insights into decision-ready IC reports. Performance, risks, opportunities, and recommended actions — structured, sourced, and ready to sign.",
-    bullets: ["Auto-generated summaries", "Standardized structure", "Performance & risk", "Recommended actions"],
-    m1L: "OUTPUT", m1V: "Memo · Deck", m2L: "CONFIDENCE", m2V: "IC-grade",
+    icon: Radar, floorLabel: "N° 04", category: "Committee Ready Investment Narratives",
+    title: "IC", titleAccent: "Intelligence",
+    desc: "Designed to structure institutional investment decisions through standardized, intelligence-backed committee workflows.",
+    bullets: ["Investment rationale", "Risk attribution", "Performance synthesis", "Capital recommendations","Portfolio exposure context","Strategic action pathways"],
+    m1L: "OUTPUT FORMAT", m1V: "Investment Memo · Committee Deck", m2L: "DECISION STANDARD", m2V: "Institutional-Grade · Built Around Institutional Investment Workflows", m3L: "", m3V: "",
     route: productRoutes.aiRentIntelligence,
   },
 ];
 
 const TOTAL = features.length;
-const NAV   = ["DEAL LENS", "PROPERTY ANALYTICS", "PORTFOLIO INTELLIGENCE", "IC MEMO"];
+const NAV   = ["DEAL LENS", "PROPERTY INTELLIGENCE", "PORTFOLIO INTELLIGENCE", "IC INTELLIGENCE"];
 
 const contentSide = (f: number) => (f % 2 === 0 ? "right" : "left");
-const buildingX   = (f: number) => (f % 2 === 0 ? -200 : 200);
+const buildingX   = (f: number) => (f % 2 === 0 ? -120 : 120);
 
 type LightColor = "warm" | "warm2" | "teal";
 type Light = { l: string; t: string; c: LightColor };
@@ -196,6 +196,7 @@ function Floor({ fi, activeFloor }: { fi: number; activeFloor: number }) {
 
 /* ─── ContentPanel (unchanged) ─── */
 function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" | "right" }) {
+  const isDealLens = feat.title === "Deal";
   return (
     <motion.div
       initial={{ opacity: 0, x: side === "right" ? 60 : -60 }}
@@ -204,16 +205,29 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       className="max-w-[520px]"
     >
-      <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", color: "#3fd6b5", fontSize: "13px", letterSpacing: "0.18em", marginBottom: "16px" }}>
+      <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", color: "#3fd6b5", fontSize: "13px", letterSpacing: "0.18em", marginBottom: "16px", whiteSpace: "nowrap" }}>
         {feat.floorLabel} — {feat.category}
       </p>
-      <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7", marginBottom: "0px" }}>
-        {feat.title}
-      </h2>
-      <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontStyle: "italic", fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#3fd6b5", marginBottom: "18px" }}>
-        {feat.titleAccent}
-      </h2>
-      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "500px", marginBottom: "22px" }}>
+      {isDealLens ? (
+        <div style={{ display: "flex", alignItems: "baseline", gap: "14px", marginBottom: "16px" }}>
+          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7", margin: 0 }}>
+            {feat.title}
+          </h2>
+          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontStyle: "italic", fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#3fd6b5", margin: 0 }}>
+            {feat.titleAccent}
+          </h2>
+        </div>
+      ) : (
+        <>
+          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7", marginBottom: "0px" }}>
+            {feat.title}
+          </h2>
+          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontStyle: "italic", fontSize: "clamp(34px, 3.8vw, 56px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#3fd6b5", marginBottom: "16px" }}>
+            {feat.titleAccent}
+          </h2>
+        </>
+      )}
+      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: isDealLens ? "100%" : "500px", marginBottom: "22px", whiteSpace: "pre-line" }}>
         {feat.desc}
       </p>
       <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 22px", marginBottom: "22px", padding: 0 }}>
@@ -224,11 +238,18 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
           </li>
         ))}
       </ul>
-      <div style={{ display: "flex", gap: "24px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px", marginTop: "18px" }}>
-        {[{ l: feat.m1L, v: feat.m1V }, { l: feat.m2L, v: feat.m2V }].map(({ l, v }) => (
-          <div key={l}>
+      <div style={{ display: "flex", gap: "28px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px", marginTop: "18px" }}>
+        {[{ l: feat.m1L, v: feat.m1V }, { l: feat.m2L, v: feat.m2V }, ...(feat.m3L ? [{ l: feat.m3L, v: feat.m3V }] : [])].map(({ l, v }) => (
+          <div key={l} style={{ flexShrink: 0 }}>
             <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "4px" }}>{l}</div>
-            <div style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontSize: "20px", fontWeight: 300, fontStyle: "italic" }}>{v}</div>
+            <div style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontSize: "13px", fontWeight: 300, fontStyle: "italic", lineHeight: 1.6 }}>
+              {v.includes(" · ") ? v.split(" · ").map((item, idx) => (
+                <div key={idx} style={{ display: "flex", alignItems: "baseline", gap: "3px", whiteSpace: "nowrap" }}>
+                  <span style={{ flexShrink: 0 }}>·</span>
+                  <span>{item}</span>
+                </div>
+              )) : v}
+            </div>
           </div>
         ))}
       </div>
@@ -287,7 +308,7 @@ const PlatformFeatures = () => {
 
         {/* ── STAMP BR ── */}
         <div className="absolute z-20 pointer-events-none text-right" style={{ bottom: "36px", right: "40px" }}>
-          <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase" }}>Scroll to assemble</div>
+          <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase" }}>Navigate the Stack</div>
           <span style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", fontSize: "15px", letterSpacing: "0.02em", display: "block", marginTop: "4px", fontWeight: 400 }}>{stampText}</span>
         </div>
 
@@ -326,7 +347,7 @@ const PlatformFeatures = () => {
         {/* ── MAIN LAYOUT ── */}
         <div className="absolute left-0 right-0 bottom-0 flex items-center justify-center" style={{ top: "clamp(240px, 30vh, 340px)", zIndex: 5 }}>
           <div className="relative flex items-center w-full"
-            style={{ maxWidth: "1400px", margin: "0 auto", paddingLeft: "196px", paddingRight: "196px", gap: "0" }}
+            style={{ maxWidth: "1400px", margin: "0 auto", paddingLeft: "196px", paddingRight: "260px", gap: "0" }}
           >
             {/* LEFT PANEL */}
             <div className="hidden lg:flex flex-1 justify-end" style={{ paddingRight: "32px" }}>
@@ -395,7 +416,7 @@ const PlatformFeatures = () => {
                   transition={{ duration: 3, repeat: Infinity }}
                   style={{ fontSize: "9px", letterSpacing: "0.3em", textTransform: "uppercase", fontFamily: "monospace", color: "rgba(255,255,255,0.30)" }}
                 >
-                  {"Scroll to Assemble"}
+                  {"Navigate the Stack"}
                 </motion.p>
                 <span style={{ color: "rgba(255,255,255,0.10)", fontSize: "9px" }}>·</span>
                 <p style={{ fontSize: "9px", fontFamily: "monospace", color: "rgba(30,188,154,0.50)" }}>
@@ -440,7 +461,7 @@ const PlatformFeatures = () => {
                 <h4 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "22px", color: "#FAFAF7" }}>
                   {activeFeat.title}{" "}<em style={{ fontStyle: "italic", color: "#3fd6b5" }}>{activeFeat.titleAccent}</em>
                 </h4>
-                <p style={{ fontSize: "13px", color: "rgba(250,250,247,0.45)", marginTop: "6px" }}>{activeFeat.desc}</p>
+                <p style={{ fontSize: "13px", color: "rgba(250,250,247,0.45)", marginTop: "6px", whiteSpace: "pre-line" }}>{activeFeat.desc}</p>
               </motion.div>
             )}
           </AnimatePresence>

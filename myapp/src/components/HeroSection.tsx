@@ -161,7 +161,7 @@ const HeroSection = () => {
               transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
               className="font-display font-extrabold text-[2.2rem] sm:text-[2.8rem] md:text-[3.2rem] lg:text-[3.6rem] leading-[1.08] tracking-[-0.025em] text-[#0f213d] mb-5"
             >
-              Portfolio Intelligence<br />
+              The Intelligence Layer<br />
               for{" "}
               <span style={{
                 background: "linear-gradient(135deg, #c49d55 0%, #d4a853 40%, #b8883d 100%)",
@@ -176,9 +176,15 @@ const HeroSection = () => {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-7"
             >
-              Analyze assets, surface risk, and present investment-grade
-              property insights with clarity. Built for acquisitions,
-              asset management, and portfolio strategy teams.
+              AI-powered property intelligence turns financial data into forward-looking decisions — protecting NOI, reducing risk, and unlocking portfolio-wide growth.
+            </motion.p>
+           <motion.p
+              initial={{ opacity: 0, x: -40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.45 }}
+              className="text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-5"
+            >
+              From acquisition underwriting to active asset management — in a single workflow
             </motion.p>
 
             {/* CTA Buttons */}
@@ -205,7 +211,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Stats */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.75 }}
@@ -224,7 +230,7 @@ const HeroSection = () => {
                   </div>
                 </div>
               ))}
-            </motion.div>
+            </motion.div> */}
 
             {/* Trust logos */}
             {/* <motion.div
