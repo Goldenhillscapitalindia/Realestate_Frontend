@@ -46,15 +46,15 @@ const GlassCard = ({ children, className = "", delay = 0 }: {
     initial={{ opacity: 0, x: 40, scale: 0.95 }}
     animate={{ opacity: 1, x: 0, scale: 1 }}
     transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-    className={`rounded-2xl border border-white/50 bg-white/55 backdrop-blur-2xl shadow-[0_8px_40px_rgba(15,23,42,0.1)] ${className}`}
+    className={`rounded-2xl border border-slate-300/60 bg-slate-100/90 backdrop-blur-2xl shadow-[0_8px_40px_rgba(15,23,42,0.12)] ${className}`}
   >
     {children}
   </motion.div>
 );
 
-/* ── Orbit Card (no entry animation, same glass style) ── */
+/* ── Orbit Card (grey background to match hero) ── */
 const OrbitCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => (
-  <div className={`rounded-2xl border border-white/50 bg-white/55 backdrop-blur-2xl shadow-[0_8px_40px_rgba(15,23,42,0.1)] ${className}`}>
+  <div className={`rounded-2xl border border-slate-300/60 bg-slate-100/90 backdrop-blur-2xl shadow-[0_8px_40px_rgba(15,23,42,0.12)] ${className}`}>
     {children}
   </div>
 );
@@ -206,7 +206,7 @@ const HeroSection = () => {
                 onClick={() => document.getElementById("platform")?.scrollIntoView({ behavior: "smooth" })}
                 className="rounded-xl border-slate-200 bg-white/70 backdrop-blur-sm px-7 py-3.5 text-slate-700 text-sm font-semibold hover:bg-white hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5"
               >
-                <Play className="mr-2 h-4 w-4" /> Explore Platform
+                <Play className="mr-2 h-4 w-4" /> See How It Works
               </Button>
             </motion.div>
 
@@ -261,101 +261,111 @@ const HeroSection = () => {
               {/* Center dot */}
               <div className="absolute w-3 h-3 rounded-full bg-slate-200/80 border border-slate-300/60 pointer-events-none" />
 
-              {/* ── Orbit Card 1: Portfolio Overview (starts at top, 0°) ── */}
+              {/* ── Orbit Card 1: Portfolio Scale + Occupied Units donut (top, 0°) ── */}
               <OrbitWrapper radius={158} startAngle={0} duration={22} fadeDelay={0.7}>
-                <OrbitCard className="w-[210px] p-3.5">
-                  <div className="flex items-center justify-between mb-2.5">
-                    <span className="text-xs font-semibold text-slate-700">Portfolio Overview</span>
-                    <span className="text-[10px] text-slate-400">Q2 2024 ▾</span>
+                <OrbitCard className="w-[215px] p-3.5">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-slate-700">Portfolio Scale</span>
+                    <span className="text-[9px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">LIVE</span>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div>
-                      <div className="text-[10px] text-slate-400 mb-0.5">Total Value</div>
-                      <div className="text-xl font-extrabold text-[#0f213d] font-display">$2.48B</div>
-                      <div className="text-[10px] text-emerald-600 font-medium mt-0.5">↑ 8.6% vs Q1 2024</div>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div>
+                        <div className="text-xl font-extrabold text-[#0f213d]">3</div>
+                        <div className="text-[10px] text-slate-500">Active Properties</div>
+                      </div>
+                      <div>
+                        <div className="text-xl font-extrabold text-[#0f213d]">328</div>
+                        <div className="text-[10px] text-slate-500">Total Units</div>
+                      </div>
                     </div>
-                    <div className="relative w-12 h-12 flex-shrink-0">
-                      <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="#e2e8f0" strokeWidth="3.5" />
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="#1e3a5f" strokeWidth="3.5" strokeDasharray="47.5 40.5" strokeLinecap="round" />
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="#64748b" strokeWidth="3.5" strokeDasharray="21 67" strokeDashoffset="-47.5" strokeLinecap="round" />
-                        <circle cx="18" cy="18" r="14" fill="none" stroke="#94a3b8" strokeWidth="3.5" strokeDasharray="12 76" strokeDashoffset="-68.5" strokeLinecap="round" />
+                    {/* Occupied units donut: 287/328 = 87.5% */}
+                    <div className="relative w-[58px] h-[58px] flex-shrink-0">
+                      <svg viewBox="0 0 58 58" className="w-full h-full -rotate-90">
+                        <circle cx="29" cy="29" r="23" fill="none" stroke="#e2e8f0" strokeWidth="7" />
+                        <circle cx="29" cy="29" r="23" fill="none" stroke="#0f172a" strokeWidth="7"
+                          strokeDasharray={`${0.875 * 144.5} ${144.5}`} strokeLinecap="round" />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-xs font-extrabold text-[#0f213d]">42</span>
-                        <span className="text-[7px] text-slate-400">Assets</span>
+                        <span className="text-[11px] font-extrabold text-[#0f213d]">287</span>
+                        <span className="text-[7px] text-slate-400 leading-none">OCC.</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex gap-2 mt-2.5 text-[8px] text-slate-500">
-                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#1e3a5f] mr-0.5" />Office 54%</span>
-                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#64748b] mr-0.5" />Ind. 24%</span>
-                    <span><span className="inline-block w-1.5 h-1.5 rounded-full bg-[#94a3b8] mr-0.5" />Retail 14%</span>
-                  </div>
+                  <div className="mt-2 text-[9px] text-slate-500">88% Occupancy · $9.57M GPR</div>
                 </OrbitCard>
               </OrbitWrapper>
 
-              {/* ── Orbit Card 2: Occupancy Trend (starts at bottom-right, 120°) ── */}
+              {/* ── Orbit Card 2: NOI Performance (bottom-right, 120°) ── */}
               <OrbitWrapper radius={158} startAngle={(2 * Math.PI) / 3} duration={22} fadeDelay={0.9}>
-                <OrbitCard className="w-[195px] p-3.5">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-slate-700">Occupancy Trend</span>
-                    <span className="text-[10px] text-slate-400">12 mo ▾</span>
-                  </div>
-                  <div className="flex items-baseline gap-2 mb-2">
-                    <span className="text-2xl font-extrabold text-[#0f213d] font-display">93.7%</span>
-                    <span className="text-xs font-semibold text-emerald-600">↑ 2.1%</span>
-                  </div>
-                  <svg viewBox="0 0 160 35" className="w-full h-7" fill="none">
-                    <path d="M0,30 Q16,26 32,24 T64,18 T96,14 T128,10 T160,6" stroke="#1ebc9a" strokeWidth="2" fill="none" strokeLinecap="round" />
-                    <path d="M0,30 Q16,26 32,24 T64,18 T96,14 T128,10 T160,6 V35 H0 Z" fill="url(#sparkGrad2)" opacity="0.12" />
-                    <defs>
-                      <linearGradient id="sparkGrad2" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#1ebc9a" />
-                        <stop offset="100%" stopColor="#1ebc9a" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </OrbitCard>
-              </OrbitWrapper>
-
-              {/* ── Orbit Card 3: NOI Growth + Risk Score (starts at bottom-left, 240°) ── */}
-              <OrbitWrapper radius={158} startAngle={(4 * Math.PI) / 3} duration={22} fadeDelay={1.1}>
                 <OrbitCard className="w-[210px] p-3.5">
+                  <div className="text-xs font-semibold text-slate-700 mb-2">NOI Performance</div>
                   <div className="flex gap-3">
                     <div className="flex-1">
-                      <div className="text-[9px] text-slate-400 mb-1">NOI Growth <span className="text-[7px]">(LTM)</span></div>
-                      <div className="text-lg font-extrabold text-[#0f213d] font-display">$184.2M</div>
-                      <div className="text-[9px] text-emerald-600 font-medium">↑ 6.2%</div>
-                      <div className="mt-1.5 h-1 rounded-full bg-slate-100 overflow-hidden">
-                        <motion.div initial={{ width: 0 }} animate={{ width: "72%" }} transition={{ duration: 1.5, delay: 1.8 }} className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400" />
+                      <div className="text-[9px] text-slate-400 mb-0.5">Net Operating Income</div>
+                      <div className="text-lg font-extrabold text-[#0f213d]">$5.76M</div>
+                      <div className="text-[9px] text-emerald-600 font-medium">↑ 68% YoY</div>
+                      <div className="mt-1.5 h-1.5 rounded-full bg-slate-200 overflow-hidden">
+                        <motion.div initial={{ width: 0 }} animate={{ width: "60%" }} transition={{ duration: 1.5, delay: 1.6 }}
+                          className="h-full rounded-full bg-emerald-500" />
                       </div>
                     </div>
-                    <div className="w-px bg-slate-100" />
+                    <div className="w-px bg-slate-200" />
                     <div className="flex-1">
-                      <div className="text-[9px] text-slate-400 mb-1">Risk Score</div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-lg font-extrabold text-[#0f213d] font-display">24</span>
-                        <span className="text-[9px] text-slate-400">/ 100</span>
-                      </div>
-                      <div className="text-[9px] text-emerald-600 font-semibold">Low Risk</div>
-                      <div className="mt-1.5 w-7 h-7 rounded-full border-2 border-emerald-400 flex items-center justify-center">
-                        <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4.5L3.5 7L9 1" stroke="#1ebc9a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      </div>
+                      <div className="text-[9px] text-slate-400 mb-0.5">NOI Margin</div>
+                      <div className="text-lg font-extrabold text-[#0f213d]">60.2%</div>
+                      <div className="text-[9px] text-emerald-600 font-medium">Healthy</div>
+                      <div className="mt-1.5 text-[9px] text-slate-400">Exp. Ratio</div>
+                      <div className="text-[11px] font-bold text-slate-700">43.3%</div>
                     </div>
                   </div>
                 </OrbitCard>
               </OrbitWrapper>
 
-              {/* Market Heat — static at bottom */}
-              <GlassCard className="absolute bottom-[3%] left-[3%] right-[3%] p-3.5" delay={1.6}>
-                <div className="text-xs font-semibold text-slate-700 mb-2">Market Heat</div>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px] text-slate-500">
-                  <span className="font-medium text-slate-600">Top Markets</span>
-                  {[{ city: "Dallas", c: "#1ebc9a" }, { city: "Austin", c: "#1ebc9a" }, { city: "Nashville", c: "#60a5fa" }, { city: "Phoenix", c: "#60a5fa" }, { city: "Atlanta", c: "#fbbf24" }].map((m) => (
-                    <span key={m.city} className="flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: m.c }} />{m.city}
-                    </span>
+              {/* ── Orbit Card 3: Deal Scorecard (bottom-left, 240°) ── */}
+              <OrbitWrapper radius={158} startAngle={(4 * Math.PI) / 3} duration={22} fadeDelay={1.1}>
+                <OrbitCard className="w-[210px] p-3.5">
+                  <div className="text-xs font-semibold text-slate-700 mb-2.5">Deal Scorecard</div>
+                  {[
+                    { label: "Market Position", score: 72, pct: 72, color: "#f59e0b" },
+                    { label: "Cash Flow Stability", score: 67, pct: 67, color: "#f59e0b" },
+                    { label: "Value-Add Potential", score: 12, pct: 12, color: "#ef4444" },
+                    { label: "Risk Level", score: 28, pct: 28, color: "#f59e0b" },
+                  ].map(({ label, score, pct, color }) => (
+                    <div key={label} className="mb-1.5">
+                      <div className="flex justify-between text-[9px] mb-0.5">
+                        <span className="text-slate-500">{label}</span>
+                        <span className="font-semibold text-slate-700">{score}</span>
+                      </div>
+                      <div className="h-1 rounded-full bg-slate-200">
+                        <div className="h-full rounded-full" style={{ width: `${pct}%`, background: color }} />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="mt-2 pt-2 border-t border-slate-200 flex justify-between items-center">
+                    <span className="text-[9px] font-semibold text-slate-600">Overall Deal Score</span>
+                    <span className="text-sm font-extrabold text-[#0f213d]">56</span>
+                  </div>
+                </OrbitCard>
+              </OrbitWrapper>
+
+              {/* ── Expense Composition — static bottom strip ── */}
+              <GlassCard className="absolute bottom-[-4%] left-[3%] right-[3%] p-3.5" delay={1.6}>
+                <div className="text-xs font-semibold text-slate-700 mb-2">Expense Composition</div>
+                <div className="flex gap-2">
+                  {[
+                    { name: "Payroll", pct: 24, color: "#6366f1" },
+                    { name: "Taxes", pct: 22, color: "#94a3b8" },
+                    { name: "Utilities", pct: 17, color: "#f59e0b" },
+                    { name: "Maintenance", pct: 10, color: "#ec4899" },
+                    { name: "Mgmt Fees", pct: 8, color: "#0ea5e9" },
+                    { name: "Other", pct: 19, color: "#d1d5db" },
+                  ].map(({ name, pct, color }) => (
+                    <div key={name} className="flex-1 min-w-0">
+                      <div className="h-1.5 rounded-full mb-1" style={{ background: color }} />
+                      <div className="text-[8px] text-slate-500 truncate">{name}</div>
+                      <div className="text-[9px] font-semibold text-slate-700">{pct}%</div>
+                    </div>
                   ))}
                 </div>
               </GlassCard>
