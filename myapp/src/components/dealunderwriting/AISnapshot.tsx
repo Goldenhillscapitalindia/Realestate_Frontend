@@ -10,7 +10,7 @@ const signalStyles: Record<string, string> = {
 
 export function AISnapshot({ deal }: { deal: Deal }) {
   return (
-    <section className="mb-6 rounded-2xl bg-[#2f568f] p-6 text-white shadow-[0_20px_50px_rgba(13,27,79,0.18)]">
+    <section className="pdf-ai-snapshot mb-6 rounded-2xl bg-[#2f568f] p-6 text-white shadow-[0_20px_50px_rgba(13,27,79,0.18)]">
       <div className="mb-5 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.16em] text-[#d7e5ff]">
         <Brain className="h-4 w-4" />
         <span>AI Acquisition Snapshot</span>
@@ -20,19 +20,19 @@ export function AISnapshot({ deal }: { deal: Deal }) {
         <div className="flex items-center gap-4">
           <TrendingUp className="h-9 w-9 text-[#bcd4ff]" />
           <div>
-            <p className="text-md text-[#d7e5ff]">Recommendation</p>
+            <p className="pdf-ai-label text-md text-[#d7e5ff]">Recommendation</p>
             <span
-              className={`mt-2 inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-4 text-sm font-semibold leading-none ${
+              className={`pdf-signal-pill mt-2 inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-4 text-sm font-semibold leading-none ${
                 signalStyles[deal.signal]
               }`}
             >
-              {deal.signal}
+              <span className="pdf-signal-pill-text">{deal.signal}</span>
             </span>
           </div>
         </div>
 
         <div className="md:pl-9">
-          <p className="text-md text-[#d7e5ff]">Investment Thesis</p>
+          <p className="pdf-ai-label text-md text-[#d7e5ff]">Investment Thesis</p>
           <p className="mt-2 text-base leading-7 text-white/95">{deal.thesis}</p>
         </div>
       </div>

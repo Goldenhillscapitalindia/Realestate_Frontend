@@ -223,6 +223,36 @@ body:has(.home-theme-dark) {
     top: -9px;
   }
 
+  .pdf-page-shell .pdf-ai-snapshot .pdf-ai-label {
+    position: relative;
+    top: -2px;
+  }
+
+  .pdf-page-shell .pdf-ai-snapshot .pdf-signal-pill {
+    align-items: center;
+    line-height: 1;
+  }
+
+  .pdf-page-shell .pdf-ai-snapshot .pdf-signal-pill-text {
+    position: relative;
+    top: -4px;
+  }
+
+  .pdf-page-shell .pdf-deal-movers .pdf-mover-label,
+  .pdf-page-shell .pdf-deal-movers .pdf-mover-caption,
+  .pdf-page-shell .pdf-deal-movers .pdf-mover-total-label {
+    position: relative;
+    top: -3px;
+  }
+
+  .pdf-page-shell .pdf-deal-movers .pdf-mover-value,
+  .pdf-page-shell .pdf-deal-movers .pdf-mover-total-value {
+    display: block;
+    line-height: 1;
+    position: relative;
+    top: -3px;
+  }
+
   .section-padding {
     @apply px-6 py-16 md:px-8 lg:py-24;
   }
