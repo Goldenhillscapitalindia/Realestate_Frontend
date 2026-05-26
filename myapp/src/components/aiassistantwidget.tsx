@@ -136,7 +136,7 @@ const fallbackSuggestedQuestionsByModule: Record<AssistantModule | "general_asse
   ],
   ic_memo: [
     "Generate acquisition summary",
-    "Create IC memo",
+    "Create IC Intelligence",
     "Summarize investment thesis",
   ],
   deal_lens: [

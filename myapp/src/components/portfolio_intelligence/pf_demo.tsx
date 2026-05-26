@@ -106,8 +106,8 @@ const PfDemo: React.FC = () => {
     if (activeTab === "IC Memo") {
       return {
         module: "ic_memo",
-        title: "IC Memo AI Analyst",
-        contextLabel: "Investment Committee Memo",
+        title: "IC Intelligence AI Analyst",
+        contextLabel: "Investment Committee Intelligence",
       };
     }
 
@@ -361,7 +361,7 @@ const PfDemo: React.FC = () => {
                   }`}
               >
                 <Landmark className="h-4 w-4" />
-                <span className="flex-1">IC Memo</span>
+                <span className="flex-1">IC Intelligence</span>
               </button>
               
             </nav>
