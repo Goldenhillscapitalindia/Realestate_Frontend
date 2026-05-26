@@ -73,6 +73,7 @@ function snapshotCanvases(container: HTMLElement): Map<number, string> {
 
   canvases.forEach((canvas, index) => {
     try {
+      canvas.dataset.pdfCanvasIndex = String(index);
       const dataUrl = canvas.toDataURL("image/png");
       // A blank canvas produces a specific small base64 — skip those
       if (dataUrl && dataUrl.length > 200) {
@@ -102,10 +103,11 @@ function injectCanvasSnapshots(
   const clonedCanvases = Array.from(clonedContainer.querySelectorAll("canvas"));
 
   clonedCanvases.forEach((clonedCanvas, index) => {
-    const dataUrl = snapshots.get(index);
+    const sourceIndex = Number(clonedCanvas.dataset.pdfCanvasIndex ?? index);
+    const dataUrl = snapshots.get(sourceIndex);
     if (!dataUrl) return;
 
-    const originalCanvas = originalCanvases[index];
+    const originalCanvas = originalCanvases[sourceIndex];
     const img = document.createElement("img");
     img.src = dataUrl;
 
@@ -119,6 +121,37 @@ function injectCanvasSnapshots(
     img.height = h;
 
     clonedCanvas.parentNode?.replaceChild(img, clonedCanvas);
+  });
+}
+
+function cloneWithPdfSplits(
+  element: HTMLElement,
+  canvasSnapshots: Map<number, string>,
+  originalContainer: HTMLElement
+) {
+  const children = Array.from(element.children).filter(
+    (child): child is HTMLElement =>
+      child instanceof HTMLElement && child.dataset.html2canvasIgnore !== "true"
+  );
+
+  if (element.dataset.pdfSplitChildren !== "true" || children.length === 0) {
+    const clone = element.cloneNode(true) as HTMLElement;
+    injectCanvasSnapshots(clone, canvasSnapshots, originalContainer);
+    clone.style.background = "transparent";
+    clone.style.backgroundColor = "transparent";
+    return [clone];
+  }
+
+  return children.map((child) => {
+    const wrapper = element.cloneNode(false) as HTMLElement;
+    const childClone = child.cloneNode(true) as HTMLElement;
+
+    injectCanvasSnapshots(childClone, canvasSnapshots, originalContainer);
+    wrapper.appendChild(childClone);
+    wrapper.style.background = "transparent";
+    wrapper.style.backgroundColor = "transparent";
+
+    return wrapper;
   });
 }
 
@@ -177,45 +210,40 @@ function buildPaginatedTargets(
 
   for (let i = 0; i < sourceBlocks.length; i++) {
     const block = sourceBlocks[i];
-    const clone = block.cloneNode(true) as HTMLElement;
+    const clones = cloneWithPdfSplits(block, canvasSnapshots, container);
 
-    // Inject canvas snapshots into this cloned block
-    injectCanvasSnapshots(clone, canvasSnapshots, container);
-    // Make clone transparent so the page-shell bg shows through uniformly
-    clone.style.background = "transparent";
-    clone.style.backgroundColor = "transparent";
+    for (const clone of clones) {
+      currentPage.appendChild(clone);
 
-    currentPage.appendChild(clone);
+      const fitsOnCurrentPage = currentPage.scrollHeight <= pageHeightPx;
 
-    const fitsOnCurrentPage = currentPage.scrollHeight <= pageHeightPx;
+      if (fitsOnCurrentPage) {
+        // Keep-with-next: short header block should stay with the next block
+        const isShortHeader = clone.offsetHeight < 120;
+        const nextBlock = sourceBlocks[i + 1];
 
-    if (fitsOnCurrentPage) {
-      // Keep-with-next: short header block should stay with the next block
-      const isShortHeader = clone.offsetHeight < 120;
-      const nextBlock = sourceBlocks[i + 1];
+        if (isShortHeader && nextBlock) {
+          const nextClone = cloneWithPdfSplits(nextBlock, canvasSnapshots, container)[0];
+          nextClone.style.visibility = "hidden";
+          nextClone.style.pointerEvents = "none";
+          currentPage.appendChild(nextClone);
+          const nextWouldOverflow = currentPage.scrollHeight > pageHeightPx;
+          currentPage.removeChild(nextClone);
 
-      if (isShortHeader && nextBlock) {
-        const nextClone = nextBlock.cloneNode(true) as HTMLElement;
-        injectCanvasSnapshots(nextClone, canvasSnapshots, container);
-        nextClone.style.visibility = "hidden";
-        nextClone.style.pointerEvents = "none";
-        currentPage.appendChild(nextClone);
-        const nextWouldOverflow = currentPage.scrollHeight > pageHeightPx;
-        currentPage.removeChild(nextClone);
-
-        if (nextWouldOverflow) {
-          currentPage.removeChild(clone);
-          currentPage = createPage();
-          currentPage.appendChild(clone);
+          if (nextWouldOverflow) {
+            currentPage.removeChild(clone);
+            currentPage = createPage();
+            currentPage.appendChild(clone);
+          }
         }
+        continue;
       }
-      continue;
-    }
 
-    // Block doesn't fit — move to new page
-    currentPage.removeChild(clone);
-    currentPage = createPage();
-    currentPage.appendChild(clone);
+      // Block doesn't fit - move to new page, keeping the block intact.
+      currentPage.removeChild(clone);
+      currentPage = createPage();
+      currentPage.appendChild(clone);
+    }
   }
 
   const nonEmptyPages = pages.filter((page) => page.children.length > 0);

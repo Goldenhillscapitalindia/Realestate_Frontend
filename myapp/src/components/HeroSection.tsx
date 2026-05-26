@@ -182,7 +182,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
-              className="text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-5"
+              className="text-[0.95rem] md:text-base leading-relaxed text-black-400 max-w-[420px] mb-5"
             >
               From acquisition underwriting to active asset management — in a single workflow
             </motion.p>
@@ -204,7 +204,7 @@ const HeroSection = () => {
               <Button
                 variant="heroOutline" size="lg"
                 onClick={() => document.getElementById("platform")?.scrollIntoView({ behavior: "smooth" })}
-                className="rounded-xl border-slate-200 bg-white/70 backdrop-blur-sm px-7 py-3.5 text-slate-700 text-sm font-semibold hover:bg-white hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5"
+                className="rounded-xl border-slate-200 bg-white/70 backdrop-blur-sm px-7 py-3.5 text-slate-700 text-sm font-semibold hover:bg-white/50 hover:border-slate-300 transition-all duration-300 hover:-translate-y-0.5"
               >
                 <Play className="mr-2 h-4 w-4" /> See How It Works
               </Button>
