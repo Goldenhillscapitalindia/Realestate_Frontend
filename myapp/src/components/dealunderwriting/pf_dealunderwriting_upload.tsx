@@ -1,4 +1,4 @@
-import  { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-api";
@@ -100,8 +100,8 @@ export default function PfDealUnderwritingUpload({
 
     const formData = new FormData();
     formData.append("property_name", propertyName.trim());
-    formData.append("rent_roll_document", rentRoll.file);
-    formData.append("t12_document", t12.file);
+    formData.append("rent_roll_document", rentRoll!.file);
+    formData.append("t12_document", t12!.file);
     if (memorandum) {
       formData.append("memorandum_document", memorandum.file);
     }

@@ -53,11 +53,7 @@ export default function AboutPlatform() {
       className="relative overflow-hidden py-32 px-6"
       id="about"
       style={{
-        background: `linear-gradient(180deg,
-          #fafbfe 0%,
-          #f1f4f9 40%,
-          #eef2f8 100%
-        )`,
+        background: "#0f213d",
       }}
     >
       {/* ── Ambient radial overlays ── */}
@@ -65,20 +61,20 @@ export default function AboutPlatform() {
         <div
           className="absolute -top-40 left-1/4 w-[700px] h-[700px] rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 60%)",
+            background: "radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 60%)",
           }}
         />
         <div
           className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full"
           style={{
-            background: "radial-gradient(circle, rgba(30,188,154,0.05) 0%, transparent 60%)",
+            background: "radial-gradient(circle, rgba(30,188,154,0.12) 0%, transparent 60%)",
           }}
         />
         {/* Subtle dot pattern */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: "radial-gradient(circle, rgba(0,0,0,0.04) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px)",
             backgroundSize: "28px 28px",
           }}
         />
@@ -89,30 +85,33 @@ export default function AboutPlatform() {
         <ScrollReveal>
           <div className="text-center mb-20">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/80 backdrop-blur-sm border border-[#e2e8f0] shadow-[0_1px_4px_rgba(0,0,0,0.04)] mb-8">
+            <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 shadow-[0_1px_8px_rgba(0,0,0,0.16)] mb-8">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#1ebc9a] opacity-75" />
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#1ebc9a]" />
               </span>
-              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#64748b]">
+              <span className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">
                 About the Platform
               </span>
             </div>
 
-            <h2 className="text-[2.8rem] md:text-[3.6rem] font-extrabold tracking-[-0.02em] text-[#0a1628] leading-[1.05] mb-7">
+            <h2 className="text-[2.8rem] md:text-[3.6rem] font-extrabold tracking-[-0.02em] text-white leading-[1.05] mb-7">
               Built by{" "}
-              <span
-                className="bg-clip-text text-transparent"
+              <a
+                href="https://ghills.ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-clip-text text-transparent transition-opacity hover:opacity-60"
                 style={{
                   backgroundImage:
-                    "linear-gradient(135deg, #0a2540 0%, #134e6f 40%, #1ebc9a 100%)",
+                    "linear-gradient(135deg, #dff7ff 0%, #5de0c4 45%, #1ebc9a 100%)",
                 }}
               >
                 Golden Hills
-              </span>
+              </a>
             </h2>
 
-            <p className="text-[#5a6a7f] max-w-2xl mx-auto text-[1.12rem] leading-[1.8]">
+            <p className="text-white max-w-2xl mx-auto text-[1.12rem] leading-[1.8]">
               Asset72{" "}
               is developed by Golden Hills, an analytics and research firm
               focused on building data-driven decision intelligence platforms.
@@ -122,24 +121,20 @@ export default function AboutPlatform() {
 
         {/* ── Asymmetric Bento Grid ── */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 auto-rows-auto">
-          {/* Card 1 — Spans 7 cols (featured) */}
-          <ScrollReveal variant="left" className="md:col-span-7">
-            <PillarCard card={pillars[0]} featured />
+          <ScrollReveal variant="left" className="md:col-span-6">
+            <PillarCard card={pillars[0]} />
           </ScrollReveal>
 
-          {/* Card 2 — Spans 5 cols */}
-          <ScrollReveal variant="right" className="md:col-span-5">
+          <ScrollReveal variant="right" className="md:col-span-6">
             <PillarCard card={pillars[1]} />
           </ScrollReveal>
 
-          {/* Card 3 — Spans 5 cols */}
-          <ScrollReveal variant="left" delay={80} className="md:col-span-5">
+          <ScrollReveal variant="left" delay={80} className="md:col-span-6">
             <PillarCard card={pillars[2]} />
           </ScrollReveal>
 
-          {/* Card 4 — Spans 7 cols (featured) */}
-          <ScrollReveal variant="right" delay={80} className="md:col-span-7">
-            <PillarCard card={pillars[3]} featured />
+          <ScrollReveal variant="right" delay={80} className="md:col-span-6">
+            <PillarCard card={pillars[3]} />
           </ScrollReveal>
         </div>
       </div>

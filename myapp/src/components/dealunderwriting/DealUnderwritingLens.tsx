@@ -344,13 +344,13 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
               <DealCharts deal={activeDeal} />
 
-              <div className="pdf-flow-block space-y-6">
-                {activeDeal.compAnalysis ? (
-                  <DealCompAnalysis
-                    propertyName={activeDeal.name}
-                    payload={activeDeal.compAnalysis}
-                  />
-                ) : null}
+              {activeDeal.compAnalysis ? (
+                <DealCompAnalysis
+                  propertyName={activeDeal.name}
+                  payload={activeDeal.compAnalysis}
+                />
+              ) : null}
+              <div className="pdf-flow-block">
                 <RisksOpportunities deal={activeDeal} />
               </div>
             </div>

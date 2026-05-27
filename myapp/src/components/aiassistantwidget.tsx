@@ -42,10 +42,12 @@ ChartJS.register(
 );
 
 type AssistantModule = "property_analytics" | "portfolio_intelligence" | "deal_lens" | "ic_memo";
+type AssistantDataScope = "user" | "demo";
 
 type AssistantWidgetProps = {
   mode?: "widget" | "page" | "sidebar";
   module?: AssistantModule;
+  dataScope?: AssistantDataScope;
   propertyName?: string;
   title?: string;
   contextLabel?: string;
@@ -134,7 +136,7 @@ const fallbackSuggestedQuestionsByModule: Record<AssistantModule | "general_asse
   ],
   ic_memo: [
     "Generate acquisition summary",
-    "Create IC memo",
+    "Create IC Intelligence",
     "Summarize investment thesis",
   ],
   deal_lens: [
@@ -535,6 +537,7 @@ const StaggeredBlocksRenderer = ({
 
 const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   module,
+  dataScope = "user",
   propertyName,
   title = "Asset72 AI Analyst",
   contextLabel,
@@ -609,6 +612,7 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
       const payload: Record<string, string> = {
         email,
         question: query,
+        data_scope: dataScope,
       };
       if (module) payload.module = module;
       if (propertyName?.trim()) payload.property_name = propertyName.trim();
@@ -660,27 +664,49 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
   };
 
   const sidebarContent = (
-    <div className="flex h-full min-h-0 flex-col bg-white text-slate-900">
-      <header className="border-b border-slate-200 px-4 py-4">
+    <div className="flex h-full min-h-0 flex-col bg-[#F8FAFC] text-[#0F172A]">
+      <header
+        className="border-b border-[#DCE6F2] px-4 py-4 text-white"
+        style={{ background: "linear-gradient(135deg, #2E3F8F 0%, #4257A8 100%)" }}
+      >
         <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-sky-600" />
-          <h2 className="text-sm font-semibold text-slate-950">{headerTitle}</h2>
+          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 ring-1 ring-white/15 backdrop-blur-sm">
+            <Sparkles className="h-4 w-4 text-[#19C37D]" />
+          </span>
+          <h2 className="text-sm font-semibold tracking-tight text-white">{headerTitle}</h2>
         </div>
         {headerContextLabel ? (
-          <p className="mt-2 text-xs leading-5 text-slate-500">{headerContextLabel}</p>
+          <p className="mt-2 text-xs leading-5 text-[#7DD3FC]">{headerContextLabel}</p>
         ) : null}
       </header>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         {chatTurns.length === 0 && (
-          <div className="rounded-2xl border border-sky-200 bg-sky-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-700">
-              Ask AI
-            </p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              Ask about the active view's risks, drivers, recommendations, or next diligence
-              questions.
-            </p>
+          <div
+            className="relative overflow-hidden rounded-2xl border border-[#DCE6F2] p-4 shadow-[0_8px_24px_rgba(8,27,92,0.06)]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(8,27,92,0.04) 0%, rgba(125,211,252,0.10) 60%, rgba(25,195,125,0.06) 100%)",
+            }}
+          >
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 opacity-60"
+              style={{
+                background:
+                  "radial-gradient(600px 120px at 0% 0%, rgba(125,211,252,0.18), transparent 60%)",
+              }}
+            />
+            <div className="relative">
+              <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#081B5C]">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#19C37D] shadow-[0_0_8px_rgba(25,195,125,0.7)]" />
+                Ask AI
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[#64748B]">
+                Ask about the active view's risks, drivers, recommendations, or next diligence
+                questions.
+              </p>
+            </div>
           </div>
         )}
 
@@ -695,15 +721,18 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
                 className="scroll-mt-4 space-y-3"
               >
                 <div className="flex justify-end">
-                  <div className="max-w-[86%] rounded-2xl rounded-tr-md border border-slate-200 bg-slate-100 px-3 py-2 text-sm leading-6 text-slate-950 shadow-sm">
+                  <div
+                    className="max-w-[86%] rounded-2xl rounded-tr-md border border-[#102A7A] px-3 py-2 text-sm leading-6 text-white shadow-[0_6px_18px_rgba(8,27,92,0.18)]"
+                    style={{ background: "linear-gradient(135deg, #081B5C 0%, #102A7A 100%)" }}
+                  >
                     {turn.question}
                   </div>
                 </div>
 
                 <div className="min-w-0">
                   {turn.isLoading ? (
-                    <div className="flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-3 text-sm text-sky-700">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                    <div className="flex items-center gap-2 rounded-xl border border-[#DCE6F2] bg-white px-3 py-3 text-sm text-[#081B5C] shadow-sm">
+                      <Loader2 className="h-4 w-4 animate-spin text-[#19C37D]" />
                       Reviewing Asset72 data...
                     </div>
                   ) : null}
@@ -725,7 +754,8 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
 
         {!loading && suggestedQuestions.length > 0 ? (
           <div className="mt-4 space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+            <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#081B5C]">
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#19C37D]" />
               Suggested questions
             </p>
             {suggestedQuestions.slice(0, 3).map((suggested) => (
@@ -736,32 +766,43 @@ const AssistantWidget: React.FC<AssistantWidgetProps> = ({
                   updateQuestion(suggested);
                   handleSubmit(undefined, suggested);
                 }}
-                className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-left text-sm text-slate-700 shadow-sm transition hover:border-sky-300 hover:bg-sky-50 hover:text-slate-950"
+                className="group flex w-full items-center justify-between gap-2 rounded-xl border border-[#DCE6F2] bg-white px-3 py-2.5 text-left text-sm text-[#0F172A] shadow-[0_2px_6px_rgba(8,27,92,0.04)] transition-all duration-200 hover:-translate-y-[1px] hover:border-[#102A7A] hover:shadow-[0_8px_20px_rgba(8,27,92,0.12)]"
               >
-                {suggested}
+                <span className="min-w-0 flex-1 truncate group-hover:text-[#081B5C]">
+                  {suggested}
+                </span>
+                <ArrowRight className="h-3.5 w-3.5 shrink-0 text-[#64748B] transition-all duration-200 group-hover:translate-x-0.5 group-hover:text-[#19C37D]" />
               </button>
             ))}
           </div>
         ) : null}
       </div>
 
-      <form onSubmit={handleSubmit} className="border-t border-slate-200 bg-white p-4">
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 focus-within:border-sky-300 focus-within:bg-white">
+      <form
+        onSubmit={handleSubmit}
+        className="border-t border-[#DCE6F2] bg-white p-4"
+      >
+        <div className="flex items-center gap-2 rounded-xl border border-[#DCE6F2] bg-[#F8FAFC] px-3 py-2 shadow-[0_2px_8px_rgba(8,27,92,0.04)] transition-all duration-200 focus-within:border-[#102A7A] focus-within:bg-white focus-within:shadow-[0_0_0_3px_rgba(8,27,92,0.10)]">
           <input
             ref={inputRef}
             type="search"
             placeholder="Ask the analyst..."
             value={question}
             onChange={(event) => updateQuestion(event.target.value)}
-            className="min-w-0 flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400"
+            className="min-w-0 flex-1 bg-transparent text-sm text-[#0F172A] outline-none placeholder:text-[#64748B]"
           />
           <button
             type="submit"
             disabled={loading || !question.trim()}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sky-600 text-white transition hover:bg-sky-500 disabled:cursor-not-allowed disabled:opacity-50"
+            className="group flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-white shadow-[0_4px_14px_rgba(8,27,92,0.25)] transition-all duration-200 hover:shadow-[0_6px_20px_rgba(25,195,125,0.35)] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
+            style={{ background: "linear-gradient(135deg, #081B5C 0%, #102A7A 100%)" }}
             aria-label="Send question"
           >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+            {loading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Send className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-[#19C37D]" />
+            )}
           </button>
         </div>
       </form>

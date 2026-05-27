@@ -13,15 +13,47 @@ const SnapshotTab: React.FC<{ data?: PortfolioSnapshot }> = ({ data }) => {
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-800">
             Portfolio Scale
           </p>
-          <div className="mt-4 space-y-2">
-            <div>
-              <p className="text-5xl font-bold leading-none">{data.totalProperties?.toLocaleString() ?? "-"}</p>
-              <p className="mt-1 text-lg text-slate-800">Active Assets</p>
+          <div className="mt-4 flex items-start justify-between gap-4">
+            <div className="space-y-2">
+              <div>
+                <p className="text-5xl font-bold leading-none">{data.totalProperties?.toLocaleString() ?? "-"}</p>
+                <p className="mt-1 text-lg text-slate-800">Active Assets</p>
+              </div>
+              <div className="pt-2">
+                <p className="text-5xl font-bold leading-none">{data.totalUnits?.toLocaleString() ?? "-"}</p>
+                <p className="mt-1 text-lg text-slate-800">Units Under Management</p>
+              </div>
             </div>
-            <div className="pt-2">
-              <p className="text-5xl font-bold leading-none">{data.totalUnits?.toLocaleString() ?? "-"}</p>
-              <p className="mt-1 text-lg text-slate-800">Units Under Management</p>
-            </div>
+            {(() => {
+              const occupied = data.occupied_units ?? 0;
+              const total = data.totalUnits ?? 0;
+              const r = 45;
+              const circ = 2 * Math.PI * r;
+              const pct = total > 0 ? occupied / total : 0;
+              const dash = pct * circ;
+              const offset = circ * 0.25;
+              return (
+                <div className="flex flex-col items-center gap-1 flex-shrink-0">
+                  <svg width="110" height="110" viewBox="0 0 110 110">
+                    <circle cx="55" cy="55" r={r} fill="none" stroke="#e2e8f0" strokeWidth="10" />
+                    <circle
+                      cx="55" cy="55" r={r} fill="none"
+                      stroke="#0f172a" strokeWidth="10"
+                      strokeDasharray={`${dash} ${circ}`}
+                      strokeDashoffset={offset}
+                      strokeLinecap="round"
+                    />
+                    <text x="55" y="50" textAnchor="middle" dominantBaseline="middle" fontSize="18" fontWeight="700" fill="#0f172a">
+                      {total > 0 ? occupied : "-"}
+                    </text>
+                    <text x="55" y="68" textAnchor="middle" fontSize="8" fill="#64748b" letterSpacing="0.08em">
+                      OCCUPIED
+                    </text>
+                  </svg>
+                  <p className="text-xs text-slate-500">{total > 0 ? `${Math.round(pct * 100)}% of ${total}` : ""}</p>
+                </div>
+              );
+            })()}
           </div>
           <div className="mt-5 border-t border-slate-200 pt-4">
             <p className="text-4xl font-bold leading-none">{data.grossPotentialRent?.display ?? "-"}</p>

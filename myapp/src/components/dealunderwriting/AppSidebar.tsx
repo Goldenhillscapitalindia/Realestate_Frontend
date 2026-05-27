@@ -1,4 +1,4 @@
-import {  BarChart3, Building2, GitCompare, TrendingUp } from "lucide-react";
+import { ArrowLeft, BarChart3, Building2, GitCompare, TrendingUp } from "lucide-react";
 import type { Deal } from "./data";
 
 interface AppSidebarProps {
@@ -14,7 +14,7 @@ export function AppSidebar({
   activeDealId,
   activeView,
   deals,
-  // onBackToLibrary,
+  onBackToLibrary,
   onDealSelect,
   onViewChange,
 }: AppSidebarProps) {
@@ -22,6 +22,18 @@ export function AppSidebar({
     <aside className="w-64 min-h-screen flex-shrink-0 self-stretch bg-[#14294d] text-white">
       <div className="sticky top-0 flex h-screen flex-col">
         <div className="border-b border-white/10 p-5">
+          {onBackToLibrary ? (
+            <button
+              type="button"
+              onClick={onBackToLibrary}
+              className="mb-4 flex items-center gap-2 text-sm font-semibold text-white/75 transition hover:text-white"
+              aria-label="Back to Deal Lens"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back</span>
+            </button>
+          ) : null}
+
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#234b88]">
               <TrendingUp className="h-5 w-5" />

@@ -8,6 +8,7 @@ export type PortfolioSnapshot = {
   badDebt?: DisplayMetric;
   noiMargin?: DisplayMetric;
   totalUnits?: number;
+  occupied_units?: number;
   concessions?: DisplayMetric;
   vacancyLoss?: DisplayMetric;
   expensePerUnit?: DisplayMetric;

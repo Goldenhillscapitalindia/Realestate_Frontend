@@ -91,23 +91,30 @@ const PfDemoIcMemo: React.FC<PfDemoIcMemoProps> = ({ hasStarted, onGenerate, onB
           <FileText className="h-8 w-8" />
         </div>
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#5b6aa5]">
-          IC Memo
+          Investment Committee Intelligence Memo
         </p>
-        <h2 className="mt-3 text-3xl font-semibold text-slate-900">
+        {/* <h2 className="mt-3 text-3xl font-semibold text-slate-900">
           Build your investment committee memo
-        </h2>
+        </h2> */}
         <p className="mt-4 text-base leading-7 text-slate-600">
-          Click below to open the IC Memo template on the right side. All sections
-          are connected through props and currently left empty for backend mapping later.
+          Designed to structure institutional investment decisions through standardized,
+          <br />
+          intelligence-backed committee workflows.
         </p>
-        <button
-          type="button"
-          onClick={onGenerate}
-          className="mx-auto mt-8 inline-flex items-center gap-3 rounded-2xl bg-[#0fa77d] px-7 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(15,167,125,0.24)] transition hover:bg-[#0c8f6b]"
-        >
-          <span>Generate Your IC Memo</span>
+        <div className="mt-8 flex items-center justify-center gap-5">
+          <span className="text-base font-semibold text-slate-700">
+            Portfolio intelligence
+          </span>
           <ArrowRight className="h-5 w-5" />
-        </button>
+          <button
+            type="button"
+            onClick={onGenerate}
+            className="inline-flex items-center gap-3 rounded-2xl bg-[#0fa77d] px-7 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(15,167,125,0.24)] transition hover:bg-[#0c8f6b]"
+          >
+            <span>Generate Your IC Intelligence Memo</span>
+            {/* <ArrowRight className="h-5 w-5" /> */}
+          </button>
+        </div>
       </div>
     </div>
   );

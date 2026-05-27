@@ -31,11 +31,11 @@ const ExecutionPriorities = ({ data }: { data?: IcExecutionPrioritiesData | null
                 <div className="min-w-0 flex-1">
                   <p className="mb-1 min-h-[20px] text-base font-semibold text-[#1E293B]">{item?.action ?? ""}</p>
                   <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
-                    <span className="flex items-center gap-1.5 text-xs text-slate-400">
+                    <span className="flex items-center gap-1.5 text-sm text-slate-500">
                       <span className="text-[#0F766E]">→</span>
                       <span>{item?.impact ?? ""}</span>
                     </span>
-                    <span className="text-xs text-slate-400">{item?.detail ?? ""}</span>
+                    <span className="text-sm text-slate-400">{item?.detail ?? ""}</span>
                   </div>
                 </div>
               </div>

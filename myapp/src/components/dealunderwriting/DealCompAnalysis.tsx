@@ -164,13 +164,15 @@ function unwrapCompAnalysisPayload(
 ): DealCompAnalysisPayload | null {
   if (!input) return null;
 
-  if ("data" in input && Array.isArray(input.data)) {
-    const firstReady = input.data.find((item): item is DealCompAnalysisPayload => Boolean(item));
+  const maybeWrapper = input as DealCompAnalysisWrapper;
+  if (Array.isArray(maybeWrapper.data)) {
+    const firstReady = maybeWrapper.data.find((item): item is DealCompAnalysisPayload => Boolean(item));
     if (!firstReady) return null;
     return unwrapCompAnalysisPayload(firstReady);
   }
 
-  const source = input.rawCompAnalysis ?? input;
+  const payloadInput = input as DealCompAnalysisPayload;
+  const source = payloadInput.rawCompAnalysis ?? payloadInput;
   const mapDataMarkers: CompAnalysisMarker[] = [
     ...(source.mapData?.subject
       ? [
@@ -431,6 +433,8 @@ export default function DealCompAnalysis({
     return ["All", ...ordered, ...rest];
   }, [normalizedPayload?.comparables]);
 
+  if (!normalizedPayload) return null;
+
   const subjectName = normalizedPayload.subjectProperty?.name ?? normalizedPayload.mapData?.subject?.name ?? propertyName;
   const subjectLocation =
     normalizedPayload.subjectProperty?.address ??
@@ -440,10 +444,11 @@ export default function DealCompAnalysis({
   const subjectClass =
     normalizedPayload.subjectProperty?.buildingClass ?? normalizedPayload.mapData?.subject?.buildingClass ?? "-";
 
-  if (!normalizedPayload) return null;
-
   return (
-    <div className="space-y-6 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]">
+    <div
+      className="pdf-flow-block space-y-6 rounded-3xl bg-white p-6 shadow-[0_20px_60px_rgba(15,23,42,0.08)]"
+      data-pdf-split-children="true"
+    >
       <div>
         <h2 className="text-2xl font-semibold text-slate-900">Comp Analysis</h2>
         <p className="mt-1 text-sm text-slate-600">Class-matched competitive analysis mapped from deal lens data.</p>

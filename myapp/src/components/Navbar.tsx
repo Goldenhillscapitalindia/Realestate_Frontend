@@ -32,11 +32,13 @@ import {
 import { productRoutes } from "@/lib/product-routes";
 
 const navLinks = [
-  { label: "Platform", id: "platform" },
-  { label: "Solutions", id: "solutions" },
+  { label: "Platform", id: "hero" },
+  { label: "Asset72 Intelligence", id: "platform" },
   { label: "Use Cases", id: "use-cases" },
-  { label: "AI Intelligence", id: "ai" },
-  { label: "Why Asset72", id: "why", branded: true },
+  { label: "Intelligence Workflow", id: "workflow" },
+  { label: "AI Layer", id: "ai" },
+  // { label: "Platform Experience", id: "platform-experience" },
+  // { label: "Why Asset72", id: "why", branded: true },
   { label: "About Us", id: "about" },
 ];
 
@@ -141,7 +143,7 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto flex items-center justify-between px-6 h-16 lg:h-18">
+      <div className="max-w-[1440px] mx-auto flex items-center justify-between gap-4 px-6 h-16 lg:h-18">
         <button
           type="button"
           onClick={() => {
@@ -154,11 +156,11 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
           }}
           className="flex items-center"
         >
-         <BrandLogo className="translate-x-6" inverted={theme === "dark"} />
+         <BrandLogo inverted={theme === "dark"} />
         </button>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex items-center gap-8">
+        <div className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-6 xl:gap-8">
           {navLinks.map((link) => (
             <button
               type="button"
@@ -170,14 +172,14 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
                 }
                 handleSectionNavigation(link.id);
               }}
-              className="text-m font-medium text-[#2b0f66] hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent after:transition-all hover:after:w-full"
+              className="whitespace-nowrap text-[15px] xl:text-base font-medium text-[#2b0f66] hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent after:transition-all hover:after:w-full"
             >
               {link.label}
             </button>
           ))}
         </div>
 
-        <div className="hidden lg:flex items-center gap-3">
+        <div className="hidden lg:flex shrink-0 items-center gap-3">
           {loggedIn ? (
             <Button
               variant="heroOutline"

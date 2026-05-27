@@ -336,6 +336,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
   const submarket = propertyContext?.submarket ?? searchParams.get("submarket") ?? "";
   const region = propertyContext?.region ?? searchParams.get("region") ?? "";
   const [record, setRecord] = useState<PropertyRecord | null>(null);
+  const [isDemoDataRecord, setIsDemoDataRecord] = useState(false);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
 
   useEffect(() => {
@@ -376,22 +377,26 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           }
         };
 
-        const response = isDemoMode()
+        const demoMode = isDemoMode();
+        let loadedDemoData = demoMode;
+        const response = demoMode
           ? await fetchSpecificPost("/api/get_property_model_data/")
           : await (async () => {
-              try {
-                const userResponse = await fetchSpecificGet("/api/get_property_model_data_user_view/");
-                if (!userResponse.data?.data) {
-                  throw new Error("No user data");
-                }
-                return userResponse;
-              } catch {
-                return fetchSpecificPost("/api/get_property_model_data/");
+            try {
+              const userResponse = await fetchSpecificGet("/api/get_property_model_data_user_view/");
+              if (!userResponse.data?.data) {
+                throw new Error("No user data");
               }
-            })();
+              return userResponse;
+            } catch {
+              loadedDemoData = true;
+              return fetchSpecificPost("/api/get_property_model_data/");
+            }
+          })();
 
         if (isActive) {
           setRecord(response.data?.data ?? null);
+          setIsDemoDataRecord(loadedDemoData);
           setStatus("idle");
         }
       } catch {
@@ -445,12 +450,19 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
   type ViewMode = "property_analytics" | "ai_rent_intelligence" | "comp_analysis";
   const [viewMode, setViewMode] = useState<ViewMode>("property_analytics");
   const [selectedInsight, setSelectedInsight] = useState<InsightKey>("review");
+  const canShowCompAnalysis = !isDemoDataRecord;
 
   // reset selection if property changes
   useEffect(() => {
     setSelectedInsight("review");
     setViewMode("property_analytics");
   }, [propertyName, submarket, region]);
+
+  useEffect(() => {
+    if (!canShowCompAnalysis && viewMode === "comp_analysis") {
+      setViewMode("property_analytics");
+    }
+  }, [canShowCompAnalysis, viewMode]);
 
   const kpiCards = useMemo(() => {
     const kpis = record?.property_response?.kpis;
@@ -695,7 +707,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           Back
         </button>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className={`grid gap-4 ${canShowCompAnalysis ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
           <button
             type="button"
             onClick={() => setViewMode("property_analytics")}
@@ -709,17 +721,19 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
             <p className="mt-2 text-2xl font-semibold">Property Analytics</p>
           </button>
 
-          <button
-            type="button"
-            onClick={() => setViewMode("comp_analysis")}
-            className={`rounded-[22px] border p-5 text-center transition ${
-              viewMode === "comp_analysis"
-                ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"
-                : "border-[#d8e4f5] bg-white text-[#162a4c] hover:border-[#a9bddf]"
-            }`}
-          >
-            <p className="mt-2 text-2xl font-semibold">Comp Analysis</p>
-          </button>
+          {canShowCompAnalysis ? (
+            <button
+              type="button"
+              onClick={() => setViewMode("comp_analysis")}
+              className={`rounded-[22px] border p-5 text-center transition ${
+                viewMode === "comp_analysis"
+                  ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"
+                  : "border-[#d8e4f5] bg-white text-[#162a4c] hover:border-[#a9bddf]"
+              }`}
+            >
+              <p className="mt-2 text-2xl font-semibold">Comp Analysis</p>
+            </button>
+          ) : null}
 
           <button
             type="button"
@@ -744,7 +758,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           </div>
         ) : null}
 
-        {viewMode === "comp_analysis" ? (
+        {canShowCompAnalysis && viewMode === "comp_analysis" ? (
           <PfCompAnalysis propertyName={record.property_name} />
         ) : null}
 

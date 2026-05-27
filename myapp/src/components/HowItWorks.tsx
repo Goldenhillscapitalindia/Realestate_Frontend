@@ -4,12 +4,17 @@ import { Upload, Search, BarChart3, TrendingUp, FileText } from "lucide-react";
 
 /* ── Step data ── */
 const steps = [
-  { icon: Upload,    title: "Upload Property Financials",     desc: "Centralize T-12s, rent rolls, and operational data in one workflow.",                                                          color: "#1ebc9a" },
-  { icon: Search,    title: "Detect Performance Drivers",     desc: "Identify revenue leakage, expense anomalies, and occupancy trends impacting NOI.",                                             color: "#6366f1" },
-  { icon: BarChart3, title: "Generate Property Intelligence", desc: "Benchmark assets, uncover upside opportunities, and surface operational risks.",                                               color: "#0ea5e9" },
-  { icon: TrendingUp,title: "Drive Portfolio Decisions",      desc: "Track portfolio performance and prioritize actions that improve asset efficiency and returns.",                                 color: "#f59e0b" },
-  { icon: FileText,  title: "Create Actionable IC Memos",     desc: "Generate investment-ready memos with strategic recommendations, risk visibility, and next-step actions.",                      color: "#ec4899" },
+  { icon: Upload,    title: "Upload Property Financials",     desc: "Centralize T-12s, rent rolls, and operational data in one workflow.",                                                          color: "#0f766e" },
+  { icon: Search,    title: "Detect Performance Drivers",     desc: "Identify revenue leakage, expense anomalies, and occupancy trends impacting NOI.",                                             color: "#14b8a6" },
+  { icon: BarChart3, title: "Generate Property Intelligence", desc: "Benchmark assets, uncover upside opportunities, and surface operational risks.",                                               color: "#1ebc9a" },
+  { icon: TrendingUp,title: "Drive Portfolio Decisions",      desc: "Track portfolio performance and prioritize actions that improve asset efficiency and returns.",                                 color: "#5de0c4" },
+  { icon: FileText,  title: "Create Actionable IC Memos",     desc: "Generate investment-ready memos with strategic recommendations, risk visibility, and next-step actions.",                      color: "#047857" },
 ];
+
+const SECTION_BG = "linear-gradient(180deg, #0b1732 0%, #10223f 52%, #0b1f38 100%)";
+const HEADING_COLOR = "#ffffff";
+const CARD_BLUE = "#ffffff";
+const CARD_BLUE_ACTIVE = "#f0f8ff";
 
 /*
  * Card positions (% of container):  cards on far left / far right.
@@ -59,21 +64,21 @@ const HowItWorks = () => {
       ref={sectionRef}
       className="relative overflow-hidden py-16 lg:py-20"
       id="workflow"
-      style={{ background: "linear-gradient(180deg, #0a0f1f 0%, #0e1628 50%, #0a0f1f 100%)" }}
+      style={{ background: SECTION_BG }}
     >
       {/* Grid background */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.03]"
+        className="absolute inset-0 pointer-events-none opacity-40"
         style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)",
           backgroundSize: "42px 42px",
         }}
       />
       {/* Corner ticks */}
-      <div className="absolute top-6 left-6 w-5 h-5 border-t border-l border-white/[0.06] hidden lg:block" />
-      <div className="absolute top-6 right-6 w-5 h-5 border-t border-r border-white/[0.06] hidden lg:block" />
-      <div className="absolute bottom-6 left-6 w-5 h-5 border-b border-l border-white/[0.06] hidden lg:block" />
-      <div className="absolute bottom-6 right-6 w-5 h-5 border-b border-r border-white/[0.06] hidden lg:block" />
+      <div className="absolute top-6 left-6 w-5 h-5 border-t border-l border-white/[0.08] hidden lg:block" />
+      <div className="absolute top-6 right-6 w-5 h-5 border-t border-r border-white/[0.08] hidden lg:block" />
+      <div className="absolute bottom-6 left-6 w-5 h-5 border-b border-l border-white/[0.08] hidden lg:block" />
+      <div className="absolute bottom-6 right-6 w-5 h-5 border-b border-r border-white/[0.08] hidden lg:block" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-6">
 
@@ -82,11 +87,11 @@ const HowItWorks = () => {
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#1ebc9a]/20 bg-[#1ebc9a]/[0.08] text-[11px] font-semibold tracking-[0.2em] uppercase text-[#5de0c4] mb-4">
             How Asset72 Works
           </span>
-          <h2 className="font-display font-extrabold text-2xl md:text-3xl lg:text-[2.2rem] text-white mb-2">
+          <h2 className="font-display font-extrabold text-2xl md:text-3xl lg:text-[2.2rem] mb-2" style={{ color: HEADING_COLOR }}>
             Turn property financials into
           </h2>
-          <p className="text-base md:text-lg text-slate-400">
-            actionable portfolio intelligence.
+          <p className="text-base md:text-lg" style={{ color: "rgba(255,255,255,0.6)", fontSize:"23px" }}>
+            Actionable portfolio intelligence.
           </p>
         </div>
 
@@ -102,11 +107,11 @@ const HowItWorks = () => {
           >
             <defs>
               <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%"   stopColor="#1ebc9a" stopOpacity="0.7" />
-                <stop offset="25%"  stopColor="#6366f1" stopOpacity="0.6" />
-                <stop offset="50%"  stopColor="#0ea5e9" stopOpacity="0.6" />
-                <stop offset="75%"  stopColor="#f59e0b" stopOpacity="0.6" />
-                <stop offset="100%" stopColor="#ec4899" stopOpacity="0.7" />
+                <stop offset="0%"   stopColor="#0f766e" stopOpacity="0.7" />
+                <stop offset="25%"  stopColor="#14b8a6" stopOpacity="0.6" />
+                <stop offset="50%"  stopColor="#1ebc9a" stopOpacity="0.6" />
+                <stop offset="75%"  stopColor="#5de0c4" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#047857" stopOpacity="0.7" />
               </linearGradient>
             </defs>
 
@@ -180,14 +185,14 @@ const HowItWorks = () => {
                         ? `linear-gradient(135deg, ${step.color}, ${step.color}bb)`
                         : isActive
                         ? `${step.color}55`
-                        : "rgba(255,255,255,0.04)",
-                      color:  isActive ? "#fff" : "rgba(255,255,255,0.18)",
+                        : "rgba(12,26,59,0.06)",
+                      color:  isActive ? "#fff" : "rgba(12,26,59,0.35)",
                       boxShadow: isCurrent
                         ? `0 0 32px ${step.color}50, 0 0 12px ${step.color}30`
                         : "none",
                       border: isActive
                         ? `2px solid ${step.color}50`
-                        : "1px solid rgba(255,255,255,0.06)",
+                        : "1px solid rgba(12,26,59,0.1)",
                     }}
                   >
                     {i + 1}
@@ -208,8 +213,8 @@ const HowItWorks = () => {
                   <div
                     className="relative p-5 rounded-2xl border backdrop-blur-sm transition-all duration-500"
                     style={{
-                      background:  isCurrent ? "rgba(255,255,255,0.055)" : "rgba(255,255,255,0.02)",
-                      borderColor: isCurrent ? `${step.color}30` : "rgba(255,255,255,0.05)",
+                      background:  isCurrent ? CARD_BLUE_ACTIVE : CARD_BLUE,
+                      borderColor: isCurrent ? `${step.color}30` : "rgba(12,26,59,0.1)",
                       boxShadow:   isCurrent ? `0 0 50px ${step.color}08` : "none",
                     }}
                   >
@@ -237,21 +242,21 @@ const HowItWorks = () => {
 
                     <span
                       className="text-[10px] font-bold uppercase tracking-[0.2em] block mb-1 transition-colors duration-500"
-                      style={{ color: isActive ? step.color : "rgba(255,255,255,0.1)" }}
+                      style={{ color: isActive ? step.color : "rgba(255,255,255,0.2)" }}
                     >
                       Step {i + 1}
                     </span>
 
                     <h3
                       className="font-display font-bold text-[15px] leading-snug mb-1.5 transition-colors duration-500"
-                      style={{ color: isActive ? "#fff" : "rgba(255,255,255,0.15)" }}
+                      style={{ color: "#0c1a3b" }}
                     >
                       {step.title}
                     </h3>
 
                     <p
-                      className="text-[13px] leading-relaxed transition-colors duration-500"
-                      style={{ color: isActive ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.08)" }}
+                      className="text-[14px] leading-relaxed transition-colors duration-500"
+                      style={{ color: "rgba(12,26,59,0.62)" }}
                     >
                       {step.desc}
                     </p>
@@ -284,15 +289,21 @@ const HowItWorks = () => {
                   />
                 )}
               </div>
-              <div className="pb-3">
+              <div
+                className="pb-3 px-4 pt-4 rounded-2xl flex-1"
+                style={{ background: CARD_BLUE, border: "1px solid rgba(12,26,59,0.1)" }}
+              >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center mb-2"
-                  style={{ background: `${step.color}15`, border: `1px solid ${step.color}25` }}
+                  style={{ background: `${step.color}20`, border: `1px solid ${step.color}30` }}
                 >
                   <step.icon className="w-4 h-4" style={{ color: step.color }} />
                 </div>
-                <h3 className="font-display font-bold text-base text-white mb-1">{step.title}</h3>
-                <p className="text-sm text-slate-400 leading-relaxed">{step.desc}</p>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] block mb-1" style={{ color: step.color }}>
+                  Step {i + 1}
+                </span>
+                <h3 className="font-display font-bold text-base mb-1" style={{ color: "#0c1a3b" }}>{step.title}</h3>
+                <p className="text-sm leading-relaxed" style={{ color: "rgba(12,26,59,0.62)" }}>{step.desc}</p>
               </div>
             </div>
           ))}
