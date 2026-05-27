@@ -96,7 +96,7 @@ const HeroSection = () => {
   const [isRequestDemoOpen, setIsRequestDemoOpen] = useState(false);
 
   return (
-    <section className="relative min-h-screen overflow-hidden">
+    <section id="hero" className="relative min-h-screen overflow-hidden">
 
       {/* ══ FULL BACKGROUND IMAGE ══ */}
       <div className="absolute inset-0">

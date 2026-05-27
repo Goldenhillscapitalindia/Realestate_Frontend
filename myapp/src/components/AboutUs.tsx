@@ -97,15 +97,18 @@ export default function AboutPlatform() {
 
             <h2 className="text-[2.8rem] md:text-[3.6rem] font-extrabold tracking-[-0.02em] text-white leading-[1.05] mb-7">
               Built by{" "}
-              <span
-                className="bg-clip-text text-transparent"
+              <a
+                href="https://ghills.ai/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-clip-text text-transparent transition-opacity hover:opacity-60"
                 style={{
                   backgroundImage:
                     "linear-gradient(135deg, #dff7ff 0%, #5de0c4 45%, #1ebc9a 100%)",
                 }}
               >
                 Golden Hills
-              </span>
+              </a>
             </h2>
 
             <p className="text-white max-w-2xl mx-auto text-[1.12rem] leading-[1.8]">

@@ -321,9 +321,9 @@ const PlatformFeatures = () => {
             What Asset72 Does
             <span style={{ width: "32px", height: "1px", background: "#1EBC9A", opacity: 0.6, display: "block" }} />
           </div>
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "50px", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
-            From acquisition to portfolio strategy — unified in one system.<br />
-            <em style={{ display: "inline-block", marginTop: "16px", fontStyle: "italic", color: "#3fd6b5", fontWeight: 300 }}>Intelligence Layers</em>{" "}
+          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "44px", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
+            From acquisition to portfolio strategy — unified in one system<br />
+            <em style={{ display: "inline-block", marginTop: "24px", fontStyle: "italic", color: "#3fd6b5", fontWeight: 300 }}>Intelligence Layers</em>{" "}
           </h1>
         </div>
 
