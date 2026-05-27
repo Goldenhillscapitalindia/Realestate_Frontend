@@ -90,8 +90,8 @@ const HowItWorks = () => {
           <h2 className="font-display font-extrabold text-2xl md:text-3xl lg:text-[2.2rem] mb-2" style={{ color: HEADING_COLOR }}>
             Turn property financials into
           </h2>
-          <p className="text-base md:text-lg" style={{ color: "rgba(255,255,255,0.6)" }}>
-            actionable portfolio intelligence.
+          <p className="text-base md:text-lg" style={{ color: "rgba(255,255,255,0.6)", fontSize:"23px" }}>
+            Actionable portfolio intelligence.
           </p>
         </div>
 
@@ -255,7 +255,7 @@ const HowItWorks = () => {
                     </h3>
 
                     <p
-                      className="text-[13px] leading-relaxed transition-colors duration-500"
+                      className="text-[14px] leading-relaxed transition-colors duration-500"
                       style={{ color: "rgba(12,26,59,0.62)" }}
                     >
                       {step.desc}

@@ -227,12 +227,12 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
           </h2>
         </>
       )}
-      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: isDealLens ? "100%" : "500px", marginBottom: "22px", whiteSpace: "pre-line" }}>
+      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "16px", lineHeight: 1.65, maxWidth: isDealLens ? "100%" : "500px", marginBottom: "22px", whiteSpace: "pre-line" }}>
         {feat.desc}
       </p>
       <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 22px", marginBottom: "22px", padding: 0 }}>
         {feat.bullets.map((b, i) => (
-          <li key={i} style={{ color: "#FAFAF7", fontSize: "13px", letterSpacing: "0.01em", paddingLeft: "16px", position: "relative", lineHeight: 1.4 }}>
+          <li key={i} style={{ color: "#FAFAF7", fontSize: "15px", letterSpacing: "0.01em", paddingLeft: "16px", position: "relative", lineHeight: 1.4 }}>
             <span style={{ position: "absolute", left: 0, top: "8px", width: "8px", height: "1px", background: "#1EBC9A", display: "block" }} />
             {b}
           </li>
@@ -241,8 +241,8 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       <div style={{ display: "flex", gap: "28px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px", marginTop: "18px" }}>
         {[{ l: feat.m1L, v: feat.m1V }, { l: feat.m2L, v: feat.m2V }, ...(feat.m3L ? [{ l: feat.m3L, v: feat.m3V }] : [])].map(({ l, v }) => (
           <div key={l} style={{ flexShrink: 0 }}>
-            <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "4px" }}>{l}</div>
-            <div style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontSize: "13px", fontWeight: 300, fontStyle: "italic", lineHeight: 1.6 }}>
+            <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "4px" }}>{l}</div>
+            <div style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontSize: "14px", fontWeight: 300, fontStyle: "italic", lineHeight: 1.6 }}>
               {v.includes(" · ") ? v.split(" · ").map((item, idx) => (
                 <div key={idx} style={{ display: "flex", alignItems: "baseline", gap: "3px", whiteSpace: "nowrap" }}>
                   <span style={{ flexShrink: 0 }}>·</span>
@@ -314,16 +314,16 @@ const PlatformFeatures = () => {
 
         {/* ── HEAD TOP ── */}
         <div className="absolute left-0 right-0 z-10 text-center pointer-events-none"
-          style={{ top: "90px", padding: "0 40px", opacity: headTopVis, transform: `translateY(${-(1 - headTopVis) * 16}px)`, transition: "opacity 0.1s, transform 0.1s" }}
+          style={{ top: "120px", padding: "0 40px", opacity: headTopVis, transform: `translateY(${-(1 - headTopVis) * 16}px)`, transition: "opacity 0.1s, transform 0.1s" }}
         >
           <div style={{ display: "inline-flex", alignItems: "center", gap: "14px", color: "#1EBC9A", fontSize: "11px", letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: "18px" }}>
             <span style={{ width: "32px", height: "1px", background: "#1EBC9A", opacity: 0.6, display: "block" }} />
             What Asset72 Does
             <span style={{ width: "32px", height: "1px", background: "#1EBC9A", opacity: 0.6, display: "block" }} />
           </div>
-          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "clamp(34px, 4.6vw, 68px)", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
-            Built floor by floor for<br />
-            <em style={{ fontStyle: "italic", color: "#3fd6b5", fontWeight: 300 }}>institutional</em>{" "}real estate.
+          <h1 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "50px", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
+            From acquisition to portfolio strategy — unified in one system.<br />
+            <em style={{ display: "inline-block", marginTop: "16px", fontStyle: "italic", color: "#3fd6b5", fontWeight: 300 }}>Intelligence Layers</em>{" "}
           </h1>
         </div>
 

@@ -93,6 +93,7 @@ const UseCases = () => {
                   backdropFilter: "blur(20px)",
                   WebkitBackdropFilter: "blur(20px)",
                   boxShadow: "0 20px 56px -34px rgba(0, 7, 24, 0.72)",
+                  
                 }}
               >
                 {/* Top accent gradient bar */}
@@ -105,20 +106,22 @@ const UseCases = () => {
                 />
 
                 <div className="flex flex-col flex-grow p-7 lg:p-8">
-                  {/* Icon */}
-                  <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl border border-[#6f87b5]/25 bg-[#122543]/80 transition-all duration-500 group-hover:scale-110 group-hover:border-[#20d6bd]/30 group-hover:bg-[#12334b] relative">
-                    <item.icon className="h-6 w-6 text-white transition-all duration-500" />
-                    {/* Hover ring pulse */}
-                    <div className="absolute inset-0 rounded-2xl border border-[#20d6bd]/0 group-hover:border-[#20d6bd]/20 transition-all duration-500 group-hover:scale-125 group-hover:opacity-0" />
+                  <div className="mb-6 flex items-center gap-4">
+                    {/* Icon */}
+                    <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-[#6f87b5]/25 bg-[#122543]/80 transition-all duration-500 group-hover:scale-110 group-hover:border-[#20d6bd]/30 group-hover:bg-[#12334b]">
+                      <item.icon className="h-6 w-6 text-white transition-all duration-500" />
+                      {/* Hover ring pulse */}
+                      <div className="absolute inset-0 rounded-2xl border border-[#20d6bd]/0 transition-all duration-500 group-hover:scale-125 group-hover:border-[#20d6bd]/20 group-hover:opacity-0" />
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-display text-xl font-semibold tracking-tight text-white">
+                      {item.title}
+                    </h3>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="mb-3 font-display text-xl font-semibold tracking-tight text-white">
-                    {item.title}
-                  </h3>
-
                   {/* Description */}
-                  <p className="text-sm leading-relaxed text-[#c7d3e6] flex-grow">{item.description}</p>
+                  <p className="text-md leading-relaxed text-[#c7d3e6] flex-grow">{item.description}</p>
 
                   {/* Stat line */}
                   <div className="mt-6 pt-4 border-t border-[#6f87b5]/20 flex items-center gap-2">

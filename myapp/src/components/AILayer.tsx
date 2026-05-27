@@ -85,7 +85,7 @@ const AILayer = () => {
               Real Estate Intelligence Infrastructure
             </h2>
 
-            <p className="text-[15px] leading-7 text-slate-500 max-w-2xl mx-auto">
+            <p className="text-[17px] leading-7 text-slate-500 max-w-2xl mx-auto">
               <span>Transform fragmented rent rolls, T12s, and operational reporting into</span>
               <br />
               <span>continuous institutional intelligence.</span>
@@ -169,7 +169,7 @@ const AILayer = () => {
                     </p>
 
                     {/* Detail */}
-                    <p className="text-[12px] leading-relaxed text-white/70">
+                    <p className="text-[13px] leading-relaxed text-white/70">
                       {capability.detail}
                     </p>
                   </div>

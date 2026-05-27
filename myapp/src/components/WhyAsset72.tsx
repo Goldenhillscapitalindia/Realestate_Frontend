@@ -73,7 +73,7 @@ const WhyAsset72 = () => {
             </div>
 
             <h2 className="mb-5 font-display text-[2rem] font-extrabold text-[#0f1d2f] tracking-tight md:text-[2.35rem] lg:text-[2.8rem]">
-              Forward-Looking. Integrated. Institutional.
+              Predictive Unified Institutional
             </h2>
           </div>
         </ScrollReveal>
@@ -125,10 +125,10 @@ const WhyAsset72 = () => {
                   </div>
 
                   {/* Title */}
-                  <p className="text-sm font-semibold leading-snug text-white mb-2">{benefit.title}</p>
+                  <p className="text-md font-semibold leading-snug text-white mb-2">{benefit.title}</p>
 
                   {/* Description */}
-                  <p className="text-[12px] leading-relaxed text-white/55 mt-auto">{benefit.description}</p>
+                  <p className="mt-1 text-[14px] leading-relaxed text-white/55">{benefit.description}</p>
                 </div>
               </ScrollReveal>
             ))}

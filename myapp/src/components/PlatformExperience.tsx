@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import { ScrollReveal } from "./ScrollReveal";
-import dealLens from "../assets/deal_lens.png";
+import dealLens from "../assets/deal_lens_final.png";
 import expenseintel from "../assets/Expenses Intel.jpg";
 import marketRadar from "../assets/market_signal_radar.png";
 import properties from "../assets/properties.png";
