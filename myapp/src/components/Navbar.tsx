@@ -33,13 +33,13 @@ import { productRoutes } from "@/lib/product-routes";
 
 const navLinks = [
   { label: "Platform", id: "hero" },
-  { label: "What Asset72", id: "platform" },
-  { label: "Investment Workflows", id: "use-cases" },
-  { label: "How Asset72", id: "workflow" },
+  { label: "Asset72 Intelligence", id: "platform" },
+  { label: "Use Cases", id: "use-cases" },
+  { label: "Intelligence Workflow", id: "workflow" },
   { label: "AI Layer", id: "ai" },
-  { label: "Platform Experience", id: "platform-experience" },
-  { label: "Why Asset72", id: "why", branded: true },
-  { label: "About The Platform", id: "about" },
+  // { label: "Platform Experience", id: "platform-experience" },
+  // { label: "Why Asset72", id: "why", branded: true },
+  { label: "About Us", id: "about" },
 ];
 
 const profileAvatarThemes = [
@@ -160,7 +160,7 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
         </button>
 
         {/* Desktop Nav */}
-        <div className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-3 xl:gap-5">
+        <div className="hidden lg:flex min-w-0 flex-1 items-center justify-center gap-6 xl:gap-8">
           {navLinks.map((link) => (
             <button
               type="button"
@@ -172,7 +172,7 @@ const Navbar = ({ theme, onToggleTheme }: NavbarProps = {}) => {
                 }
                 handleSectionNavigation(link.id);
               }}
-              className="whitespace-nowrap text-[13px] xl:text-sm font-medium text-[#2b0f66] hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent after:transition-all hover:after:w-full"
+              className="whitespace-nowrap text-[15px] xl:text-base font-medium text-[#2b0f66] hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:w-0 after:h-[2px] after:bg-accent after:transition-all hover:after:w-full"
             >
               {link.label}
             </button>

@@ -91,7 +91,7 @@ const PfDemoIcMemo: React.FC<PfDemoIcMemoProps> = ({ hasStarted, onGenerate, onB
           <FileText className="h-8 w-8" />
         </div>
         <p className="text-sm font-semibold uppercase tracking-[0.28em] text-[#5b6aa5]">
-          IC Intelligence
+          Investment Committee Intelligence Memo
         </p>
         {/* <h2 className="mt-3 text-3xl font-semibold text-slate-900">
           Build your investment committee memo
@@ -111,7 +111,7 @@ const PfDemoIcMemo: React.FC<PfDemoIcMemoProps> = ({ hasStarted, onGenerate, onB
             onClick={onGenerate}
             className="inline-flex items-center gap-3 rounded-2xl bg-[#0fa77d] px-7 py-4 text-base font-semibold text-white shadow-[0_16px_30px_rgba(15,167,125,0.24)] transition hover:bg-[#0c8f6b]"
           >
-            <span>Generate Your IC Intelligence</span>
+            <span>Generate Your IC Intelligence Memo</span>
             {/* <ArrowRight className="h-5 w-5" /> */}
           </button>
         </div>

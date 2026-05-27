@@ -26,7 +26,7 @@ const HeroSection = ({ data }: { data?: IcHeroData | null }) => {
         <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#9cb2ff]">
-              Confidential - Investment Committee
+              Confidential - Investment Committee Memo
             </p>
             <h1 className="mb-2 text-3xl font-bold tracking-tight md:text-4xl">
               {data?.companyName ?? ""}
