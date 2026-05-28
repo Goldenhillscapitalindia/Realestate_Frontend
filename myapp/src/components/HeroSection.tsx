@@ -260,7 +260,7 @@ const HeroSection = () => {
           </div>
 
           {/* ── RIGHT: Orbital Card Display ── */}
-          <div className="relative hidden lg:block h-[70vh] min-h-[500px]">
+          <div className="relative hidden lg:block h-[70vh] min-h-[500px] -translate-y-20">
             <div className="absolute inset-0 flex items-center justify-center">
 
               {/* Outer dashed orbit ring */}
