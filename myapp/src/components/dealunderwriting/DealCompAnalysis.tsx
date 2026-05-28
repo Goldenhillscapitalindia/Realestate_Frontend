@@ -61,6 +61,7 @@ export type DealCompAnalysisPayload = {
     markerColor?: "green" | "red" | string;
   }>;
   map?: {
+    provider?: string;
     leafletEnabled?: boolean;
     markers?: CompAnalysisMarker[];
     diagnostics?: {
@@ -71,46 +72,6 @@ export type DealCompAnalysisPayload = {
     };
     legend?: unknown;
   };
-  mapData?: {
-    subject?: {
-      name?: string;
-      address?: string;
-      location?: string;
-      latitude?: number | null;
-      longitude?: number | null;
-      coords?: Coords;
-      buildingClass?: string;
-    };
-    comparables?: Array<{
-      name?: string;
-      address?: string;
-      latitude?: number | null;
-      longitude?: number | null;
-      coords?: Coords;
-      buildingClass?: string;
-      distanceMiles?: number;
-      source?: string;
-      inPlaceRents?: Record<string, number | null | undefined>;
-      vsYourAvg?: number | null;
-      markerColor?: "blue" | "green" | "red" | string;
-    }>;
-    markers?: CompAnalysisMarker[];
-    legend?: unknown;
-  };
-  metrics?: {
-    yourAvgInPlaceRent?: number | null;
-    classMatchedMarketAvg?: number | null;
-    totalRentGap?: number | null;
-    totalRentGapPct?: number | null;
-    comparablesFound?: number | null;
-  };
-  mapMarkers?: CompAnalysisMarker[];
-  rawCompAnalysis?: DealCompAnalysisPayload;
-};
-
-type DealCompAnalysisWrapper = {
-  status?: string;
-  data?: Array<DealCompAnalysisPayload | null | undefined>;
 };
 
 const ACCENT_PURPLE = "#7C3AED";
@@ -157,71 +118,6 @@ function normalizeCoords(input: {
     return { lat: input.latitude, lng: input.longitude };
   }
   return null;
-}
-
-function unwrapCompAnalysisPayload(
-  input: DealCompAnalysisPayload | DealCompAnalysisWrapper | null
-): DealCompAnalysisPayload | null {
-  if (!input) return null;
-
-  const maybeWrapper = input as DealCompAnalysisWrapper;
-  if (Array.isArray(maybeWrapper.data)) {
-    const firstReady = maybeWrapper.data.find((item): item is DealCompAnalysisPayload => Boolean(item));
-    if (!firstReady) return null;
-    return unwrapCompAnalysisPayload(firstReady);
-  }
-
-  const payloadInput = input as DealCompAnalysisPayload;
-  const source = payloadInput.rawCompAnalysis ?? payloadInput;
-  const mapDataMarkers: CompAnalysisMarker[] = [
-    ...(source.mapData?.subject
-      ? [
-          {
-            type: "subject" as const,
-            name: source.mapData.subject.name ?? source.subjectProperty?.name ?? source.propertyName,
-            address: source.mapData.subject.address ?? source.subjectProperty?.address,
-            buildingClass: source.mapData.subject.buildingClass ?? source.subjectProperty?.buildingClass,
-            coords: normalizeCoords(source.mapData.subject) ?? undefined,
-            latitude: source.mapData.subject.latitude,
-            longitude: source.mapData.subject.longitude,
-            markerColor: "blue",
-            markerSize: "large",
-          },
-        ]
-      : []),
-    ...(source.mapData?.comparables ?? []).map((comp) => ({
-      type: "comp" as const,
-      name: comp.name,
-      address: comp.address,
-      buildingClass: comp.buildingClass,
-      distanceMiles: comp.distanceMiles,
-      coords: normalizeCoords(comp) ?? undefined,
-      latitude: comp.latitude,
-      longitude: comp.longitude,
-      source: comp.source,
-      inPlaceRents: comp.inPlaceRents,
-      vsYourAvg: comp.vsYourAvg ?? null,
-      markerColor: comp.markerColor ?? "red",
-    })),
-    ...(source.mapData?.markers ?? []),
-  ];
-
-  return {
-    ...source,
-    summary: source.summary ?? {
-      yourAvgInPlaceRent: source.metrics?.yourAvgInPlaceRent ?? null,
-      classMatchedMarketAvg: source.metrics?.classMatchedMarketAvg ?? null,
-      totalRentGap: source.metrics?.totalRentGap ?? null,
-      totalRentGapPct: source.metrics?.totalRentGapPct ?? null,
-      comparablesFound: source.metrics?.comparablesFound ?? null,
-    },
-    map: {
-      leafletEnabled: source.map?.leafletEnabled,
-      markers: source.map?.markers ?? source.mapMarkers ?? mapDataMarkers,
-      diagnostics: source.map?.diagnostics,
-      legend: source.map?.legend ?? source.mapData?.legend,
-    },
-  };
 }
 
 function buildLegendItems(legend: unknown): Array<{ label: string; color: string }> {
@@ -302,7 +198,7 @@ export default function DealCompAnalysis({
   >("distance");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
-  const normalizedPayload = useMemo(() => unwrapCompAnalysisPayload(payload), [payload]);
+  const normalizedPayload = useMemo(() => payload ?? null, [payload]);
 
   const summary = normalizedPayload?.summary;
   const chart = normalizedPayload?.chart;
@@ -435,14 +331,9 @@ export default function DealCompAnalysis({
 
   if (!normalizedPayload) return null;
 
-  const subjectName = normalizedPayload.subjectProperty?.name ?? normalizedPayload.mapData?.subject?.name ?? propertyName;
-  const subjectLocation =
-    normalizedPayload.subjectProperty?.address ??
-    normalizedPayload.mapData?.subject?.address ??
-    normalizedPayload.mapData?.subject?.location ??
-    "";
-  const subjectClass =
-    normalizedPayload.subjectProperty?.buildingClass ?? normalizedPayload.mapData?.subject?.buildingClass ?? "-";
+  const subjectName = normalizedPayload.subjectProperty?.name ?? propertyName;
+  const subjectLocation = normalizedPayload.subjectProperty?.address ?? "";
+  const subjectClass = normalizedPayload.subjectProperty?.buildingClass ?? "-";
 
   return (
     <div
@@ -761,13 +652,7 @@ export default function DealCompAnalysis({
                 <td className="px-4 py-4">-</td>
                 {unitTypes.map((unitType) => (
                   <td key={unitType} className="px-4 py-4">
-                    {formatCurrency(
-                      normalizedPayload.subjectProperty?.inPlaceRents?.[unitType] ??
-                        normalizedPayload.mapData?.comparables?.find(
-                          (comp) => (comp.name ?? "").trim().toLowerCase() === subjectName.trim().toLowerCase()
-                        )?.inPlaceRents?.[unitType] ??
-                        null
-                    )}
+                    {formatCurrency(normalizedPayload.subjectProperty?.inPlaceRents?.[unitType] ?? null)}
                   </td>
                 ))}
                 <td className="px-4 py-4">-</td>
