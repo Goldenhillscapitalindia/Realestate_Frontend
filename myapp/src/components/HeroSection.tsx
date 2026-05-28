@@ -138,7 +138,7 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-8 w-full items-center -mt-10">
 
           {/* ── LEFT: Text Content ── */}
-          <div className="relative lg:pr-4">
+          <div className="relative -translate-y-20 lg:pr-4">
             <div
               className="pointer-events-none absolute -left-16 top-16 bottom-0 w-[640px]"
               style={{
