@@ -1,5 +1,10 @@
 import { IcKpiItem, IcSignal } from "./types";
 
+const hasText = (value?: string | null) => Boolean(value?.trim());
+
+const hasKpiItem = (item?: IcKpiItem | null) =>
+  Boolean(item && (hasText(item.label) || hasText(item.value) || hasText(item.subtitle)));
+
 export const SectionHeader = ({ number, title }: { number: string; title: string }) => (
   <div className="pdf-section-header mb-5 flex items-center gap-3">
     <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-[#0d1b4f] text-xs font-bold text-white">
@@ -36,12 +41,16 @@ const KpiCard = ({ label, value, signal = "neutral", subtitle }: IcKpiItem) => {
 };
 
 const KpiStrip = ({ items = [] }: { items?: IcKpiItem[] | null }) => {
+  const visibleItems = (items ?? []).filter(hasKpiItem);
+
+  if (!visibleItems.length) return null;
+
   return (
     <section>
       <SectionHeader number="02" title="Portfolio KPIs" />
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {Array.from({ length: Math.max(items.length, 8) }).map((_, index) => (
-          <KpiCard key={index} {...(items[index] ?? {})} />
+        {visibleItems.map((item, index) => (
+          <KpiCard key={index} {...item} />
         ))}
       </div>
     </section>

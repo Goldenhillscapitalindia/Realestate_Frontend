@@ -1,6 +1,20 @@
 import { SectionHeader } from "./KpiStrip";
 import { IcRiskAsset, IcRiskMetric, IcRiskRadarData } from "./types";
 
+const hasText = (value?: string | null) => Boolean(value?.trim());
+
+const hasRiskMetric = (metric?: IcRiskMetric | null) =>
+  Boolean(metric && (hasText(metric.label) || hasText(metric.value) || hasText(metric.detail)));
+
+const hasRiskAsset = (asset?: IcRiskAsset | null) =>
+  Boolean(
+    asset &&
+      (hasText(asset.name) ||
+        hasText(asset.description) ||
+        hasText(asset.badge) ||
+        asset.stats?.some((stat) => hasText(stat.label) || hasText(stat.value)))
+  );
+
 const metricLevelStyles = {
   low: {
     wrap: "bg-[#f4fbf7] border border-[#c7e8d7] border-l-2 border-l-[#1f9d68]",
@@ -86,27 +100,34 @@ const RiskAssetCard = ({ asset, fallbackTone }: { asset?: IcRiskAsset | null; fa
 };
 
 const RiskRadar = ({ data }: { data?: IcRiskRadarData | null }) => {
-  const metrics = data?.metrics ?? [];
-  const assets = data?.assets ?? [];
+  const metrics = (data?.metrics ?? []).filter(hasRiskMetric);
+  const assets = (data?.assets ?? []).filter(hasRiskAsset);
+
+  if (!metrics.length && !assets.length) return null;
 
   return (
     <section>
       <SectionHeader number="06" title="Risk Radar" />
-      <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-        {Array.from({ length: Math.max(metrics.length, 4) }).map((_, index) => (
-          <RiskMetricCard key={index} {...(metrics[index] ?? {})} />
-        ))}
-      </div>
-
-      <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-rose-600">
-          Underperforming Assets
-        </p>
-        <div className="grid grid-cols-1 gap-4">
-          <RiskAssetCard asset={assets[0]} fallbackTone="red" />
-          {/* <RiskAssetCard asset={assets[1]} fallbackTone="yellow" /> */}
+      {metrics.length ? (
+        <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
+          {metrics.map((metric, index) => (
+            <RiskMetricCard key={index} {...metric} />
+          ))}
         </div>
-      </div>
+      ) : null}
+
+      {assets.length ? (
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.16em] text-rose-600">
+            Underperforming Assets
+          </p>
+          <div className="grid grid-cols-1 gap-4">
+            {assets.map((asset, index) => (
+              <RiskAssetCard key={index} asset={asset} fallbackTone={index === 0 ? "red" : "yellow"} />
+            ))}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 };
