@@ -183,7 +183,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: -40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
-              style={{color:"#12304A"}}
+              style={{color:"#050505"}}
               className="text-[0.95rem] md:text-base leading-relaxed text-slate-500 max-w-[420px] mb-5"
             >
               From acquisition underwriting to active asset management — in a single workflow
