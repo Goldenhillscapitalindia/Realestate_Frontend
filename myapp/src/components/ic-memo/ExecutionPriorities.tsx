@@ -1,5 +1,10 @@
 import { SectionHeader } from "./KpiStrip";
-import { IcExecutionPrioritiesData } from "./types";
+import { IcExecutionPrioritiesData, IcExecutionPriorityItem } from "./types";
+
+const hasText = (value?: string | null) => Boolean(value?.trim());
+
+const hasExecutionPriority = (item?: IcExecutionPriorityItem | null) =>
+  Boolean(item && (hasText(item.action) || hasText(item.impact) || hasText(item.detail) || hasText(item.priority)));
 
 const priorityStyles = {
   HIGH: { bg: "bg-[#B91C1C]", text: "text-white" },
@@ -8,14 +13,15 @@ const priorityStyles = {
 };
 
 const ExecutionPriorities = ({ data }: { data?: IcExecutionPrioritiesData | null }) => {
-  const items = data?.items ?? [];
+  const items = (data?.items ?? []).filter(hasExecutionPriority);
+
+  if (!items.length) return null;
 
   return (
     <section className="pdf-flow-block">
       <SectionHeader number="09" title="Execution Priorities" />
       <div className="space-y-3">
-        {Array.from({ length: Math.max(items.length, 5) }).map((_, index) => {
-          const item = items[index];
+        {items.map((item, index) => {
           const priority = item?.priority ?? "MONITOR";
           const style = priorityStyles[priority];
 
