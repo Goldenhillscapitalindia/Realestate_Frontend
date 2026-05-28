@@ -111,10 +111,10 @@ const HeroSection = () => {
           style={{
             background: `linear-gradient(
               to right,
-              rgba(244,248,252,0.55) 0%,
-              rgba(244,248,252,0.38) 22%,
-              rgba(244,248,252,0.18) 40%,
-              rgba(244,248,252,0.06) 58%,
+              rgba(244,248,252,0.68) 0%,
+              rgba(244,248,252,0.50) 22%,
+              rgba(244,248,252,0.28) 40%,
+              rgba(244,248,252,0.10) 58%,
               transparent 100%
             )`,
           }}
@@ -122,12 +122,12 @@ const HeroSection = () => {
         {/* Top gradient for navbar area */}
         <div
           className="absolute inset-x-0 top-0 h-28"
-          style={{ background: "linear-gradient(to bottom, rgba(244,248,252,0.35), transparent)" }}
+          style={{ background: "linear-gradient(to bottom, rgba(244,248,252,0.45), transparent)" }}
         />
         {/* Bottom subtle fade */}
         <div
           className="absolute inset-x-0 bottom-0 h-20"
-          style={{ background: "linear-gradient(to top, rgba(244,248,252,0.20), transparent)" }}
+          style={{ background: "linear-gradient(to top, rgba(244,248,252,0.28), transparent)" }}
         />
         {/* Subtle grid pattern over everything */}
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.012)_1px,transparent_1px),linear-gradient(rgba(15,23,42,0.012)_1px,transparent_1px)] bg-[size:44px_44px]" />
@@ -138,13 +138,20 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-8 w-full items-center -mt-10">
 
           {/* ── LEFT: Text Content ── */}
-          <div className="lg:pr-4">
+          <div className="relative lg:pr-4">
+            <div
+              className="pointer-events-none absolute -left-16 top-16 bottom-0 w-[640px]"
+              style={{
+                background: "radial-gradient(ellipse at 38% 50%, rgba(244,248,252,0.46) 0%, rgba(244,248,252,0.30) 42%, rgba(244,248,252,0.12) 68%, rgba(244,248,252,0) 100%)",
+              }}
+            />
+
             {/* Badge */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="mb-5"
+              className="relative mb-5"
             >
               <span className="inline-flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase text-[#1a6b54]">
                 <span className="flex items-center justify-center w-5 h-5 rounded-full bg-[#1a6b54]">
@@ -159,7 +166,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, x: -50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className="font-display font-extrabold text-[2.2rem] sm:text-[2.8rem] md:text-[3.2rem] lg:text-[3.6rem] leading-[1.08] tracking-[-0.025em] text-[#0f213d] mb-5"
+              className="relative font-display font-extrabold text-[2.2rem] sm:text-[2.8rem] md:text-[3.2rem] lg:text-[3.6rem] leading-[1.08] tracking-[-0.025em] text-[#0f213d] mb-5"
             >
               The Intelligence Layer<br />
               for{" "}
@@ -175,7 +182,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
               style={{color:"#071827"}}
-              className="text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-7"
+              className="relative text-[0.95rem] md:text-base leading-relaxed text-slate-600 max-w-[420px] mb-7"
             >
               AI-powered property intelligence turns financial data into forward-looking decisions — protecting NOI, reducing risk, and unlocking portfolio-wide growth.
             </motion.p>
@@ -184,7 +191,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.7, delay: 0.45 }}
               style={{color:"#050505"}}
-              className="text-[0.95rem] md:text-base leading-relaxed text-slate-500 max-w-[420px] mb-5"
+              className="relative text-[0.95rem] md:text-base leading-relaxed text-slate-500 max-w-[420px] mb-5"
             >
               From acquisition underwriting to active asset management — in a single workflow
             </motion.p>
@@ -194,7 +201,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-wrap gap-3 mb-10"
+              className="relative flex flex-wrap gap-3 mb-10"
             >
               <Button
                 variant="hero" size="lg"
