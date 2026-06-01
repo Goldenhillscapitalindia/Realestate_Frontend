@@ -156,8 +156,8 @@ const HowItWorks = () => {
                 }}
               >
                 <img
-                  src="/image1.jpg"
-                  alt="Building"
+                  src="/building-icon.jpg"
+                  alt="Property building icon"
                   className="w-9 h-9 object-contain"
                 />
               </div>

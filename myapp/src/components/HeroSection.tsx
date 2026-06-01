@@ -102,7 +102,7 @@ const HeroSection = () => {
       <div className="absolute inset-0">
         <img
           src={heroSkyline}
-          alt=""
+          alt="Modern city skyline representing real estate portfolios"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         {/* Left-to-right gradient overlay for text readability */}

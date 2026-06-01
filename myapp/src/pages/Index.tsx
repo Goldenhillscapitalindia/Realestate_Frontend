@@ -5,6 +5,7 @@ import AILayer from "../components/AILayer";
 import CTASection from "../components/CTASection";
 import Footer from "../components/Footer";
 import HeroSection from "../components/HeroSection";
+import HomeFaq from "../components/HomeFaq";
 import HowItWorks from "../components/HowItWorks";
 import Navbar from "../components/Navbar";
 import PlatformExperience from "../components/PlatformExperience";
@@ -84,6 +85,7 @@ const Index = () => {
         <AILayer />
         <PlatformExperience />
         <WhyAsset72 />
+        <HomeFaq />
       </div>
 
       <AboutUs />

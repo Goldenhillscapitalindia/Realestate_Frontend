@@ -1,51 +1,11 @@
 # Asset72
+> AI-powered real estate portfolio intelligence platform by Golden Hills. Analyzes T12s, rent rolls, NOI, occupancy, and market signals for institutional investors.
 
-> AI-powered real estate portfolio intelligence platform for multifamily asset managers and real estate investors.
-
-Asset72 is a B2B SaaS platform built by Ghills (ghills.ai) that helps real estate professionals analyze property portfolios faster and with greater accuracy using AI. It automates the extraction and analysis of financial documents like T12s and rent rolls, generates investment committee memos, surfaces risk signals, and delivers market insights so asset managers can make confident investment decisions in minutes rather than days.
-
-## What Asset72 Does
-
-Asset72 addresses the most time-consuming workflows in multifamily real estate asset management:
-
-- **T12 Analysis**: Automatically extracts and normalizes trailing 12-month operating statements, flagging anomalies and benchmarking against market comparables.
-- **Rent Roll Analysis**: Parses rent rolls to surface occupancy trends, lease expirations, loss-to-lease, and revenue-at-risk metrics.
-- **IC Memo Generation**: Automatically generates investment committee memos directly from portfolio data and T12s — eliminating hours of manual memo writing. Memos are structured, data-backed, and ready for internal review or LP reporting.
-- **NOI Optimization**: Identifies where net operating income is underperforming relative to market potential.
-- **Risk Signal Detection**: Monitors supply pipeline, market rent trends, and occupancy risk to flag underperforming or at-risk assets early.
-- **Mark-to-Market Analysis**: Compares in-place rents against current market rates to quantify upside or exposure.
-- **Portfolio Dashboard**: A unified view of all assets with performance tracking, alerts, and market pulse data.
-
-## Target Users
-
-- Multifamily real estate asset managers
-- Real estate investment managers and sponsors
-- Private equity real estate firms
-- Real estate developers and operators managing US multifamily portfolios
-- CRE (commercial real estate) underwriters and analysts
-- Investment committee members who review asset performance and acquisition decisions
-
-## Key Terminology
-
-Asset72 works with the following domain-specific concepts: NOI (net operating income), T12 (trailing 12-month income statement), rent roll, IC memo (investment committee memo), loss-to-lease, revenue at risk, occupancy rate, cap rate, DSCR (debt service coverage ratio), mark-to-market, supply pipeline risk, lease management, underwriting automation, LP reporting.
-
-## Product Details
-
-- **Type**: Web-based SaaS (no installation required)
-- **Market**: US multifamily real estate
-- **Access**: Request a demo at https://asset72.ghills.ai
-- **Company**: Ghills — https://ghills.ai
-- **LinkedIn**: https://www.linkedin.com/company/asset72/
-
-## Why Asset72
-
-Traditional real estate analysis relies on manual spreadsheet work and memo writing that takes days. Asset72 compresses that timeline to minutes by using AI to extract, normalize, and interpret financial data — and automatically producing investment-grade IC memos from that data. Asset managers get more time to act on insights rather than produce them.
-
-## Pages
-
-- Homepage / Product overview: https://asset72.ghills.ai/
-- Demo request: https://asset72.ghills.ai/#demo
+## Products
+- Deal Lens: pre-underwriting deal screening
+- Portfolio Intelligence: portfolio-wide risk & allocation
+- AI Rent Intelligence: rent-roll pricing analysis
+- Market Radar: competitive market signals
 
 ## Contact
-
-For partnership, press, or enterprise inquiries, visit https://ghills.ai or connect via LinkedIn at https://www.linkedin.com/company/asset72/
+asset72@ghills.ai

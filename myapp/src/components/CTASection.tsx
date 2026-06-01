@@ -114,7 +114,7 @@ const CTASection = () => {
             <div className="absolute inset-0 overflow-hidden pointer-events-none">
               <img
                 src="/portfolio-dashboard.png"
-                alt=""
+                alt="Asset72 portfolio intelligence dashboard"
                 className="absolute right-[-8%] top-1/2 -translate-y-1/2 w-[75%] h-auto object-contain"
                 style={{ opacity: 0.12, filter: "brightness(1.4) contrast(0.9)" }}
               />
