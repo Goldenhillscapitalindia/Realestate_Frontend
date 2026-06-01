@@ -10,6 +10,10 @@ type ProtectedRouteProps = {
 };
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+  if (typeof window === "undefined") {
+    return <>{children}</>;
+  }
+
   const navigate = useNavigate();
   const location = useLocation();
   const hasAccess = isUserLoggedIn() || isDemoMode();

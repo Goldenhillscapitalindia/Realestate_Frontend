@@ -52,14 +52,19 @@ const routeToTab: Record<string, DemoTab> = {
   "/portfolio_intelligence": "Portfolio Analytics",
   [productRoutes.portfolioIntelligence]: "Portfolio Analytics",
   [productRoutes.propertyIntelligence]: "Properties",
-  "/ai_rent_intelligence": "AI Rent Intelligence",
-  "/market_radar": "Market Signal Radar",
+  [productRoutes.aiRentIntelligence]: "AI Rent Intelligence",
+  [productRoutes.marketRadar]: "Market Signal Radar",
   "/ic_memo": "IC Memo",
-  "/deal_lens": "Deal Underwriting Lens",
+  [productRoutes.dealLens]: "Deal Underwriting Lens",
 };
 
+const getTabFromPath = (pathname: string): DemoTab =>
+  routeToTab[pathname] ?? "Portfolio Analytics";
+
 const PfDemo: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<DemoTab>("Portfolio Analytics");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState<DemoTab>(() => getTabFromPath(location.pathname));
   const [selectedProperty, setSelectedProperty] = useState<
     Pick<PropertyRecord, "property_name" | "submarket" | "region"> | null
   >(null);
@@ -69,8 +74,6 @@ const PfDemo: React.FC = () => {
   const [dealLensScreen, setDealLensScreen] = useState<"library" | "upload" | "detail">("library");
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(true);
   const mainScrollRef = useRef<HTMLElement | null>(null);
-  const location = useLocation();
-  const navigate = useNavigate();
   const isDealLensTab = activeTab === "Deal Underwriting Lens";
   const hidePortfolioSidebar = isDealLensTab && dealLensScreen === "detail";
   const isAuthenticatedUserView = isUserLoggedIn() && !isDemoMode();
@@ -156,10 +159,7 @@ const PfDemo: React.FC = () => {
       return;
     }
 
-    const tabFromRoute = routeToTab[location.pathname];
-    if (tabFromRoute) {
-      setActiveTab(tabFromRoute);
-    }
+    setActiveTab(getTabFromPath(location.pathname));
   }, [location.pathname, location.state]);
 
   useEffect(() => {

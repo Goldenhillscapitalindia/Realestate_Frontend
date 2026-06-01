@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, type ReactNode } from "react";
+import { useEffect } from "react";
 import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
@@ -15,15 +15,11 @@ import TermsOfUse from "./pages/TermsOfUse";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { autoLogin } from "./lib/auth";
 import { productRoutes } from "./lib/product-routes";
+import MarketRadarView from "./components/market-radar-view/components/MarketRadarView";
+import PfDemo from "./components/portfolio_intelligence/pf_demo";
+import PfPropertyInsights from "./components/portfolio_intelligence/pf_property_insights";
 
 const queryClient = new QueryClient();
-const MarketRadarView = lazy(() => import("./components/market-radar-view/components/MarketRadarView"));
-const PfDemo = lazy(() => import("./components/portfolio_intelligence/pf_demo"));
-const PfPropertyInsights = lazy(() => import("./components/portfolio_intelligence/pf_property_insights"));
-
-const withProtectedSuspense = (element: ReactNode) => (
-  <Suspense fallback={null}>{element}</Suspense>
-);
 
 const App = () => {
   useEffect(() => {
@@ -46,91 +42,73 @@ const App = () => {
         <Route
           path={`${productRoutes.portfolioIntelligence}/*`}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path={productRoutes.propertyIntelligence}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path={productRoutes.aiRentIntelligence}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path={productRoutes.marketRadar}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path={productRoutes.dealLens}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path={`${productRoutes.portfolioIntelligence}/property-insights`}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfPropertyInsights />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfPropertyInsights />
+            </ProtectedRoute>
           }
         />
         <Route
           path={`${productRoutes.propertyIntelligence}/property-insights`}
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfPropertyInsights />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfPropertyInsights />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/ic_memo"
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <PfDemo />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <PfDemo />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/market_radar_view/:sub_market_name"
           element={
-            withProtectedSuspense(
-              <ProtectedRoute>
-                <MarketRadarView />
-              </ProtectedRoute>,
-            )
+            <ProtectedRoute>
+              <MarketRadarView />
+            </ProtectedRoute>
           }
         />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

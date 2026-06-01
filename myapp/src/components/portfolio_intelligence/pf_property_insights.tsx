@@ -1,9 +1,8 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { Bar, Line } from "react-chartjs-2";
 import { authClient } from "@/lib/auth-api";
 import PfDemoAiRentIntelligence from "./pf_demo_ai_rent_intelligence";
-import PfCompAnalysis from "./pf_comp_analysis";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -28,6 +27,8 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+
+const PfCompAnalysis = lazy(() => import("./pf_comp_analysis"));
 
 type TrendPoint = {
   month: string;
@@ -759,7 +760,9 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
         ) : null}
 
         {canShowCompAnalysis && viewMode === "comp_analysis" ? (
-          <PfCompAnalysis propertyName={record.property_name} />
+          <Suspense fallback={null}>
+            <PfCompAnalysis propertyName={record.property_name} />
+          </Suspense>
         ) : null}
 
         {viewMode === "property_analytics" ? (

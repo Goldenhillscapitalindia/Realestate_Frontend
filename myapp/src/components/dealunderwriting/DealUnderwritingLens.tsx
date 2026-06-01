@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { AISnapshot } from "./AISnapshot";
 import { AppSidebar } from "./AppSidebar";
 import { ComparisonBar } from "./ComparisonBar";
@@ -11,11 +11,12 @@ import { KeyMetrics } from "./KeyMetrics";
 import { RisksOpportunities } from "./RisksOpportunities";
 import { WhatMovesTheDeal } from "./WhatMovesTheDeal";
 import { deleteUserDealUnderwriting, getDealById, useDealUnderwritingData } from "./data";
-import DealCompAnalysis from "./DealCompAnalysis";
 import PfDealUnderwritingUpload from "./pf_dealunderwriting_upload";
 import { Search, Trash2 } from "lucide-react";
 import { isDemoMode } from "@/lib/demo-mode";
 import { exportElementToPdf } from "@/lib/pdf-export";
+
+const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
 
 interface DealUnderwritingLensProps {
   onScreenChange?: (screen: "library" | "upload" | "detail") => void;
@@ -345,10 +346,12 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
               <DealCharts deal={activeDeal} />
 
               {activeDeal.compAnalysis ? (
-                <DealCompAnalysis
-                  propertyName={activeDeal.name}
-                  payload={activeDeal.compAnalysis}
-                />
+                <Suspense fallback={null}>
+                  <DealCompAnalysis
+                    propertyName={activeDeal.name}
+                    payload={activeDeal.compAnalysis}
+                  />
+                </Suspense>
               ) : null}
               <div className="pdf-flow-block">
                 <RisksOpportunities deal={activeDeal} />
