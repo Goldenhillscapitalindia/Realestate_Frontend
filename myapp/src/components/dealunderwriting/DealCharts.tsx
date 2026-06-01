@@ -214,7 +214,10 @@ export function DealCharts({ deal }: { deal: Deal }) {
           />
         </ChartCard>
 
-        <ChartCard title="Revenue vs Expenses" insight={ci.revenueVsExpenses}>
+        <ChartCard
+          title={hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? "Revenue vs Expenses" : "Revenue vs Expenses vs NOI"}
+          insight={ci.revenueVsExpenses}
+        >
           {hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? (
             <Line
               data={{
