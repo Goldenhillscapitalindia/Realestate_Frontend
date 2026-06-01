@@ -142,7 +142,7 @@ type DealUnderwritingApiRecord = {
     expenseBreakdown?: Array<{ category: string; amount: number; percent?: number }>;
     expenseDistribution?: Array<{ category: string; amount: number; percent?: number }>;
     leaseExpiration?: Array<{ month: string; units: number }>;
-    occupancyVsVacancy?: Array<{ month: string; occupancyRate: number; vacancyRate: number }>;
+    occupancyVsVacancy?: Array<{ month?: string; occupancyRate: number; vacancyRate: number; occupied?: number; total?: number; vacant?: number }>;
     leaseExpirationFloorplan?: {
       title?: string;
       xlabels?: string[];
@@ -850,11 +850,13 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       year: item.month,
       units: toNumber(item.units),
     })),
-    occupancyHistory: (record.performanceAnalytics.occupancyVsVacancy ?? []).map((item) => ({
-      month: item.month,
-      occupancy: toNumber(item.occupancyRate),
-      vacancy: toNumber(item.vacancyRate),
-    })),
+    occupancyHistory: (record.performanceAnalytics.occupancyVsVacancy ?? [])
+      .filter((item) => item.month != null)
+      .map((item) => ({
+        month: item.month as string,
+        occupancy: toNumber(item.occupancyRate),
+        vacancy: toNumber(item.vacancyRate),
+      })),
     leaseExpirationFloorplan: record.performanceAnalytics.leaseExpirationFloorplan
       ? {
           title: record.performanceAnalytics.leaseExpirationFloorplan.title || "Lease Expirations and Occupied Units by Floorplan",

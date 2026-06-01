@@ -150,6 +150,44 @@ function hasChartData(arr: Array<Record<string, number | string>>): boolean {
   );
 }
 
+function OccupancyDonut({ occupied, total }: { occupied: number; total: number }) {
+  const vacant = Math.max(total - occupied, 0);
+  const pct = total > 0 ? Math.round((occupied / total) * 100) : 0;
+  const radius = 68;
+  const strokeWidth = 16;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (pct / 100) * circumference;
+
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <div className="relative flex items-center justify-center">
+        <svg width="176" height="176" viewBox="0 0 176 176">
+          <circle cx="88" cy="88" r={radius} fill="none" stroke="#e2e8f0" strokeWidth={strokeWidth} />
+          <circle
+            cx="88" cy="88" r={radius}
+            fill="none"
+            stroke="#274b87"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            transform="rotate(-90 88 88)"
+          />
+        </svg>
+        <div className="absolute flex flex-col items-center leading-tight">
+          <span className="text-4xl font-bold text-[#102149]">{occupied}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#57719c]">Occupied</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 text-xs text-[#57719c]">
+        <span className="font-medium text-[#102149]">{pct}% of {total}</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#274b87]" />Occupied: {occupied}</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#e2e8f0]" />Vacant: {vacant}</span>
+      </div>
+    </div>
+  );
+}
+
 export function DealCharts({ deal }: { deal: Deal }) {
   const ci = deal.chartInsights;
 
@@ -279,8 +317,8 @@ export function DealCharts({ deal }: { deal: Deal }) {
           />
         </ChartCard>
 
-        {hasChartData(deal.occupancyHistory as unknown as Array<Record<string, number | string>>) && (
-          <ChartCard title="Occupancy vs Vacancy" insight={ci.occupancyVacancy}>
+        <ChartCard title="Occupancy vs Vacancy" insight={ci.occupancyVacancy}>
+          {hasChartData(deal.occupancyHistory as unknown as Array<Record<string, number | string>>) ? (
             <Line
               data={{
                 labels: deal.occupancyHistory.map((item) => item.month),
@@ -291,8 +329,13 @@ export function DealCharts({ deal }: { deal: Deal }) {
               }}
               options={barOptions}
             />
-          </ChartCard>
-        )}
+          ) : (
+            <OccupancyDonut
+              occupied={deal.metrics.occupancyUnits?.occupied ?? Math.round((deal.metrics.occupancy / 100) * (deal.metrics.noOfUnits ?? 0))}
+              total={deal.metrics.occupancyUnits?.total ?? deal.metrics.noOfUnits ?? 0}
+            />
+          )}
+        </ChartCard>
       </section>
       {deal.leaseExpirationFloorplan?.xlabels?.length && deal.leaseExpirationFloorplan?.ylabels?.length ? (
         <section className="pdf-flow-block mb-4">
