@@ -38,6 +38,7 @@ type RevenueExpensePoint = {
   month: string;
   revenue: number;
   expense: number;
+  noi?: number;
 };
 
 type IntelligenceTips = {
@@ -181,8 +182,6 @@ const formatPercent = (value?: number | null): string => {
   // if API sends 0.68 => 68%
   return `${(value * 100).toFixed(1)}%`;
 };
-
-const formatWholeUnits = (value: number): string => Math.round(value).toLocaleString("en-US");
 
 const formatYoY = (value?: number | null): string | undefined => {
   if (!isValidNumber(value)) return undefined;
@@ -547,6 +546,37 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
   const noiTrend = trends?.noiTrend12Month ?? [];
   const revenueExpense = trends?.revenueVsExpense ?? [];
 
+  const hasNoiTrendData = noiTrend.some((p) => isValidNumber((p as { value?: number }).value));
+
+  // "Annual" single-entry = backend fallback when no monthly data → use bar chart
+  const isAnnualFallback = revenueExpense.length === 1 && revenueExpense[0].month === "Annual";
+  const hasRevenueExpenseData = !isAnnualFallback && revenueExpense.some(
+    (p) => isValidNumber(p.revenue) || isValidNumber(p.expense)
+  );
+
+  const kpis = record?.property_response?.kpis;
+  const kpiRevenue = kpis?.revenue ?? 0;
+  const kpiNoi = kpis?.noi ?? 0;
+  const kpiExpenses = kpiRevenue > 0 ? kpiRevenue - kpiNoi : 0;
+
+  // Prefer values from the Annual fallback entry if present
+  const barRevenue = isAnnualFallback ? (revenueExpense[0].revenue ?? kpiRevenue) : kpiRevenue;
+  const barExpenses = isAnnualFallback ? (revenueExpense[0].expense ?? kpiExpenses) : kpiExpenses;
+  const barNoi = isAnnualFallback ? (revenueExpense[0].noi ?? kpiNoi) : kpiNoi;
+
+  const revenueExpenseFallbackData = {
+    labels: ["Revenue", "Expenses", "NOI"],
+    datasets: [
+      {
+        label: " ",
+        data: [barRevenue, barExpenses, barNoi],
+        backgroundColor: ["#274b87", "#f59e0b", "#22c55e"],
+        barPercentage: 0.6,
+        categoryPercentage: 0.7,
+      },
+    ],
+  };
+
   const noiChartData = useMemo(
     () => ({
       labels: noiTrend.map((point) => point.month),
@@ -802,8 +832,8 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
             ))}
           </div>
 
-          <div className="grid gap-4 lg:grid-cols-2">
-            {noiTrend.length ? (
+          <div className={`grid gap-4 ${hasNoiTrendData ? "lg:grid-cols-2" : ""}`}>
+            {hasNoiTrendData ? (
               <div className="relative rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-4 flex items-center justify-between">
                   <h3 className="text-m font-semibold text-black">NOI Trend (12 Month)</h3>
@@ -815,17 +845,32 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
               </div>
             ) : null}
 
-            {revenueExpense.length ? (
-              <div className="relative rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="mb-4 flex items-center justify-between">
-                  <h3 className="text-m font-semibold text-black">Revenue vs Expense</h3>
-                  <span className="text-xs text-slate-700">Last 12 months</span>
-                </div>
-                <div className="mt-4 h-64">
-                  <Line data={revenueExpenseChartData} options={revenueLineOptions} />
-                </div>
+            <div className="relative rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-m font-semibold text-black">
+                  {hasRevenueExpenseData ? "Revenue vs Expense" : "Revenue vs Expenses vs NOI"}
+                </h3>
+                {/* <span className="text-xs text-slate-700">Last 12 months</span> */}
               </div>
-            ) : null}
+              <div className="mt-4 h-64">
+                {hasRevenueExpenseData ? (
+                  <Line data={revenueExpenseChartData} options={revenueLineOptions} />
+                ) : (
+                  <Bar
+                    data={revenueExpenseFallbackData}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      scales: {
+                        x: { ticks: { color: "#475569" }, grid: { color: "rgba(15,23,42,0.05)" } },
+                        y: { ticks: { color: "#475569", callback: (v) => formatCurrency(Number(v)) }, grid: { color: "rgba(15,23,42,0.08)" } },
+                      },
+                      plugins: { legend: { display: false } },
+                    }}
+                  />
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-4">
