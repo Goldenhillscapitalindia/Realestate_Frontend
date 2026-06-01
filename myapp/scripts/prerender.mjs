@@ -13,7 +13,16 @@ const templatePath = path.join(distDir, "index.html");
 const srcAssetsDir = path.join(projectRoot, "src", "assets");
 const distAssetsDir = path.join(distDir, "assets");
 
-const publicRoutes = ["/", "/contact", "/privacy-policy", "/terms-of-use"];
+const publicRoutes = [
+  "/",
+  "/contact",
+  "/privacy-policy",
+  "/terms-of-use",
+  "/pf/portfolio_intelligence",
+  "/pf/ai_rent_intelligence",
+  "/pf/market_radar",
+  "/pf/deal_lens",
+];
 const baseUrl = "https://asset72.ghills.ai";
 const routeMeta = {
   "/": {
@@ -35,6 +44,26 @@ const routeMeta = {
     title: "Terms of Use | Asset72",
     description:
       "Review the Asset72 terms of use for platform access, acceptable usage, uploaded document handling, and service conditions.",
+  },
+  "/pf/portfolio_intelligence": {
+    title: "Portfolio Intelligence | Asset72",
+    description:
+      "Explore Asset72 portfolio intelligence for NOI trends, lease health, expense pressure, occupancy movement, and risk signals across real estate assets.",
+  },
+  "/pf/ai_rent_intelligence": {
+    title: "AI Rent Intelligence | Asset72",
+    description:
+      "Review Asset72 AI rent intelligence for pricing signals, renewal strategy, comp context, and leasing decisions across multifamily portfolios.",
+  },
+  "/pf/market_radar": {
+    title: "Market Radar | Asset72",
+    description:
+      "Track market signal radar insights with Asset72, including submarket trends, supply pressure, demand health, and investment decision support.",
+  },
+  "/pf/deal_lens": {
+    title: "Deal Lens | Asset72",
+    description:
+      "Analyze acquisitions faster with Asset72 Deal Lens, combining underwriting views, risk surfacing, and AI-guided real estate deal evaluation.",
   },
 };
 
@@ -100,25 +129,25 @@ function rewriteRouteMeta(html, route) {
   return html
     .replace(/<title>.*?<\/title>/, `<title>${meta.title}</title>`)
     .replace(
-      /<meta name="description" content=".*?" \/>/,
+      /<meta name="description"[\s\S]*?content=".*?"[\s\S]*?\/>/,
       `<meta name="description" content="${meta.description}" />`,
     )
-    .replace(/<meta property="og:url" content=".*?" \/>/, `<meta property="og:url" content="${url}" />`)
+    .replace(/<meta property="og:url"[\s\S]*?content=".*?"[\s\S]*?\/>/, `<meta property="og:url" content="${url}" />`)
     .replace(
-      /<meta property="og:title" content=".*?" \/>/,
+      /<meta property="og:title"[\s\S]*?content=".*?"[\s\S]*?\/>/,
       `<meta property="og:title" content="${meta.title}" />`,
     )
     .replace(
-      /<meta property="og:description" content=".*?" \/>/,
+      /<meta property="og:description"[\s\S]*?content=".*?"[\s\S]*?\/>/,
       `<meta property="og:description" content="${meta.description}" />`,
     )
-    .replace(/<link rel="canonical" href=".*?" \/>/, `<link rel="canonical" href="${url}" />`)
+    .replace(/<link rel="canonical"[\s\S]*?href=".*?"[\s\S]*?\/>/, `<link rel="canonical" href="${url}" />`)
     .replace(
-      /<meta name="twitter:title" content=".*?" \/>/,
+      /<meta name="twitter:title"[\s\S]*?content=".*?"[\s\S]*?\/>/,
       `<meta name="twitter:title" content="${meta.title}" />`,
     )
     .replace(
-      /<meta name="twitter:description" content=".*?" \/>/,
+      /<meta name="twitter:description"[\s\S]*?content=".*?"[\s\S]*?\/>/,
       `<meta name="twitter:description" content="${meta.description}" />`,
     );
 }

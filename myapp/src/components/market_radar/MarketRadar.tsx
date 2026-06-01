@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import "leaflet/dist/leaflet.css";
 import axios from "axios";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
@@ -7,10 +7,11 @@ import { MarketRadarItem } from "./types";
 import { normalizeItems, normalizePulseKey } from "./utils";
 import MarketRadarHeader from "./MarketRadarHeader";
 import MarketRadarHighlights from "./MarketRadarHighlights";
-import MarketRadarMap from "./MarketRadarMap";
 import MarketRadarTable from "./MarketRadarTable";
 import AddSubmarketModal from "./AddSubmarketModal";
 import MarketRadarView from "../market-radar-view/components/MarketRadarView";
+
+const MarketRadarMap = lazy(() => import("./MarketRadarMap"));
 
 
 type MarketRadarProps = {
@@ -27,6 +28,7 @@ const MarketRadar: React.FC<MarketRadarProps> = ({
   showPanelCard = true,
 }) => {
   const API_URL = import.meta.env.VITE_API_URL;
+  const showInteractiveMap = typeof window !== "undefined";
 
   const [data, setData] = useState<MarketRadarItem[]>([]);
   const [assetType, setAssetType] = useState<"Multifamily" | "Industrial">(() => {
@@ -125,6 +127,21 @@ const MarketRadar: React.FC<MarketRadarProps> = ({
     [mapCenter.lat, mapCenter.lng]
   );
 
+  const mapPanel = showInteractiveMap ? (
+    <Suspense fallback={<div className="h-[420px] rounded-2xl border border-slate-200 bg-slate-50" />}>
+      <MarketRadarMap data={data} mapCenter={mapCenterLatLng} mapBounds={mapBounds} />
+    </Suspense>
+  ) : (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xl font-semibold text-black">Market Radar Map</p>
+      </div>
+      <div className="flex h-[420px] items-center justify-center rounded-2xl border border-slate-200 bg-slate-50 px-6 text-center text-sm text-slate-600 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+        Interactive market mapping loads in the browser. The prerendered page still includes the market radar summary and table content for crawlers.
+      </div>
+    </div>
+  );
+
   const handleUpload = async (payload: FormData) => {
     setUploading(true);
     setUploadError(null);
@@ -207,7 +224,7 @@ const MarketRadar: React.FC<MarketRadarProps> = ({
             }}
           >
             <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-              <MarketRadarMap data={data} mapCenter={mapCenterLatLng} mapBounds={mapBounds} />
+              {mapPanel}
               <MarketRadarTable
                 data={data}
                 loading={loading}
@@ -227,7 +244,7 @@ const MarketRadar: React.FC<MarketRadarProps> = ({
           </div>
         ) : (
           <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr]">
-            <MarketRadarMap data={data} mapCenter={mapCenterLatLng} mapBounds={mapBounds} />
+            {mapPanel}
             <MarketRadarTable
               data={data}
               loading={loading}
