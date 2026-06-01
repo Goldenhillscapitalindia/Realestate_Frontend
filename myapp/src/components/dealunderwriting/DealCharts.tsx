@@ -144,6 +144,12 @@ function FloorplanHeatmap({
 const axisColor = "rgba(15,23,42,0.08)";
 const tickColor = "#475569";
 
+function hasChartData(arr: Array<Record<string, number | string>>): boolean {
+  return arr.some((item) =>
+    Object.values(item).some((v) => typeof v === "number" && v !== 0)
+  );
+}
+
 export function DealCharts({ deal }: { deal: Deal }) {
   const ci = deal.chartInsights;
 
@@ -209,16 +215,36 @@ export function DealCharts({ deal }: { deal: Deal }) {
         </ChartCard>
 
         <ChartCard title="Revenue vs Expenses" insight={ci.revenueVsExpenses}>
-          <Line
-            data={{
-              labels: deal.revenueVsExpenses.map((item) => item.month),
-              datasets: [
-                { label: "Revenue", data: deal.revenueVsExpenses.map((item) => item.revenue), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.15)", tension: 0.35 },
-                { label: "Expense", data: deal.revenueVsExpenses.map((item) => item.expenses), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.15)", tension: 0.35 },
-              ],
-            }}
-            options={lineOptions}
-          />
+          {hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? (
+            <Line
+              data={{
+                labels: deal.revenueVsExpenses.map((item) => item.month),
+                datasets: [
+                  { label: "Revenue", data: deal.revenueVsExpenses.map((item) => item.revenue), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.15)", tension: 0.35 },
+                  { label: "Expense", data: deal.revenueVsExpenses.map((item) => item.expenses), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.15)", tension: 0.35 },
+                ],
+              }}
+              options={lineOptions}
+            />
+          ) : (
+            <Bar
+              data={{
+                labels: ["Revenue", "Expenses", "NOI"],
+                datasets: [
+                  {
+                    label: "Amount",
+                    data: [
+                      deal.metrics.noi + deal.metrics.totalExpenses,
+                      deal.metrics.totalExpenses,
+                      deal.metrics.noi,
+                    ],
+                    backgroundColor: ["#274b87", "#f59e0b", "#22c55e"],
+                  },
+                ],
+              }}
+              options={barOptions}
+            />
+          )}
         </ChartCard>
       </section>
       <section className="pdf-flow-block mb-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
@@ -242,18 +268,20 @@ export function DealCharts({ deal }: { deal: Deal }) {
           />
         </ChartCard>
 
-        <ChartCard title="Occupancy vs Vacancy" insight={ci.occupancyVacancy}>
-          <Line
-            data={{
-              labels: deal.occupancyHistory.map((item) => item.month),
-              datasets: [
-                { label: "Occupancy %", data: deal.occupancyHistory.map((item) => item.occupancy), borderColor: "#274b87", backgroundColor: "rgba(39,75,135,0.1)", tension: 0.35 },
-                { label: "Vacancy %", data: deal.occupancyHistory.map((item) => item.vacancy), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.1)", tension: 0.35 },
-              ],
-            }}
-            options={barOptions}
-          />
-        </ChartCard>
+        {hasChartData(deal.occupancyHistory as unknown as Array<Record<string, number | string>>) && (
+          <ChartCard title="Occupancy vs Vacancy" insight={ci.occupancyVacancy}>
+            <Line
+              data={{
+                labels: deal.occupancyHistory.map((item) => item.month),
+                datasets: [
+                  { label: "Occupancy %", data: deal.occupancyHistory.map((item) => item.occupancy), borderColor: "#274b87", backgroundColor: "rgba(39,75,135,0.1)", tension: 0.35 },
+                  { label: "Vacancy %", data: deal.occupancyHistory.map((item) => item.vacancy), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.1)", tension: 0.35 },
+                ],
+              }}
+              options={barOptions}
+            />
+          </ChartCard>
+        )}
       </section>
       {deal.leaseExpirationFloorplan?.xlabels?.length && deal.leaseExpirationFloorplan?.ylabels?.length ? (
         <section className="pdf-flow-block mb-4">
