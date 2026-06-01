@@ -232,17 +232,25 @@ export function DealCharts({ deal }: { deal: Deal }) {
                 labels: ["Revenue", "Expenses", "NOI"],
                 datasets: [
                   {
-                    label: "Amount",
+                    label: " ",
                     data: [
                       deal.metrics.noi + deal.metrics.totalExpenses,
                       deal.metrics.totalExpenses,
                       deal.metrics.noi,
                     ],
                     backgroundColor: ["#274b87", "#f59e0b", "#22c55e"],
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7,
                   },
                 ],
               }}
-              options={barOptions}
+              options={{
+                ...barOptions,
+                plugins: {
+                  ...barOptions.plugins,
+                  legend: { display: false },
+                },
+              }}
             />
           )}
         </ChartCard>
