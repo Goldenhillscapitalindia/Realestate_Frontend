@@ -152,23 +152,25 @@ function hasChartData(arr: Array<Record<string, number | string>>): boolean {
 
 function OccupancyDonut({ occupied, total }: { occupied: number; total: number }) {
   const vacant = Math.max(total - occupied, 0);
-  const pct = total > 0 ? Math.round((occupied / total) * 100) : 0;
+  const occupiedRatio = total > 0 ? Math.min(Math.max(occupied / total, 0), 1) : 0;
+  const pct = Math.round(occupiedRatio * 100);
   const radius = 68;
   const strokeWidth = 16;
   const circumference = 2 * Math.PI * radius;
-  const offset = circumference - (pct / 100) * circumference;
+  const offset = circumference - occupiedRatio * circumference;
+  const vacantColor = "#f59e0b";
 
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3">
       <div className="relative flex items-center justify-center">
         <svg width="176" height="176" viewBox="0 0 176 176">
-          <circle cx="88" cy="88" r={radius} fill="none" stroke="#e2e8f0" strokeWidth={strokeWidth} />
+          <circle cx="88" cy="88" r={radius} fill="none" stroke={vacantColor} strokeWidth={strokeWidth} />
           <circle
             cx="88" cy="88" r={radius}
             fill="none"
             stroke="#274b87"
             strokeWidth={strokeWidth}
-            strokeLinecap="round"
+            strokeLinecap="butt"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
             transform="rotate(-90 88 88)"
@@ -182,7 +184,7 @@ function OccupancyDonut({ occupied, total }: { occupied: number; total: number }
       <div className="flex items-center gap-4 text-xs text-[#57719c]">
         <span className="font-medium text-[#102149]">{pct}% of {total}</span>
         <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#274b87]" />Occupied: {occupied}</span>
-        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#e2e8f0]" />Vacant: {vacant}</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#f59e0b]" />Vacant: {vacant}</span>
       </div>
     </div>
   );
