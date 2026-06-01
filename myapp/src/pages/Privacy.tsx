@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="mb-10">
@@ -18,6 +19,11 @@ const PrivacyPolicyPage = () => {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,_#f8fafc_0%,_#f1f5f9_45%,_#ffffff_100%)]">
+      <Seo
+        title="Privacy Policy | Asset72"
+        description="Read the Asset72 privacy policy to understand how platform data, uploaded documents, and user information are handled."
+        canonicalPath="/privacy-policy"
+      />
       <Navbar />
       <div className="relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,_rgba(15,118,110,0.12),_transparent_65%)] pointer-events-none" />

@@ -29,6 +29,7 @@ import { isDemoMode } from "@/lib/demo-mode";
 import { isUserLoggedIn } from "@/lib/auth";
 import DealUnderwritingLens from "../dealunderwriting/DealUnderwritingLens";
 import AssistantWidget from "../aiassistantwidget";
+import Seo from "@/components/Seo";
 
 const tabs = [
   "Portfolio Analytics",
@@ -61,6 +62,46 @@ const routeToTab: Record<string, DemoTab> = {
 const getTabFromPath = (pathname: string): DemoTab =>
   routeToTab[pathname] ?? "Portfolio Analytics";
 
+const seoByPath: Record<
+  string,
+  {
+    title: string;
+    description: string;
+    canonicalPath: string;
+  }
+> = {
+  [productRoutes.portfolioIntelligence]: {
+    title: "Portfolio Intelligence | Asset72",
+    description:
+      "Aggregate asset-level data into portfolio-wide risk and allocation visibility. Track NOI, occupancy, and performance across your entire real estate portfolio.",
+    canonicalPath: productRoutes.portfolioIntelligence,
+  },
+  [productRoutes.propertyIntelligence]: {
+    title: "Property Intelligence | Asset72",
+    description:
+      "Monitor leasing performance, revenue quality, expense drift, and occupancy trends at the asset level with always-on property intelligence.",
+    canonicalPath: productRoutes.propertyIntelligence,
+  },
+  [productRoutes.aiRentIntelligence]: {
+    title: "AI Rent Intelligence | Asset72",
+    description:
+      "AI rent analysis that surfaces below-market pricing and revenue exposure across unit types from your rent roll. Identify rent growth opportunities.",
+    canonicalPath: productRoutes.aiRentIntelligence,
+  },
+  [productRoutes.marketRadar]: {
+    title: "Market Radar | Asset72",
+    description:
+      "Real-time competitive market intelligence around your assets - supply pipeline, rent trends, and market positioning signals for smarter decisions.",
+    canonicalPath: productRoutes.marketRadar,
+  },
+  [productRoutes.dealLens]: {
+    title: "Deal Lens - Pre-Underwriting Intelligence | Asset72",
+    description:
+      "Screen real estate deals before full diligence. Asset72 Deal Lens analyzes lease rollover, in-place vs market rents, and occupancy risk from T12s and rent rolls.",
+    canonicalPath: productRoutes.dealLens,
+  },
+};
+
 const PfDemo: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,6 +118,7 @@ const PfDemo: React.FC = () => {
   const isDealLensTab = activeTab === "Deal Underwriting Lens";
   const hidePortfolioSidebar = isDealLensTab && dealLensScreen === "detail";
   const isAuthenticatedUserView = isUserLoggedIn() && !isDemoMode();
+  const seoConfig = seoByPath[location.pathname];
 
   const assistantContext = useMemo<{
     module: AssistantModule;
@@ -226,6 +268,13 @@ const PfDemo: React.FC = () => {
           "radial-gradient(1200px 600px at 10% 0%, rgba(232,239,250,0.85) 0%, rgba(241,246,252,0.95) 40%, rgba(248,251,255,1) 100%)",
       }}
     >
+      {seoConfig ? (
+        <Seo
+          title={seoConfig.title}
+          description={seoConfig.description}
+          canonicalPath={seoConfig.canonicalPath}
+        />
+      ) : null}
       <div className={`grid h-screen ${hidePortfolioSidebar ? "grid-cols-[minmax(0,1fr)]" : "grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"}`}>
         {!hidePortfolioSidebar ? (
           <aside

@@ -19,6 +19,7 @@ const publicRoutes = [
   "/privacy-policy",
   "/terms-of-use",
   "/pf/portfolio_intelligence",
+  "/pf/property_intelligence",
   "/pf/ai_rent_intelligence",
   "/pf/market_radar",
   "/pf/deal_lens",
@@ -26,14 +27,14 @@ const publicRoutes = [
 const baseUrl = "https://asset72.ghills.ai";
 const routeMeta = {
   "/": {
-    title: "The Operating System for Real Estate Investments",
+    title: "The Operating System for Real Estate Investments | Asset72",
     description:
-      "AI-powered real estate portfolio analytics to analyze NOI, rent rolls, T12s, occupancy, and risk signals. Make faster, data-driven investment decisions",
+      "AI-powered real estate portfolio analytics to analyze NOI, rent rolls, T12s, occupancy, and risk signals. Make faster, data-driven investment decisions.",
   },
   "/contact": {
-    title: "Contact Asset72 | Real Estate Portfolio Intelligence",
+    title: "Contact Asset72 | Golden Hills",
     description:
-      "Contact the Asset72 team for demos, platform questions, and partnership discussions around real estate portfolio intelligence.",
+      "Contact the Golden Hills team for an Asset72 demo, platform access, or partnership questions. Response within one business day.",
   },
   "/privacy-policy": {
     title: "Privacy Policy | Asset72",
@@ -48,22 +49,27 @@ const routeMeta = {
   "/pf/portfolio_intelligence": {
     title: "Portfolio Intelligence | Asset72",
     description:
-      "Explore Asset72 portfolio intelligence for NOI trends, lease health, expense pressure, occupancy movement, and risk signals across real estate assets.",
+      "Aggregate asset-level data into portfolio-wide risk and allocation visibility. Track NOI, occupancy, and performance across your entire real estate portfolio.",
+  },
+  "/pf/property_intelligence": {
+    title: "Property Intelligence | Asset72",
+    description:
+      "Monitor leasing performance, revenue quality, expense drift, and occupancy trends at the asset level with always-on property intelligence.",
   },
   "/pf/ai_rent_intelligence": {
     title: "AI Rent Intelligence | Asset72",
     description:
-      "Review Asset72 AI rent intelligence for pricing signals, renewal strategy, comp context, and leasing decisions across multifamily portfolios.",
+      "AI rent analysis that surfaces below-market pricing and revenue exposure across unit types from your rent roll. Identify rent growth opportunities.",
   },
   "/pf/market_radar": {
     title: "Market Radar | Asset72",
     description:
-      "Track market signal radar insights with Asset72, including submarket trends, supply pressure, demand health, and investment decision support.",
+      "Real-time competitive market intelligence around your assets - supply pipeline, rent trends, and market positioning signals for smarter decisions.",
   },
   "/pf/deal_lens": {
-    title: "Deal Lens | Asset72",
+    title: "Deal Lens - Pre-Underwriting Intelligence | Asset72",
     description:
-      "Analyze acquisitions faster with Asset72 Deal Lens, combining underwriting views, risk surfacing, and AI-guided real estate deal evaluation.",
+      "Screen real estate deals before full diligence. Asset72 Deal Lens analyzes lease rollover, in-place vs market rents, and occupancy risk from T12s and rent rolls.",
   },
 };
 

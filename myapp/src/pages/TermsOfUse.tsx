@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { BadgeCheck, Scale } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const Section = ({ title, children }: { title: string; children: ReactNode }) => (
   <section className="mb-10">
@@ -18,6 +19,11 @@ const TermsOfUsePage = () => {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,_#f8fafc_0%,_#fff7ed_45%,_#ffffff_100%)]">
+      <Seo
+        title="Terms of Use | Asset72"
+        description="Review the Asset72 terms of use for platform access, acceptable usage, uploaded document handling, and service conditions."
+        canonicalPath="/terms-of-use"
+      />
       <Navbar />
       <div className="relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-72 bg-[radial-gradient(circle_at_top,_rgba(217,119,6,0.14),_transparent_65%)] pointer-events-none" />

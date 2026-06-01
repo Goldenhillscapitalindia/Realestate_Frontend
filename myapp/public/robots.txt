@@ -1,9 +1,4 @@
 User-agent: *
 Allow: /
 
-Disallow: /login
-Disallow: /signup
-Disallow: /logout
-Disallow: /pf/
-
 Sitemap: https://asset72.ghills.ai/sitemap.xml

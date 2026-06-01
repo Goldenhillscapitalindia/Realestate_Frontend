@@ -13,6 +13,7 @@ import UseCases from "../components/UseCases";
 import WhyChooseAsset72 from "../components/WhyChooseAsset72";
 import WhyAsset72 from "../components/WhyAsset72";
 import AboutUs from "@/components/AboutUs";
+import Seo from "@/components/Seo";
 import { isUserLoggedIn } from "@/lib/auth";
 const scrollToSection = (sectionId: string) => {
   if (!sectionId) return;
@@ -67,6 +68,11 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <Seo
+        title="The Operating System for Real Estate Investments | Asset72"
+        description="AI-powered real estate portfolio analytics to analyze NOI, rent rolls, T12s, occupancy, and risk signals. Make faster, data-driven investment decisions."
+        canonicalPath="/"
+      />
       <Navbar />
 
       <div>

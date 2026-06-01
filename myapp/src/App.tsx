@@ -3,7 +3,8 @@ import { Toaster } from "./components/ui/toaster";
 import { Toaster as Sonner } from "./components/ui/sonner";
 import { TooltipProvider } from "./components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route } from "react-router";
+import { Routes, Route, useLocation } from "react-router";
+import { Helmet, HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Login from "./pages/Login";
@@ -20,6 +21,35 @@ import PfDemo from "./components/portfolio_intelligence/pf_demo";
 import PfPropertyInsights from "./components/portfolio_intelligence/pf_property_insights";
 
 const queryClient = new QueryClient();
+const SITE_URL = "https://asset72.ghills.ai";
+const noindexRoutePrefixes = ["/market_radar_view/"];
+const noindexRoutePaths = new Set([
+  "/ic_memo",
+  "/login",
+  "/signup",
+  "/logout",
+  `${productRoutes.portfolioIntelligence}/property-insights`,
+  `${productRoutes.propertyIntelligence}/property-insights`,
+]);
+
+const RouteSeoManager = () => {
+  const location = useLocation();
+  const isNoindexRoute =
+    noindexRoutePaths.has(location.pathname) ||
+    noindexRoutePrefixes.some((prefix) => location.pathname.startsWith(prefix));
+
+  if (!isNoindexRoute) {
+    return null;
+  }
+
+  return (
+    <Helmet>
+      <meta name="robots" content="noindex, nofollow, noarchive" />
+      <link rel="canonical" href={`${SITE_URL}/`} />
+      <meta property="og:url" content={`${SITE_URL}/`} />
+    </Helmet>
+  );
+};
 
 const App = () => {
   useEffect(() => {
@@ -27,11 +57,13 @@ const App = () => {
     autoLogin();
   }, []);
   return (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
+  <HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <RouteSeoManager />
+        <Toaster />
+        <Sonner />
+        <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -41,43 +73,23 @@ const App = () => {
         <Route path="/terms-of-use" element={<TermsOfUse />} />
         <Route
           path={`${productRoutes.portfolioIntelligence}/*`}
-          element={
-            <ProtectedRoute>
-              <PfDemo />
-            </ProtectedRoute>
-          }
+          element={<PfDemo />}
         />
         <Route
           path={productRoutes.propertyIntelligence}
-          element={
-            <ProtectedRoute>
-              <PfDemo />
-            </ProtectedRoute>
-          }
+          element={<PfDemo />}
         />
         <Route
           path={productRoutes.aiRentIntelligence}
-          element={
-            <ProtectedRoute>
-              <PfDemo />
-            </ProtectedRoute>
-          }
+          element={<PfDemo />}
         />
         <Route
           path={productRoutes.marketRadar}
-          element={
-            <ProtectedRoute>
-              <PfDemo />
-            </ProtectedRoute>
-          }
+          element={<PfDemo />}
         />
         <Route
           path={productRoutes.dealLens}
-          element={
-            <ProtectedRoute>
-              <PfDemo />
-            </ProtectedRoute>
-          }
+          element={<PfDemo />}
         />
         <Route
           path={`${productRoutes.portfolioIntelligence}/property-insights`}
@@ -113,9 +125,10 @@ const App = () => {
         />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
-  </QueryClientProvider>
+        </Routes>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </HelmetProvider>
   );
 };
 

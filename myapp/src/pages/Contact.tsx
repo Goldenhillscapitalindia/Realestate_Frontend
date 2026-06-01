@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { ArrowUpRight, Building2, Globe, Mail } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Seo from "@/components/Seo";
 
 const contactItems = [
   { icon: Mail, label: "Email", value: "asset72@ghills.ai", href: "mailto:asset72@ghills.ai" },
@@ -16,6 +17,11 @@ const ContactPage = () => {
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,_#f8fafc_0%,_#eef4ff_48%,_#f8fafc_100%)]">
+      <Seo
+        title="Contact Asset72 | Golden Hills"
+        description="Contact the Golden Hills team for an Asset72 demo, platform access, or partnership questions. Response within one business day."
+        canonicalPath="/contact"
+      />
       <Navbar />
       <div className="relative overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-64  pointer-events-none" />
