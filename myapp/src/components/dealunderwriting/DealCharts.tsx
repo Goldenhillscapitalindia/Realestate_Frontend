@@ -144,6 +144,52 @@ function FloorplanHeatmap({
 const axisColor = "rgba(15,23,42,0.08)";
 const tickColor = "#475569";
 
+function hasChartData(arr: Array<Record<string, number | string>>): boolean {
+  return arr.some((item) =>
+    Object.values(item).some((v) => typeof v === "number" && v !== 0)
+  );
+}
+
+function OccupancyDonut({ occupied, total }: { occupied: number; total: number }) {
+  const vacant = Math.max(total - occupied, 0);
+  const occupiedRatio = total > 0 ? Math.min(Math.max(occupied / total, 0), 1) : 0;
+  const pct = Math.round(occupiedRatio * 100);
+  const radius = 68;
+  const strokeWidth = 16;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - occupiedRatio * circumference;
+  const vacantColor = "#f59e0b";
+
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-3">
+      <div className="relative flex items-center justify-center">
+        <svg width="176" height="176" viewBox="0 0 176 176">
+          <circle cx="88" cy="88" r={radius} fill="none" stroke={vacantColor} strokeWidth={strokeWidth} />
+          <circle
+            cx="88" cy="88" r={radius}
+            fill="none"
+            stroke="#274b87"
+            strokeWidth={strokeWidth}
+            strokeLinecap="butt"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            transform="rotate(-90 88 88)"
+          />
+        </svg>
+        <div className="absolute flex flex-col items-center leading-tight">
+          <span className="text-4xl font-bold text-[#102149]">{occupied}</span>
+          <span className="text-[10px] font-semibold uppercase tracking-widest text-[#57719c]">Occupied</span>
+        </div>
+      </div>
+      <div className="flex items-center gap-4 text-xs text-[#57719c]">
+        <span className="font-medium text-[#102149]">{pct}% of {total}</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#274b87]" />Occupied: {occupied}</span>
+        <span className="flex items-center gap-1"><span className="inline-block h-2 w-2 rounded-full bg-[#f59e0b]" />Vacant: {vacant}</span>
+      </div>
+    </div>
+  );
+}
+
 export function DealCharts({ deal }: { deal: Deal }) {
   const ci = deal.chartInsights;
 
@@ -208,17 +254,48 @@ export function DealCharts({ deal }: { deal: Deal }) {
           />
         </ChartCard>
 
-        <ChartCard title="Revenue vs Expenses" insight={ci.revenueVsExpenses}>
-          <Line
-            data={{
-              labels: deal.revenueVsExpenses.map((item) => item.month),
-              datasets: [
-                { label: "Revenue", data: deal.revenueVsExpenses.map((item) => item.revenue), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.15)", tension: 0.35 },
-                { label: "Expense", data: deal.revenueVsExpenses.map((item) => item.expenses), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.15)", tension: 0.35 },
-              ],
-            }}
-            options={lineOptions}
-          />
+        <ChartCard
+          title={hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? "Revenue vs Expenses" : "Revenue vs Expenses vs NOI"}
+          insight={ci.revenueVsExpenses}
+        >
+          {hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? (
+            <Line
+              data={{
+                labels: deal.revenueVsExpenses.map((item) => item.month),
+                datasets: [
+                  { label: "Revenue", data: deal.revenueVsExpenses.map((item) => item.revenue), borderColor: "#2563eb", backgroundColor: "rgba(37,99,235,0.15)", tension: 0.35 },
+                  { label: "Expense", data: deal.revenueVsExpenses.map((item) => item.expenses), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.15)", tension: 0.35 },
+                ],
+              }}
+              options={lineOptions}
+            />
+          ) : (
+            <Bar
+              data={{
+                labels: ["Revenue", "Expenses", "NOI"],
+                datasets: [
+                  {
+                    label: " ",
+                    data: [
+                      deal.metrics.noi + deal.metrics.totalExpenses,
+                      deal.metrics.totalExpenses,
+                      deal.metrics.noi,
+                    ],
+                    backgroundColor: ["#274b87", "#f59e0b", "#22c55e"],
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7,
+                  },
+                ],
+              }}
+              options={{
+                ...barOptions,
+                plugins: {
+                  ...barOptions.plugins,
+                  legend: { display: false },
+                },
+              }}
+            />
+          )}
         </ChartCard>
       </section>
       <section className="pdf-flow-block mb-4 grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
@@ -243,16 +320,23 @@ export function DealCharts({ deal }: { deal: Deal }) {
         </ChartCard>
 
         <ChartCard title="Occupancy vs Vacancy" insight={ci.occupancyVacancy}>
-          <Line
-            data={{
-              labels: deal.occupancyHistory.map((item) => item.month),
-              datasets: [
-                { label: "Occupancy %", data: deal.occupancyHistory.map((item) => item.occupancy), borderColor: "#274b87", backgroundColor: "rgba(39,75,135,0.1)", tension: 0.35 },
-                { label: "Vacancy %", data: deal.occupancyHistory.map((item) => item.vacancy), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.1)", tension: 0.35 },
-              ],
-            }}
-            options={barOptions}
-          />
+          {hasChartData(deal.occupancyHistory as unknown as Array<Record<string, number | string>>) ? (
+            <Line
+              data={{
+                labels: deal.occupancyHistory.map((item) => item.month),
+                datasets: [
+                  { label: "Occupancy %", data: deal.occupancyHistory.map((item) => item.occupancy), borderColor: "#274b87", backgroundColor: "rgba(39,75,135,0.1)", tension: 0.35 },
+                  { label: "Vacancy %", data: deal.occupancyHistory.map((item) => item.vacancy), borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.1)", tension: 0.35 },
+                ],
+              }}
+              options={barOptions}
+            />
+          ) : (
+            <OccupancyDonut
+              occupied={deal.metrics.occupancyUnits?.occupied ?? Math.round((deal.metrics.occupancy / 100) * (deal.metrics.noOfUnits ?? 0))}
+              total={deal.metrics.occupancyUnits?.total ?? deal.metrics.noOfUnits ?? 0}
+            />
+          )}
         </ChartCard>
       </section>
       {deal.leaseExpirationFloorplan?.xlabels?.length && deal.leaseExpirationFloorplan?.ylabels?.length ? (

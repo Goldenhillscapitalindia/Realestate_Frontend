@@ -29,6 +29,7 @@ type DemoDealUnderwritingRecord = {
     Administrative?: string | number | null;
     "Management Fees"?: string | number | null;
     "Professional Fees"?: string | number | null;
+    Expenses?: string | number | null;
     "Operating Expenses"?: string | number | null;
     "Operating Expense Ratio"?: string | number | null;
     "Revenue per Unit"?: string | number | null;
@@ -108,6 +109,10 @@ type DealUnderwritingApiRecord = {
     siteSize?: number | null;
     site_size?: number | null;
     siteAcreage?: number | null;
+    noi?: number | null;
+    totalExpenses?: number | null;
+    expenses?: number | null;
+    operatingExpenses?: number | null;
     noiMargin: number | null;
     revenuePerUnit: number | null;
     expenseRatio: number | null;
@@ -137,7 +142,7 @@ type DealUnderwritingApiRecord = {
     expenseBreakdown?: Array<{ category: string; amount: number; percent?: number }>;
     expenseDistribution?: Array<{ category: string; amount: number; percent?: number }>;
     leaseExpiration?: Array<{ month: string; units: number }>;
-    occupancyVsVacancy?: Array<{ month: string; occupancyRate: number; vacancyRate: number }>;
+    occupancyVsVacancy?: Array<{ month?: string; occupancyRate: number; vacancyRate: number; occupied?: number; total?: number; vacant?: number }>;
     leaseExpirationFloorplan?: {
       title?: string;
       xlabels?: string[];
@@ -362,7 +367,7 @@ function mergeChartInsight(
   };
 }
 
-function buildChartInsights(propertyName: string, occupancy: number, rentGap: number, noiMargin: number) {
+function buildChartInsights(propertyName: string, occupancy: number, rentGap: number) {
   return {
     tenantMix: { insight: `${propertyName} unit mix is mapped from backend underwriting data.`, impact: "Supports demand and retention analysis.", drives: "Cash Flow Stability" },
     rentVsMarket: { insight: `Current rents are approximately ${rentGap.toFixed(1)}% below market.`, impact: "Highlights mark-to-market upside.", drives: "Value-Add Potential" },
@@ -521,7 +526,10 @@ function buildDemoDeal(record: DemoDealUnderwritingRecord, index: number): Deal 
   }));
 
   const totalRevenue = revenuePerMonth.reduce((sum, item) => sum + item.value, 0);
-  const totalExpenses = expensePerMonth.reduce((sum, item) => sum + item.value, 0);
+  const totalExpenses =
+    parseLooseNumber(t12.Expenses, 0) ||
+    parseLooseNumber(t12["Operating Expenses"], 0) ||
+    expensePerMonth.reduce((sum, item) => sum + item.value, 0);
 
   const revenuePerUnit =
     parseLooseNumber(t12["Revenue per Unit"], 0) || (units > 0 ? totalRevenue / units : 0);
@@ -731,12 +739,16 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
   const defaultChartInsights = buildChartInsights(
     record.propertyName,
     toNumber(record.kpiCards.occupancyRate, 0),
-    toNumber(record.kpiCards.rentVsMarketGap, 0),
-    toNumber(record.kpiCards.noiMargin, 0)
+    toNumber(record.kpiCards.rentVsMarketGap, 0)
   );
 
   const units = toNumber(record.header.units ?? record.kpiCards.noOfUnits, 0);
   const revenuePerUnit = toNumber(record.kpiCards.revenuePerUnit, 0);
+  const kpiNoi = parseLooseNumber(record.kpiCards.noi, 0);
+  const kpiTotalExpenses =
+    parseLooseNumber(record.kpiCards.totalExpenses, 0) ||
+    parseLooseNumber(record.kpiCards.expenses, 0) ||
+    parseLooseNumber(record.kpiCards.operatingExpenses, 0);
   const estimatedRevenue =
     revenuePerUnit > 0 && units > 0
       ? revenuePerUnit * units
@@ -744,10 +756,13 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
 
   const noiMargin = toNumber(record.kpiCards.noiMargin, 0);
   const totalExpenses =
+    kpiTotalExpenses ||
     record.performanceAnalytics.revenueVsExpenses?.reduce((sum, item) => sum + toNumber(item.expense), 0) ||
     estimatedRevenue * (toNumber(record.kpiCards.expenseRatio, 0) / 100);
 
-  const noi = estimatedRevenue > 0 ? estimatedRevenue * (noiMargin / 100) : Math.max(estimatedRevenue - totalExpenses, 0);
+  const noi =
+    kpiNoi ||
+    (estimatedRevenue > 0 ? estimatedRevenue * (noiMargin / 100) : Math.max(estimatedRevenue - totalExpenses, 0));
   const rentGap = toNumber(record.kpiCards.rentVsMarketGap, 0);
   const docStatus = getDealDocStatus(record);
 
@@ -835,11 +850,13 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       year: item.month,
       units: toNumber(item.units),
     })),
-    occupancyHistory: (record.performanceAnalytics.occupancyVsVacancy ?? []).map((item) => ({
-      month: item.month,
-      occupancy: toNumber(item.occupancyRate),
-      vacancy: toNumber(item.vacancyRate),
-    })),
+    occupancyHistory: (record.performanceAnalytics.occupancyVsVacancy ?? [])
+      .filter((item) => item.month != null)
+      .map((item) => ({
+        month: item.month as string,
+        occupancy: toNumber(item.occupancyRate),
+        vacancy: toNumber(item.vacancyRate),
+      })),
     leaseExpirationFloorplan: record.performanceAnalytics.leaseExpirationFloorplan
       ? {
           title: record.performanceAnalytics.leaseExpirationFloorplan.title || "Lease Expirations and Occupied Units by Floorplan",

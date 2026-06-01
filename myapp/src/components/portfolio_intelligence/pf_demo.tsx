@@ -113,7 +113,7 @@ const PfDemo: React.FC = () => {
   const [isPortfolioMenuOpen, setIsPortfolioMenuOpen] = useState(true);
   const [isIcMemoStarted, setIsIcMemoStarted] = useState(false);
   const [dealLensScreen, setDealLensScreen] = useState<"library" | "upload" | "detail">("library");
-  const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(true);
+  const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
   const mainScrollRef = useRef<HTMLElement | null>(null);
   const isDealLensTab = activeTab === "Deal Underwriting Lens";
   const hidePortfolioSidebar = isDealLensTab && dealLensScreen === "detail";
@@ -207,6 +207,10 @@ const PfDemo: React.FC = () => {
   useEffect(() => {
     mainScrollRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [activeTab, portfolioSubTab]);
+
+  useEffect(() => {
+    setIsAiSidebarOpen(false);
+  }, [activeTab, portfolioSubTab, selectedProperty?.property_name]);
 
   const activeContent = useMemo(() => {
     if (activeTab === "Portfolio Analytics") {
