@@ -29,6 +29,7 @@ import { isUserLoggedIn } from "@/lib/auth";
 import DealUnderwritingLens from "../dealunderwriting/DealUnderwritingLens";
 import AssistantWidget from "../aiassistantwidget";
 import Seo from "@/components/Seo";
+import "./pf_demo.css";
 
 const tabs = [
   "Portfolio Analytics",
@@ -263,7 +264,7 @@ const PfDemo: React.FC = () => {
 
   return (
     <section
-      className={`h-screen overflow-hidden text-black ${
+      className={`pf-demo-shell h-screen overflow-hidden text-black ${
         isAiSidebarVisible ? "xl:pr-[492px]" : showAiSidebar ? "xl:pr-[72px]" : ""
       }`}
       style={{
@@ -278,10 +279,10 @@ const PfDemo: React.FC = () => {
           canonicalPath={seoConfig.canonicalPath}
         />
       ) : null}
-      <div className={`grid h-screen ${hidePortfolioSidebar ? "grid-cols-[minmax(0,1fr)]" : "grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"}`}>
+      <div className={`pf-demo-layout grid h-screen ${hidePortfolioSidebar ? "grid-cols-[minmax(0,1fr)]" : "grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"}`}>
         {!hidePortfolioSidebar ? (
           <aside
-            className="sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"
+            className="pf-demo-sidebar sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"
           >
             {isAuthenticatedUserView ? (
             <div className="mb-4">
@@ -422,10 +423,10 @@ const PfDemo: React.FC = () => {
 
         <main
           ref={mainScrollRef}
-          className={`h-screen min-w-0 overflow-y-auto ${hidePortfolioSidebar ? "px-0 py-0" : "px-4 py-6 md:px-6 md:pt-7"} ${isDealLensTab ? "bg-[#f3f6fb]" : "bg-[#f3f6fb]"
+          className={`pf-demo-main h-screen min-w-0 overflow-y-auto ${hidePortfolioSidebar ? "px-0 py-0" : "px-4 py-6 md:px-6 md:pt-7"} ${isDealLensTab ? "bg-[#f3f6fb]" : "bg-[#f3f6fb]"
             }`}
         >
-          <div className={hidePortfolioSidebar ? "w-full" : isDealLensTab ? "mx-auto w-full max-w-[1600px] px-4 py-6 md:px-8 xl:px-12" : "mx-auto w-full max-w-[1420px]"}>
+          <div className={`pf-demo-content ${hidePortfolioSidebar ? "w-full" : isDealLensTab ? "mx-auto w-full max-w-[1600px] px-4 py-6 md:px-8 xl:px-12" : "mx-auto w-full max-w-[1420px]"}`}>
             {activeContent}
           </div>
         </main>

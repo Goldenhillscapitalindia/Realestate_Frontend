@@ -1,0 +1,22 @@
+@media (max-width: 767px) {
+  .pf-comp-analysis-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .pf-comp-analysis-table table {
+    min-width: 760px;
+    table-layout: auto;
+  }
+
+  .pf-comp-analysis-table th,
+  .pf-comp-analysis-table td {
+    white-space: nowrap;
+  }
+
+  .pf-comp-analysis-table th:first-child,
+  .pf-comp-analysis-table td:first-child {
+    min-width: 190px;
+    white-space: normal;
+  }
+}

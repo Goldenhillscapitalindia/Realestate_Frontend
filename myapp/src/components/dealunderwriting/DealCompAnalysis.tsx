@@ -557,7 +557,7 @@ export default function DealCompAnalysis({
           </div>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+        <div className="deal-lens-comps-table mt-4 overflow-hidden rounded-2xl border border-slate-200">
           <table className="w-full table-auto">
             <thead className="bg-slate-50">
               <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-600">

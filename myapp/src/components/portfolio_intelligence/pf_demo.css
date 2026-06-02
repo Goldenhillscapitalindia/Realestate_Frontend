@@ -1,0 +1,57 @@
+@media (max-width: 767px) {
+  .pf-demo-shell {
+    height: auto !important;
+    min-height: 100svh;
+    overflow: auto !important;
+  }
+
+  .pf-demo-layout {
+    height: auto !important;
+    min-height: 100svh;
+    grid-template-columns: 210px minmax(340px, 1fr) !important;
+  }
+
+  .pf-demo-sidebar {
+    width: 210px !important;
+    min-height: 100svh;
+    height: auto !important;
+    padding: 16px 12px !important;
+  }
+
+  .pf-demo-sidebar h1 {
+    font-size: 22px;
+    line-height: 1.25;
+  }
+
+  .pf-demo-sidebar nav button {
+    padding: 12px 14px;
+    font-size: 14px;
+  }
+
+  .pf-demo-main {
+    height: auto !important;
+    min-height: 100svh;
+    overflow: visible !important;
+    padding: 20px 16px !important;
+  }
+
+  .pf-demo-content {
+    max-width: none !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .pf-demo-layout {
+    grid-template-columns: 188px minmax(320px, 1fr) !important;
+  }
+
+  .pf-demo-sidebar {
+    width: 188px !important;
+  }
+
+  .pf-demo-sidebar h1 {
+    font-size: 20px;
+  }
+}
