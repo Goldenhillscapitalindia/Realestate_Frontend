@@ -12,7 +12,6 @@ import {
   ArrowLeft,
   BarChart3,
   Building2,
-  TrendingUp,
   FileText,
   History,
   Landmark,
