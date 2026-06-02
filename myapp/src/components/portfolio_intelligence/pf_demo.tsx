@@ -279,7 +279,7 @@ const PfDemo: React.FC = () => {
           canonicalPath={seoConfig.canonicalPath}
         />
       ) : null}
-      <div className={`pf-demo-layout grid h-screen ${hidePortfolioSidebar ? "grid-cols-[minmax(0,1fr)]" : "grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"}`}>
+      <div className={`pf-demo-layout grid h-screen ${hidePortfolioSidebar ? "pf-demo-layout--full grid-cols-[minmax(0,1fr)]" : "grid-cols-[220px_minmax(0,1fr)] md:grid-cols-[240px_minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)] xl:grid-cols-[280px_minmax(0,1fr)]"}`}>
         {!hidePortfolioSidebar ? (
           <aside
             className="pf-demo-sidebar sticky top-0 z-30 h-screen w-[220px] overflow-y-auto bg-[#0d1b4f] px-4 py-5 text-white md:w-[240px] lg:w-[260px] xl:w-[280px]"

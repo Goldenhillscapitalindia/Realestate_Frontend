@@ -16,8 +16,8 @@ const BrandLogo = ({
   inverted = false,
 }: BrandLogoProps) => {
   const sizeClass = compact
-    ? "h-[8rem] w-auto max-w-[45rem]"
-    : "h-[9.5rem] w-auto max-w-[47rem]";
+    ? "h-14 w-auto max-w-[70vw] sm:h-[8rem] sm:max-w-[45rem]"
+    : "h-16 w-auto max-w-[72vw] sm:h-[9.5rem] sm:max-w-[47rem]";
   const logoSrc = inverted ? asset72FooterLogo : asset72Logo;
 
   return (

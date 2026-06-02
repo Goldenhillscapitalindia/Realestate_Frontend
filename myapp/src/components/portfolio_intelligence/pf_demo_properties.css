@@ -290,22 +290,11 @@
   }
 
   .pf-properties__table {
-    min-width: 0;
+    min-width: 760px;
     table-layout: auto;
   }
 
-  .pf-properties__head th:nth-child(n + 2),
-  .pf-properties__cell:nth-child(n + 2) {
-    display: none;
-  }
-
-  .pf-properties__head th:first-child,
-  .pf-properties__cell:first-child {
-    width: 100%;
-  }
-
   .pf-properties__property {
-    white-space: normal;
     line-height: 1.35;
   }
 

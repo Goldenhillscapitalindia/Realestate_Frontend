@@ -5,6 +5,8 @@ import {
   getAuthUser,
   getSessionId,
   setAuthSession,
+  setAuthUser,
+  type AuthUser,
 } from "./auth";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -291,4 +293,20 @@ export const forgotPasswordRequest = async (email: string): Promise<void> => {
     email,
     identifier: email,
   });
+};
+
+// Uses authClient so refresh goes through the same isRefreshing guard as all
+// other API calls — prevents the race condition where autoLogin's raw-fetch
+// refresh and an axios interceptor refresh fire concurrently and the backend
+// invalidates the cookie on the first use (refresh token rotation).
+export const autoLogin = async (): Promise<AuthUser | null> => {
+  if (typeof window === "undefined") return null;
+
+  try {
+    const user = await meRequest();
+    setAuthUser(user as AuthUser);
+    return user as AuthUser;
+  } catch {
+    return null;
+  }
 };
