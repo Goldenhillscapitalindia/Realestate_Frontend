@@ -14,7 +14,7 @@ import Contact from "./pages/Contact";
 import Privacy from "./pages/Privacy";
 import TermsOfUse from "./pages/TermsOfUse";
 import ProtectedRoute from "./components/ProtectedRoute";
-import { autoLogin } from "./lib/auth";
+import { autoLogin } from "./lib/auth-api";
 import { productRoutes } from "./lib/product-routes";
 import MarketRadarView from "./components/market-radar-view/components/MarketRadarView";
 import PfDemo from "./components/portfolio_intelligence/pf_demo";
