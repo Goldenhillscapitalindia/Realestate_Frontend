@@ -97,12 +97,13 @@
   }
 
   .deal-lens-comps-table {
-    overflow-x: auto;
+    overflow-x: auto !important;
+    overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
   }
 
   .deal-lens-comps-table table {
-    min-width: 760px;
+    min-width: 760px !important;
     table-layout: auto;
   }
 
