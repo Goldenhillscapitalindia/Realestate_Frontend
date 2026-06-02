@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
 import { Search, LineChart, Brain, Radar } from "lucide-react";
 import AccessBlockedModal from "./AccessBlockedModal";
+import "./home.css";
 import { useLoginGuard } from "@/hooks/use-login-guard";
 import { productRoutes } from "@/lib/product-routes";
 
@@ -203,7 +204,7 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: side === "right" ? 30 : -30 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="max-w-[520px]"
+      className={`max-w-[520px] platform-content-panel ${isDealLens ? "platform-content-panel--deal-lens" : ""}`}
     >
       <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", color: "#3fd6b5", fontSize: "13px", letterSpacing: "0.18em", marginBottom: "16px", whiteSpace: "nowrap" }}>
         {feat.floorLabel} — {feat.category}
@@ -227,10 +228,10 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
           </h2>
         </>
       )}
-      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "16px", lineHeight: 1.65, maxWidth: isDealLens ? "100%" : "500px", marginBottom: "22px", whiteSpace: "pre-line" }}>
+      <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "16px", lineHeight: 1.65, maxWidth: isDealLens ? "100%" : "500px", marginBottom: isDealLens ? "16px" : "22px", whiteSpace: "pre-line" }}>
         {feat.desc}
       </p>
-      <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px 22px", marginBottom: "22px", padding: 0 }}>
+      <ul style={{ listStyle: "none", display: "grid", gridTemplateColumns: "1fr 1fr", gap: isDealLens ? "8px 20px" : "10px 22px", marginBottom: isDealLens ? "16px" : "22px", padding: 0 }}>
         {feat.bullets.map((b, i) => (
           <li key={i} style={{ color: "#FAFAF7", fontSize: "15px", letterSpacing: "0.01em", paddingLeft: "16px", position: "relative", lineHeight: 1.4 }}>
             <span style={{ position: "absolute", left: 0, top: "8px", width: "8px", height: "1px", background: "#1EBC9A", display: "block" }} />
@@ -238,7 +239,7 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
           </li>
         ))}
       </ul>
-      <div style={{ display: "flex", gap: "28px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: "16px", marginTop: "18px" }}>
+      <div style={{ display: "flex", gap: isDealLens ? "22px" : "28px", borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: isDealLens ? "12px" : "16px", marginTop: isDealLens ? "12px" : "18px" }}>
         {[{ l: feat.m1L, v: feat.m1V }, { l: feat.m2L, v: feat.m2V }, ...(feat.m3L ? [{ l: feat.m3L, v: feat.m3V }] : [])].map(({ l, v }) => (
           <div key={l} style={{ flexShrink: 0 }}>
             <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "12px", letterSpacing: "0.22em", textTransform: "uppercase", marginBottom: "4px" }}>{l}</div>
@@ -257,6 +258,46 @@ function ContentPanel({ feat, side }: { feat: typeof features[0]; side: "left" |
   );
 }
 
+function MobileContentPanel({ feat }: { feat: typeof features[0] }) {
+  const metrics = [
+    { l: feat.m1L, v: feat.m1V },
+    { l: feat.m2L, v: feat.m2V },
+    ...(feat.m3L ? [{ l: feat.m3L, v: feat.m3V }] : []),
+  ];
+
+  return (
+    <motion.div
+      key={feat.floorLabel}
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      className="platform-mobile-card"
+    >
+      <p className="platform-mobile-eyebrow">{feat.floorLabel}</p>
+      <h4 className="platform-mobile-title">
+        {feat.title} <em>{feat.titleAccent}</em>
+      </h4>
+      <p className="platform-mobile-desc">{feat.desc}</p>
+
+      <ul className="platform-mobile-bullets">
+        {feat.bullets.map((bullet) => (
+          <li key={bullet}>{bullet}</li>
+        ))}
+      </ul>
+
+      <div className="platform-mobile-metrics">
+        {metrics.map(({ l, v }) => (
+          <div key={l}>
+            <span>{l}</span>
+            <p>{v}</p>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 /* ══════════════════════════════════════ PlatformFeatures ══ */
 const PlatformFeatures = () => {
   const { isModalOpen, setIsModalOpen, goToLogin } = useLoginGuard();
@@ -266,6 +307,16 @@ const PlatformFeatures = () => {
   const [rawProgress, setRawProgress] = useState(0);
   const [headTopVis,  setHeadTopVis]  = useState(1);
   const [headBotVis,  setHeadBotVis]  = useState(1);
+  const [isMobileView, setIsMobileView] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 1023px)");
+    const update = () => setIsMobileView(query.matches);
+
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -294,41 +345,42 @@ const PlatformFeatures = () => {
   return (
     <section
       ref={sectionRef}
+      className="platform-features-section"
       id="platform"
       style={{ height: "420vh", background: "#1a2535", position: "relative" }}
     >
-      <div className="sticky top-0 h-screen overflow-hidden"
+      <div className="platform-features-sticky sticky top-0 h-screen overflow-hidden"
         style={{ background: "#0F213D" }}
       >
         {/* ── STAMP TL ── */}
-        <div className="absolute z-20 pointer-events-none" style={{ top: "120px", left: "40px" }}>
+        <div className="platform-stamp absolute z-20 pointer-events-none" style={{ top: "120px", left: "40px" }}>
           <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase" }}>Est. MMXXVI · Golden Hills</div>
           <span style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", fontSize: "15px", letterSpacing: "0.02em", display: "block", marginTop: "4px", fontWeight: 400 }}>The Operating System</span>
         </div>
 
         {/* ── STAMP BR ── */}
-        <div className="absolute z-20 pointer-events-none text-right" style={{ bottom: "36px", right: "40px" }}>
+        <div className="platform-stamp absolute z-20 pointer-events-none text-right" style={{ bottom: "36px", right: "40px" }}>
           <div style={{ color: "rgba(250,250,247,0.42)", fontSize: "10px", letterSpacing: "0.28em", textTransform: "uppercase" }}>Navigate the Stack</div>
           <span style={{ color: "#3fd6b5", fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", fontSize: "15px", letterSpacing: "0.02em", display: "block", marginTop: "4px", fontWeight: 400 }}>{stampText}</span>
         </div>
 
         {/* ── HEAD TOP ── */}
-        <div className="absolute left-0 right-0 z-10 text-center pointer-events-none"
+        <div className="platform-heading absolute left-0 right-0 z-10 text-center pointer-events-none"
           style={{ top: "120px", padding: "0 40px", opacity: headTopVis, transform: `translateY(${-(1 - headTopVis) * 16}px)`, transition: "opacity 0.1s, transform 0.1s" }}
         >
-          <div style={{ display: "inline-flex", alignItems: "center", gap: "14px", color: "#1EBC9A", fontSize: "11px", letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: "18px" }}>
+          <div className="platform-heading-kicker" style={{ display: "inline-flex", alignItems: "center", gap: "14px", color: "#1EBC9A", fontSize: "11px", letterSpacing: "0.32em", textTransform: "uppercase", marginBottom: "18px" }}>
             <span style={{ width: "32px", height: "1px", background: "#1EBC9A", opacity: 0.6, display: "block" }} />
             What Asset72 Does
             <span style={{ width: "32px", height: "1px", background: "#1EBC9A", opacity: 0.6, display: "block" }} />
           </div>
-          <h2 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "44px", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
+          <h2 className="platform-heading-title" style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "44px", lineHeight: 1.04, letterSpacing: "-0.025em", color: "#FAFAF7" }}>
             From acquisition to portfolio strategy — unified in one system<br />
             <em style={{ display: "inline-block", marginTop: "24px", fontStyle: "italic", color: "#3fd6b5", fontWeight: 300 }}>Intelligence Layers</em>{" "}
           </h2>
         </div>
 
         {/* ── HEAD BOT ── */}
-        <div className="absolute left-0 right-0 z-10 text-center pointer-events-none"
+        <div className="platform-bottom-prompt absolute left-0 right-0 z-10 text-center pointer-events-none"
           style={{ bottom: "70px", padding: "0 40px", opacity: headBotVis, transform: `translateY(${(1 - headBotVis) * 16}px)`, transition: "opacity 0.1s, transform 0.1s" }}
         >
           {/* <p style={{ color: "rgba(250,250,247,0.72)", fontSize: "14px", lineHeight: 1.65, maxWidth: "540px", margin: "0 auto 18px" }}>
@@ -345,8 +397,8 @@ const PlatformFeatures = () => {
         </div>
 
         {/* ── MAIN LAYOUT ── */}
-        <div className="absolute left-0 right-0 bottom-0 flex items-center justify-center" style={{ top: "clamp(240px, 30vh, 340px)", zIndex: 5 }}>
-          <div className="relative flex items-center w-full"
+        <div className="platform-main absolute left-0 right-0 bottom-0 flex items-center justify-center" style={{ top: "clamp(240px, 30vh, 340px)", zIndex: 5 }}>
+          <div className="platform-main-inner relative flex items-center w-full"
             style={{ maxWidth: "1400px", margin: "0 auto", paddingLeft: "196px", paddingRight: "260px", gap: "0" }}
           >
             {/* LEFT PANEL */}
@@ -360,12 +412,12 @@ const PlatformFeatures = () => {
 
             {/* ── BUILDING ── */}
             <motion.div
-              className="flex-shrink-0"
-              animate={{ x: bX }}
+              className="platform-building flex-shrink-0"
+              animate={{ x: isMobileView ? 0 : bX }}
               transition={{ type: "spring", stiffness: 90, damping: 22 }}
               style={{ width: "clamp(320px, 30vw, 560px)" }}
             >
-              <div style={{ perspective: "1800px", perspectiveOrigin: "50% 45%" }}>
+              <div className="platform-building-stage" style={{ perspective: "1800px", perspectiveOrigin: "50% 45%" }}>
                 {introComplete ? (
                   /*
                    * ── ASSEMBLED STATE (p >= 0.20) ──
@@ -410,7 +462,7 @@ const PlatformFeatures = () => {
               </div>
 
               {/* Counter */}
-              <div className="flex items-center justify-center gap-3 mt-5">
+              <div className="platform-building-counter flex items-center justify-center gap-3 mt-5">
                 <motion.p
                   animate={{ opacity: [0.25, 0.55, 0.25] }}
                   transition={{ duration: 3, repeat: Infinity }}
@@ -453,16 +505,10 @@ const PlatformFeatures = () => {
         </div>
 
         {/* ── MOBILE CONTENT ── */}
-        <div className="lg:hidden absolute bottom-6 left-0 right-0 px-6 z-10">
+        <div className="platform-mobile-content lg:hidden absolute bottom-6 left-0 right-0 px-6 z-10">
           <AnimatePresence mode="wait">
             {activeFeat && (
-              <motion.div key={activeFloor} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
-                <p style={{ fontFamily: "'Fraunces', Georgia, serif", fontStyle: "italic", color: "#3fd6b5", fontSize: "13px", letterSpacing: "0.18em", marginBottom: "4px" }}>{activeFeat.floorLabel}</p>
-                <h4 style={{ fontFamily: "'Fraunces', Georgia, serif", fontWeight: 300, fontSize: "22px", color: "#FAFAF7" }}>
-                  {activeFeat.title}{" "}<em style={{ fontStyle: "italic", color: "#3fd6b5" }}>{activeFeat.titleAccent}</em>
-                </h4>
-                <p style={{ fontSize: "13px", color: "rgba(250,250,247,0.45)", marginTop: "6px", whiteSpace: "pre-line" }}>{activeFeat.desc}</p>
-              </motion.div>
+              <MobileContentPanel feat={activeFeat} />
             )}
           </AnimatePresence>
         </div>
