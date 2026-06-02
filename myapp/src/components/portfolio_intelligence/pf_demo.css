@@ -11,6 +11,10 @@
     grid-template-columns: 210px minmax(340px, 1fr) !important;
   }
 
+  .pf-demo-layout.pf-demo-layout--full {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
   .pf-demo-sidebar {
     width: 210px !important;
     min-height: 100svh;
