@@ -15,6 +15,7 @@ import PfDealUnderwritingUpload from "./pf_dealunderwriting_upload";
 import { Search, Trash2 } from "lucide-react";
 import { isDemoMode } from "@/lib/demo-mode";
 import { exportElementToPdf } from "@/lib/pdf-export";
+import "./DealUnderwritingLens.css";
 
 const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
 
@@ -137,7 +138,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
   if (!deals.length) {
     return (
-      <section className="mx-auto max-w-[1280px] rounded-[32px] border border-[#d8e2f1] bg-white px-10 py-12 text-[#102149] shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+      <section className="deal-lens-library mx-auto max-w-[1280px] rounded-[32px] border border-[#d8e2f1] bg-white px-10 py-12 text-[#102149] shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             {/* <p className="text-xs font-semibold uppercase tracking-[0.45em] text-[#b48a41]">Deal Lens</p> */}
@@ -162,7 +163,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
   if (screen === "library") {
     return (
-      <section className="mx-auto max-w-[1280px] rounded-[32px] border border-[#d8e2f1] bg-white px-10 py-12 text-[#102149] shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
+      <section className="deal-lens-library mx-auto max-w-[1280px] rounded-[32px] border border-[#d8e2f1] bg-white px-10 py-12 text-[#102149] shadow-[0_24px_70px_rgba(15,23,42,0.08)]">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             {/* <p className="text-xs font-semibold uppercase tracking-[0.45em] text-[#b48a41]">Deal Lens</p> */}
@@ -288,7 +289,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
   }
 
   return (
-    <div className="flex min-h-screen gap-6 overflow-hidden rounded-[28px] bg-[#f5f7fb] shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
+    <div className="deal-lens-detail flex min-h-screen gap-6 overflow-hidden rounded-[28px] bg-[#f5f7fb] shadow-[0_18px_48px_rgba(15,23,42,0.06)]">
       <AppSidebar
         activeDealId={activeDeal.id}
         activeView={activeView}
@@ -297,8 +298,8 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
         onDealSelect={openDeal}
         onViewChange={setActiveView}
       />
-      <main className="min-w-0 flex-1 overflow-y-auto bg-[#f8fbff]">
-        <div className="mx-auto max-w-[1480px] px-8 py-10 pb-28 2xl:px-10">
+      <main className="deal-lens-detail__main min-w-0 flex-1 overflow-y-auto bg-[#f8fbff]">
+        <div className="deal-lens-detail__content mx-auto max-w-[1480px] px-8 py-10 pb-28 2xl:px-10">
           {activeView === "deal" ? (
             <div id="deal-underwriting-pdf-export" className="space-y-6">
               <div className="pdf-flow-block deal-underwriting-first-page space-y-5 ">

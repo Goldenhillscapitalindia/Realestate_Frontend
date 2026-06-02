@@ -11,6 +11,7 @@ import {
   PortfolioAnalyticsRecord,
   PortfolioNarrativeFields,
 } from "./portfolio_analytics_types";
+import "./pf_demo_portfolio_analytics.css";
 
 export const portfolioAnalyticsTabDefinitions = [
   { id: "snapshot", label: "Snapshot" },
@@ -203,7 +204,7 @@ const PfDemoPortfolioAnalytics: React.FC<PfDemoPortfolioAnalyticsProps> = ({
         </div>
       )}
 
-      <div>
+      <div className="pf-portfolio-analytics">
         {status === "loading" ? (
           <p className="text-sm text-slate-500">Loading analytics...</p>
         ) : status === "error" ? (

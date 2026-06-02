@@ -1,0 +1,36 @@
+@media (max-width: 767px) {
+  .pf-portfolio-analytics {
+    min-width: 0;
+  }
+
+  .pf-portfolio-analytics .portfolio-recommendation-card {
+    border-radius: 24px;
+    padding: 22px;
+  }
+
+  .pf-portfolio-analytics .portfolio-recommendation-card h2 {
+    font-size: 28px;
+  }
+
+  .pf-portfolio-analytics .portfolio-recommendation-card p {
+    line-height: 1.65;
+  }
+
+  .pf-portfolio-analytics section {
+    min-width: 0;
+  }
+
+  .pf-portfolio-analytics svg {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 520px) {
+  .pf-portfolio-analytics .portfolio-recommendation-card {
+    padding: 18px;
+  }
+
+  .pf-portfolio-analytics .portfolio-recommendation-card h2 {
+    font-size: 24px;
+  }
+}

@@ -66,11 +66,12 @@ function FloorplanHeatmap({
   };
 
   return (
-    <div className="relative rounded-2xl bg-[#fffdfa] p-5 text-[#2a2a2a]">
+    <div className="deal-lens-floorplan-heatmap relative rounded-2xl bg-[#fffdfa] p-5 text-[#2a2a2a]">
       <h5 className="mb-4 text-center text-[15px] font-semibold text-[#2a2a2a]">{title}</h5>
+      <div className="deal-lens-floorplan-heatmap__scroll">
       <div
-        className="grid gap-[3px]"
-        style={{ gridTemplateColumns: `80px repeat(${xlabels.length}, minmax(0, 1fr))` }}
+        className="deal-lens-floorplan-heatmap__grid grid gap-[3px]"
+        style={{ gridTemplateColumns: `80px repeat(${xlabels.length}, minmax(18px, 1fr))` }}
       >
         {/* Header row */}
         <div />
@@ -115,6 +116,7 @@ function FloorplanHeatmap({
             })}
           </Fragment>
         ))}
+      </div>
       </div>
 
       {/* Tooltip */}

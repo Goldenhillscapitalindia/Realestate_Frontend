@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-api";
 import { MapContainer, Marker, Popup, TileLayer, Tooltip, useMap } from "react-leaflet";
 import L from "leaflet";
 import type { LatLngBoundsExpression, LatLngExpression } from "leaflet";
+import "./pf_comp_analysis.css";
 
 type UnitType = "Studio" | "1BD" | "2BD" | "3BD" | string;
 
@@ -561,7 +562,7 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
           </div>
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+        <div className="pf-comp-analysis-table mt-4 overflow-hidden rounded-2xl border border-slate-200">
           <table className="w-full table-auto">
             <thead className="bg-slate-50">
               <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-600">

@@ -1,0 +1,133 @@
+@media (max-width: 767px) {
+  .deal-lens-library {
+    border-radius: 24px;
+    padding: 28px 20px;
+  }
+
+  .deal-lens-library h1 {
+    font-size: 36px;
+    line-height: 1.05;
+  }
+
+  .deal-lens-library p {
+    font-size: 16px;
+  }
+
+  .deal-lens-library select,
+  .deal-lens-library button {
+    width: 100%;
+  }
+
+  .deal-lens-library > div:first-child {
+    align-items: stretch;
+  }
+
+  .deal-lens-library > div:first-child > div:last-child {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .deal-lens-library input {
+    height: 48px;
+  }
+
+  .deal-lens-library .space-y-4 > button {
+    border-radius: 22px;
+    padding: 22px 20px;
+  }
+
+  .deal-lens-library .space-y-4 > button p:first-child {
+    font-size: 26px;
+    line-height: 1.15;
+  }
+
+  .deal-lens-detail {
+    min-height: 100svh;
+    gap: 0;
+    overflow: visible;
+    border-radius: 0;
+  }
+
+  .deal-lens-detail > aside {
+    width: 188px;
+  }
+
+  .deal-lens-detail > aside > div {
+    height: auto;
+    min-height: 100svh;
+  }
+
+  .deal-lens-detail__main {
+    overflow: visible;
+  }
+
+  .deal-lens-detail__content {
+    min-width: 340px;
+    padding: 24px 16px 72px;
+  }
+
+  .deal-lens-detail__content h2 {
+    line-height: 1.1;
+  }
+
+  .deal-lens-floorplan-heatmap {
+    padding: 18px 14px;
+  }
+
+  .deal-lens-floorplan-heatmap h5 {
+    max-width: 260px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.45;
+  }
+
+  .deal-lens-floorplan-heatmap__scroll {
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .deal-lens-floorplan-heatmap__grid {
+    min-width: 360px;
+  }
+
+  .deal-lens-floorplan-heatmap__grid > div {
+    min-width: 18px;
+  }
+
+  .deal-lens-comps-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .deal-lens-comps-table table {
+    min-width: 760px;
+    table-layout: auto;
+  }
+
+  .deal-lens-comps-table th,
+  .deal-lens-comps-table td {
+    white-space: nowrap;
+  }
+
+  .deal-lens-comps-table th:first-child,
+  .deal-lens-comps-table td:first-child {
+    min-width: 190px;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 520px) {
+  .deal-lens-library {
+    padding: 24px 18px;
+  }
+
+  .deal-lens-detail > aside {
+    width: 176px;
+  }
+
+  .deal-lens-detail__content {
+    min-width: 320px;
+  }
+}
