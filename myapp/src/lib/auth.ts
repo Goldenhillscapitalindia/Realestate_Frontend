@@ -1,7 +1,7 @@
 const ACCESS_TOKEN_KEY = "auth_access_token";
 const SESSION_ID_KEY = "auth_session_id";
 const USER_KEY = "auth_user";
-const API_BASE = "http://192.168.1.50:7000";
+const API_BASE = import.meta.env.VITE_API_URL;;
 
 const isBrowser = typeof window !== "undefined";
 export type AuthUser = {
