@@ -92,9 +92,9 @@ const formatGap = (value?: number | null): string => {
 
 const formatPct = (value?: number | null): string => {
   if (typeof value !== "number" || Number.isNaN(value)) return "-";
-  const pct = value > 1 ? value : value * 100;
+  const pct = Math.abs(value) > 1 ? value : value * 100;
   const sign = pct > 0 ? "+" : pct < 0 ? "-" : "";
-  return `${sign}${Math.abs(pct).toFixed(1)}%`;
+  return `${sign}${Math.abs(pct).toFixed(2)}%`;
 };
 
 function colorToHex(color?: string) {
