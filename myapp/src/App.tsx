@@ -76,7 +76,7 @@ const App = () => {
           element={<PfDemo />}
         />
         <Route
-          path={productRoutes.propertyIntelligence}
+          path={`${productRoutes.propertyIntelligence}/*`}
           element={<PfDemo />}
         />
         <Route
@@ -88,7 +88,7 @@ const App = () => {
           element={<PfDemo />}
         />
         <Route
-          path={productRoutes.dealLens}
+          path={`${productRoutes.dealLens}/*`}
           element={<PfDemo />}
         />
         <Route

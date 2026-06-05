@@ -60,7 +60,98 @@ const routeToTab: Record<string, DemoTab> = {
 };
 
 const getTabFromPath = (pathname: string): DemoTab =>
-  routeToTab[pathname] ?? "Portfolio Analytics";
+  routeToTab[pathname] ??
+  (pathname.startsWith(`${productRoutes.portfolioIntelligence}/`)
+    ? "Portfolio Analytics"
+    : pathname.startsWith(`${productRoutes.propertyIntelligence}/`)
+      ? "Properties"
+      : pathname.startsWith(`${productRoutes.dealLens}/`)
+        ? "Deal Underwriting Lens"
+        : "Portfolio Analytics");
+
+const tabRoutes: Partial<Record<DemoTab, string>> = {
+  "Portfolio Analytics": productRoutes.portfolioIntelligence,
+  Properties: productRoutes.propertyIntelligence,
+  "AI Rent Intelligence": productRoutes.aiRentIntelligence,
+  "Market Signal Radar": productRoutes.marketRadar,
+  "IC Memo": "/ic_memo",
+  "Deal Underwriting Lens": productRoutes.dealLens,
+};
+
+const portfolioSubTabRoutes: Record<PortfolioAnalyticsTabId, string> = {
+  snapshot: `${productRoutes.portfolioIntelligence}/snapshot`,
+  performance_drivers: `${productRoutes.portfolioIntelligence}/performancedrivers`,
+  revenue_quality_lease_intelligence: `${productRoutes.portfolioIntelligence}/revenue_leases`,
+  expenses_dashboard: `${productRoutes.portfolioIntelligence}/expense_intel`,
+  risk_stability_dashboard: `${productRoutes.portfolioIntelligence}/risk_stability`,
+};
+
+const routeToPortfolioSubTab: Record<string, PortfolioAnalyticsTabId> = {
+  [productRoutes.portfolioIntelligence]: "snapshot",
+  [`${productRoutes.portfolioIntelligence}/snapshot`]: "snapshot",
+  [`${productRoutes.portfolioIntelligence}/performancedrivers`]: "performance_drivers",
+  [`${productRoutes.portfolioIntelligence}/performance_drivers`]: "performance_drivers",
+  [`${productRoutes.portfolioIntelligence}/revenue_leases`]: "revenue_quality_lease_intelligence",
+  [`${productRoutes.portfolioIntelligence}/expense_intel`]: "expenses_dashboard",
+  [`${productRoutes.portfolioIntelligence}/risk_stability`]: "risk_stability_dashboard",
+};
+
+const propertyDetailViews = [
+  "property_analytics",
+  "comp_analysis",
+  "ai_rent_intelligence",
+] as const;
+
+type PropertyDetailView = (typeof propertyDetailViews)[number];
+
+const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const deslugify = (value: string) =>
+  value
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const getPropertyRoute = (
+  property: Pick<PropertyRecord, "property_name" | "submarket" | "region">,
+  view: PropertyDetailView = "property_analytics",
+) => {
+  const params = new URLSearchParams();
+  params.set("property_name", property.property_name);
+  if (property.submarket) params.set("submarket", property.submarket);
+  if (property.region) params.set("region", property.region);
+
+  return `${productRoutes.propertyIntelligence}/${slugify(property.property_name)}/${view}?${params.toString()}`;
+};
+
+const getPropertyRouteState = (pathname: string, search: string) => {
+  const prefix = `${productRoutes.propertyIntelligence}/`;
+  if (!pathname.startsWith(prefix)) return null;
+
+  const [propertySlug, viewSegment] = pathname.slice(prefix.length).split("/");
+  if (!propertySlug) return null;
+
+  const params = new URLSearchParams(search);
+  const view = propertyDetailViews.includes(viewSegment as PropertyDetailView)
+    ? (viewSegment as PropertyDetailView)
+    : "property_analytics";
+
+  return {
+    property: {
+      property_name: params.get("property_name") || deslugify(propertySlug),
+      submarket: params.get("submarket") || "",
+      region: params.get("region") || "",
+    },
+    view,
+  };
+};
 
 const seoByPath: Record<
   string,
@@ -75,6 +166,36 @@ const seoByPath: Record<
     description:
       "Aggregate asset-level data into portfolio-wide risk and allocation visibility. Track NOI, occupancy, and performance across your entire real estate portfolio.",
     canonicalPath: productRoutes.portfolioIntelligence,
+  },
+  [portfolioSubTabRoutes.snapshot]: {
+    title: "Portfolio Snapshot | Asset72",
+    description:
+      "View a portfolio-level operating snapshot across scale, profitability, revenue momentum, expense pressure, occupancy, and risk signals.",
+    canonicalPath: portfolioSubTabRoutes.snapshot,
+  },
+  [portfolioSubTabRoutes.performance_drivers]: {
+    title: "Portfolio Performance Drivers | Asset72",
+    description:
+      "Analyze the revenue, expense, and NOI drivers behind portfolio performance with Asset72 portfolio intelligence.",
+    canonicalPath: portfolioSubTabRoutes.performance_drivers,
+  },
+  [portfolioSubTabRoutes.revenue_quality_lease_intelligence]: {
+    title: "Portfolio Revenue and Lease Intelligence | Asset72",
+    description:
+      "Track revenue quality, lease rollover, occupancy trends, and lease exposure across a real estate portfolio.",
+    canonicalPath: portfolioSubTabRoutes.revenue_quality_lease_intelligence,
+  },
+  [portfolioSubTabRoutes.expenses_dashboard]: {
+    title: "Portfolio Expense Intel | Asset72",
+    description:
+      "Monitor expense pressure, operating expense ratios, and controllable cost signals across portfolio assets.",
+    canonicalPath: portfolioSubTabRoutes.expenses_dashboard,
+  },
+  [portfolioSubTabRoutes.risk_stability_dashboard]: {
+    title: "Portfolio Risk and Stability | Asset72",
+    description:
+      "Evaluate portfolio stability, risk concentration, occupancy exposure, and operating resilience signals.",
+    canonicalPath: portfolioSubTabRoutes.risk_stability_dashboard,
   },
   [productRoutes.propertyIntelligence]: {
     title: "Property Intelligence | Asset72",
@@ -118,7 +239,23 @@ const PfDemo: React.FC = () => {
   const isDealLensTab = activeTab === "Deal Underwriting Lens";
   const hidePortfolioSidebar = isDealLensTab && dealLensScreen === "detail";
   const isAuthenticatedUserView = isUserLoggedIn() && !isDemoMode();
-  const seoConfig = seoByPath[location.pathname];
+  const seoConfig =
+    seoByPath[location.pathname] ??
+    (location.pathname.startsWith(`${productRoutes.propertyIntelligence}/`)
+      ? {
+          title: `${selectedProperty?.property_name ?? "Property Intelligence"} | Asset72`,
+          description:
+            "Analyze property-level performance, comp analysis, rent intelligence, occupancy, and operating risk signals with Asset72.",
+          canonicalPath: location.pathname,
+        }
+      : location.pathname.startsWith(`${productRoutes.dealLens}/`)
+        ? {
+            title: "Deal Lens Property Analysis | Asset72",
+            description:
+              "Review property-specific deal underwriting, scorecards, comps, rent roll exposure, and acquisition risk signals with Asset72 Deal Lens.",
+            canonicalPath: location.pathname,
+          }
+        : seoByPath[tabRoutes[activeTab] ?? ""]);
 
   const assistantContext = useMemo<{
     module: AssistantModule;
@@ -178,6 +315,32 @@ const PfDemo: React.FC = () => {
   const showAiSidebar = Boolean(assistantContext);
   const isAiSidebarVisible = showAiSidebar && isAiSidebarOpen;
 
+  const activateTab = (tab: DemoTab, options?: { resetSelectedProperty?: boolean }) => {
+    setActiveTab(tab);
+
+    if (options?.resetSelectedProperty) {
+      setSelectedProperty(null);
+    }
+
+    const route = tabRoutes[tab];
+    if (route && location.pathname !== route) {
+      navigate(route);
+    }
+  };
+
+  const changePortfolioSubTab = (subTab: PortfolioAnalyticsTabId) => {
+    setPortfolioSubTab(subTab);
+    const route = portfolioSubTabRoutes[subTab];
+    if (location.pathname !== route) {
+      navigate(route);
+    }
+  };
+
+  const selectProperty = (property: Pick<PropertyRecord, "property_name" | "submarket" | "region">) => {
+    setSelectedProperty(property);
+    navigate(getPropertyRoute(property));
+  };
+
   const handleSidebarBack = () => {
     if (isAuthenticatedUserView) {
       if (activeTab === "Portfolio Analytics") {
@@ -202,7 +365,18 @@ const PfDemo: React.FC = () => {
     }
 
     setActiveTab(getTabFromPath(location.pathname));
-  }, [location.pathname, location.state]);
+    const requestedSubTab = routeToPortfolioSubTab[location.pathname];
+    if (requestedSubTab) {
+      setPortfolioSubTab(requestedSubTab);
+    }
+
+    const propertyRouteState = getPropertyRouteState(location.pathname, location.search);
+    if (propertyRouteState) {
+      setSelectedProperty(propertyRouteState.property);
+    } else if (location.pathname === productRoutes.propertyIntelligence) {
+      setSelectedProperty(null);
+    }
+  }, [location.pathname, location.search, location.state]);
 
   useEffect(() => {
     mainScrollRef.current?.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -215,9 +389,9 @@ const PfDemo: React.FC = () => {
   const activeContent = useMemo(() => {
     if (activeTab === "Portfolio Analytics") {
       return (
-        <PfDemoPortfolioAnalytics
+          <PfDemoPortfolioAnalytics
           activeSubTab={portfolioSubTab}
-          onSubTabChange={setPortfolioSubTab}
+          onSubTabChange={changePortfolioSubTab}
           showTabMenu={false}
         />
       );
@@ -227,11 +401,20 @@ const PfDemo: React.FC = () => {
         return (
           <PfPropertyInsights
             propertyContext={selectedProperty}
-            onBack={() => setSelectedProperty(null)}
+            onBack={() => {
+              setSelectedProperty(null);
+              navigate(productRoutes.propertyIntelligence);
+            }}
+            viewRoute={getPropertyRouteState(location.pathname, location.search)?.view}
+            onViewRouteChange={(view) => {
+              if (selectedProperty) {
+                navigate(getPropertyRoute(selectedProperty, view));
+              }
+            }}
           />
         );
       }
-      return <PfDemoProperties onSelectProperty={setSelectedProperty} />;
+      return <PfDemoProperties onSelectProperty={selectProperty} />;
     }
     if (activeTab === "AI Rent Intelligence") return <PfDemoAiRentIntelligence />;
     if (activeTab === "Market Signal Radar") {
@@ -254,7 +437,7 @@ const PfDemo: React.FC = () => {
       );
     }
     return <DealUnderwritingLens onScreenChange={setDealLensScreen} />;
-  }, [activeTab, isIcMemoStarted, portfolioSubTab, selectedProperty]);
+  }, [activeTab, isIcMemoStarted, location.pathname, location.search, portfolioSubTab, selectedProperty]);
 
   useEffect(() => {
     if (!isDealLensTab) {
@@ -314,7 +497,7 @@ const PfDemo: React.FC = () => {
             <nav className="space-y-2">
               <button
                 type="button"
-                onClick={() => setActiveTab("Deal Underwriting Lens")}
+                onClick={() => activateTab("Deal Underwriting Lens")}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Deal Underwriting Lens"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
@@ -326,10 +509,7 @@ const PfDemo: React.FC = () => {
 
               <button
                 type="button"
-                onClick={() => {
-                  setActiveTab("Properties");
-                  setSelectedProperty(null);
-                }}
+                onClick={() => activateTab("Properties", { resetSelectedProperty: true })}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Properties"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
@@ -345,7 +525,7 @@ const PfDemo: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    setActiveTab("Portfolio Analytics");
+                    activateTab("Portfolio Analytics");
                     setIsPortfolioMenuOpen((prev) => !prev);
                   }}
                   className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "Portfolio Analytics"
@@ -373,8 +553,8 @@ const PfDemo: React.FC = () => {
                           key={subTab.id}
                           type="button"
                           onClick={() => {
-                            setActiveTab("Portfolio Analytics");
-                            setPortfolioSubTab(subTab.id);
+                            activateTab("Portfolio Analytics");
+                            changePortfolioSubTab(subTab.id);
                           }}
                           className={`flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-[15px] font-semibold transition ${isSubActive
                               ? "bg-[#dff3eb] text-[#066b52]"
@@ -407,7 +587,7 @@ const PfDemo: React.FC = () => {
               
               <button
                 type="button"
-                onClick={() => setActiveTab("IC Memo")}
+                onClick={() => activateTab("IC Memo")}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] font-semibold transition ${activeTab === "IC Memo"
                     ? "bg-[#0fa77d] text-white shadow-[0_6px_18px_rgba(15,167,125,0.35)]"
                     : "bg-white/5 text-blue-100 hover:bg-white/10"
