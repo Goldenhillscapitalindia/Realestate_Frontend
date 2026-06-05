@@ -138,7 +138,7 @@ type DealUnderwritingApiRecord = {
     tenantMix?: Array<{ unitType: string; count: number; percent: number }>;
     rentVsMarket?: Array<{ unitType: string; market: number; inPlace: number }>;
     noiGrowthProjection?: Array<{ year: number; noi: number }>;
-    revenueVsExpenses?: Array<{ month: string; revenue: number; expense: number }>;
+    revenueVsExpenses?: Array<{ month: string; revenue: number; expense: number; noi:number }>;
     expenseBreakdown?: Array<{ category: string; amount: number; percent?: number }>;
     expenseDistribution?: Array<{ category: string; amount: number; percent?: number }>;
     leaseExpiration?: Array<{ month: string; units: number }>;
@@ -215,7 +215,7 @@ export interface Deal {
   tenantMix: Array<{ name: string; percentage: number; count?: number }>;
   rentVsMarket: Array<{ type: string; current: number; market: number }>;
   noiProjection: Array<{ year: string; noi: number }>;
-  revenueVsExpenses: Array<{ month: string; revenue: number; expenses: number }>;
+  revenueVsExpenses: Array<{ month: string; revenue: number; expenses: number; noi?: number }>;
   expenseBreakdown: Array<{ category: string; amount: number; percent?: number }>;
   expenseDistribution: Array<{ category: string; amount: number; percent?: number }>;
   leaseExpirations: Array<{ year: string; units: number }>;
@@ -835,6 +835,7 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       month: item.month,
       revenue: toNumber(item.revenue),
       expenses: toNumber(item.expense),
+      noi: item.noi == null ? undefined : toNumber(item.noi),
     })),
     expenseBreakdown: (record.performanceAnalytics.expenseBreakdown ?? []).map((item) => ({
       category: item.category,
