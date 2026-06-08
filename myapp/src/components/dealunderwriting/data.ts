@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
 import type { DealCompAnalysisPayload } from "./DealCompAnalysis";
+import type { DemandElasticityPayload } from "./pf_deal_elasticity";
 
 export type DealSignal = "Strong Buy" | "Buy" | "Neutral" | "Avoid";
 
@@ -164,6 +165,7 @@ type DealUnderwritingApiRecord = {
   dealRentrollResponse?: unknown;
   deal_rentroll_response?: unknown;
   compAnalysis?: DealCompAnalysisPayload | null;
+  demandElasticity?: DemandElasticityPayload | null;
 };
 
 export interface Deal {
@@ -236,6 +238,7 @@ export interface Deal {
     { insight: string; impact: string; drives: string }
   >;
   compAnalysis?: DealCompAnalysisPayload | null;
+  demandElasticity?: DemandElasticityPayload | null;
 }
 
 type DealDataState = {
@@ -877,6 +880,7 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       occupancyVacancy: mergeChartInsight(defaultChartInsights.occupancyVacancy, record.performanceAnalytics.occupancyVsVacancyInsights),
     },
     compAnalysis: record.compAnalysis ?? null,
+    demandElasticity: record.demandElasticity ?? null,
   };
 }
 

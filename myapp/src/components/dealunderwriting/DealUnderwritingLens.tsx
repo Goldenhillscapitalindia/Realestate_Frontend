@@ -20,6 +20,7 @@ import { useLocation, useNavigate } from "react-router";
 import "./DealUnderwritingLens.css";
 
 const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
+const PfDealElasticity = lazy(() => import("./pf_deal_elasticity"));
 
 interface DealUnderwritingLensProps {
   onScreenChange?: (screen: "library" | "upload" | "detail") => void;
@@ -384,6 +385,11 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
               <DealCharts deal={activeDeal} />
 
+              {activeDeal.demandElasticity ? (
+                <Suspense fallback={null}>
+                  <PfDealElasticity payload={activeDeal.demandElasticity} />
+                </Suspense>
+              ) : null}
               {activeDeal.compAnalysis ? (
                 <Suspense fallback={null}>
                   <DealCompAnalysis
