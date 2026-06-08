@@ -32,6 +32,18 @@ export type DemandElasticityPayload = {
     source?: string;
     elasticity?: number;
   }>;
+  simulator?: {
+    baseRent: number;
+    marketRent: number;
+    baseOccupancy: number;
+    marketOccupancy: number;
+    subjectUnits: number;
+    minRentChangePct: number;
+    maxRentChangePct: number;
+    baseAnnualRevenue: number;
+    marketPosition: string;
+    zoneDescription: string;
+  } | null;
 };
 
 const ZONE_COLORS = {
@@ -90,7 +102,7 @@ type HoveredPoint = {
 };
 
 export default function PfDealElasticity({ payload }: { payload: DemandElasticityPayload }) {
-  const { curve, subject, comparables = [], zones } = payload;
+  const { curve, subject, comparables = [] } = payload;
   const [hovered, setHovered] = useState<HoveredPoint | null>(null);
 
   const allRents = useMemo(

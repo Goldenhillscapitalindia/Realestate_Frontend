@@ -21,6 +21,7 @@ import "./DealUnderwritingLens.css";
 
 const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
 const PfDealElasticity = lazy(() => import("./pf_deal_elasticity"));
+const PfDealsRentStimulator = lazy(() => import("./pf_deals_rentstimulator"));
 
 interface DealUnderwritingLensProps {
   onScreenChange?: (screen: "library" | "upload" | "detail") => void;
@@ -387,7 +388,10 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
               {activeDeal.demandElasticity ? (
                 <Suspense fallback={null}>
-                  <PfDealElasticity payload={activeDeal.demandElasticity} />
+                  <div className="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(360px,1fr)]">
+                    <PfDealElasticity payload={activeDeal.demandElasticity} />
+                    <PfDealsRentStimulator payload={activeDeal.demandElasticity} />
+                  </div>
                 </Suspense>
               ) : null}
               {activeDeal.compAnalysis ? (
