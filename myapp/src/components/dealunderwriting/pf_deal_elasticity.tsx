@@ -54,10 +54,10 @@ const ZONE_COLORS = {
 };
 
 const ZONE_LABEL_MAP: Record<string, { label: string; description: string; dotColor: string }> = {
-  pricingPower: { label: "Pricing Power", description: "High rent · High occupancy", dotColor: "#16a34a" },
-  rentGrowthOpportunity: { label: "Rent Growth Opp.", description: "Low rent · High occupancy", dotColor: "#d97706" },
-  demandRisk: { label: "Demand Risk", description: "High rent · Low occupancy", dotColor: "#dc2626" },
-  equilibrium: { label: "Equilibrium", description: "Efficient pricing", dotColor: "#1e293b" },
+  pricingPower: { label: "Defensive", description: "Premium rents supported by strong demand", dotColor: "#16a34a" },
+  rentGrowthOpportunity: { label: "Growth Opportunity", description: "Below-market rents with pricing upside", dotColor: "#d97706" },
+  demandRisk: { label: "Demand Risk", description: "Aggressive pricing may pressure occupancy", dotColor: "#dc2626" },
+  equilibrium: { label: "Hold", description: "Stable market-aligned pricing", dotColor: "#1e293b" },
 };
 
 const W = 700;

@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import type { DemandElasticityPayload } from "./pf_deal_elasticity";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
+const OCCUPANCY_ELASTICITY_FACTOR = -0.5;
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -13,18 +14,18 @@ const formatCurrency = (value: number) =>
 
 function getMarketPosition(projectedRent: number, marketRent: number): string {
   const ratio = projectedRent / marketRent;
-  if (ratio < 0.95) return "Growth Opp.";
-  if (ratio <= 1.0) return "Equilibrium";
-  if (ratio <= 1.05) return "Premium Pricing";
+  if (ratio < 0.95) return "Growth Opportunity";
+  if (ratio <= 1.0) return "Hold";
+  if (ratio <= 1.05) return "Defensive";
   return "Demand Risk";
 }
 
 function getZoneDescription(projectedRent: number, marketRent: number): string {
   const ratio = projectedRent / marketRent;
-  if (ratio < 0.95) return "Low rent - High occupancy";
-  if (ratio <= 1.0) return "Market-rate pricing";
-  if (ratio <= 1.05) return "Above market - Moderate risk";
-  return "High rent - Low occupancy risk";
+  if (ratio < 0.95) return "Below-market rents with pricing upside";
+  if (ratio <= 1.0) return "Stable market-aligned pricing";
+  if (ratio <= 1.05) return "Premium rents supported by demand";
+  return "Aggressive pricing may pressure occupancy";
 }
 
 function signedPercent(value: number) {
@@ -52,15 +53,20 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
   const simulator = payload.simulator;
   const [rentChangePct, setRentChangePct] = useState(0);
 
+  const zeroMarkerPosition = useMemo(() => {
+    if (!simulator) return 50;
+    const range = simulator.maxRentChangePct - simulator.minRentChangePct;
+    if (!(range > 0)) return 50;
+    return clamp(((0 - simulator.minRentChangePct) / range) * 100, 0, 100);
+  }, [simulator]);
+
   const scenario = useMemo(() => {
     if (!simulator) return null;
-    if (!(simulator.marketRent > 0) || !(simulator.baseOccupancy >= 0)) return null;
+    if (!(simulator.baseRent > 0) || !(simulator.marketRent > 0) || !(simulator.baseOccupancy >= 0)) return null;
 
     const projectedRent = simulator.baseRent * (1 + rentChangePct / 100);
-    const rawOccupancy =
-      simulator.baseOccupancy -
-      (simulator.baseOccupancy - (simulator.marketOccupancy ?? simulator.baseOccupancy)) *
-        (projectedRent / simulator.marketRent);
+    const rentDeltaPct = ((projectedRent - simulator.baseRent) / simulator.baseRent) * 100;
+    const rawOccupancy = simulator.baseOccupancy + rentDeltaPct * OCCUPANCY_ELASTICITY_FACTOR;
     const projectedOccupancy = clamp(Number.isFinite(rawOccupancy) ? rawOccupancy : simulator.baseOccupancy, 0, 100);
     const occupancyImpactPp = projectedOccupancy - simulator.baseOccupancy;
     const annualRevenue = projectedRent * simulator.subjectUnits * 12 * (projectedOccupancy / 100);
@@ -107,10 +113,12 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
             onChange={(event) => setRentChangePct(Number(event.target.value))}
             className="mt-5 h-2 w-full cursor-pointer accent-[#102149]"
           />
-          <div className="mt-1 flex items-center justify-between text-[11px] text-slate-600">
-            <span>{simulator.minRentChangePct}%</span>
-            <span>0%</span>
-            <span>+{simulator.maxRentChangePct}%</span>
+          <div className="relative mt-1 h-4 text-[11px] text-slate-600">
+            <span className="absolute left-0 top-0">{simulator.minRentChangePct}%</span>
+            <span className="absolute top-0 -translate-x-1/2" style={{ left: `${zeroMarkerPosition}%` }}>
+              0%
+            </span>
+            <span className="absolute right-0 top-0">+{simulator.maxRentChangePct}%</span>
           </div>
         </div>
 
