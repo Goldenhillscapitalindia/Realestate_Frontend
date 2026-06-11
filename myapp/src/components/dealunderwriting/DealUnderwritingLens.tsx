@@ -403,9 +403,11 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                   />
                 </Suspense>
               ) : null}
+              <div className="pdf-flow-block rounded-[32px] border border-[#d8e2f1] bg-white p-7">
               <Suspense fallback={null}>
                 <PfDealAmenities propertyName={activeDeal.name} />
               </Suspense>
+              </div>
               <div className="pdf-flow-block">
                 <RisksOpportunities deal={activeDeal} />
               </div>

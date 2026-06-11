@@ -71,7 +71,7 @@ function positionDot(pos: string) {
 
 // ── Quadrant SVG chart ───────────────────────────────────────────────────────
 
-const QW = 900;
+const QW = 1300;
 const QH = 400;
 const QP = { top: 36, right: 32, bottom: 52, left: 56 };
 const plotW = QW - QP.left - QP.right;
@@ -127,7 +127,7 @@ function PositioningQuadrant({
       <text
         x={14}
         y={QP.top + plotH / 2}
-        fontSize={9}
+        fontSize={11}
         fill="#94a3b8"
         textAnchor="middle"
         transform={`rotate(-90, 14, ${QP.top + plotH / 2})`}
@@ -136,18 +136,27 @@ function PositioningQuadrant({
       </text>
 
       {/* X-axis label */}
-      <text x={QP.left + plotW / 2} y={QH - 4} fontSize={9} fill="#94a3b8" textAnchor="middle">
+      <text x={QP.left + plotW / 2} y={QH - 4} fontSize={11} fill="#94a3b8" textAnchor="middle">
         AMENITY QUALITY INDEX
       </text>
 
       {/* Subject point */}
       <circle cx={sx} cy={sy} r={8} fill="#1e293b" />
-      {/* Tooltip bubble */}
-      <rect x={sx - 42} y={sy - 34} width={84} height={22} rx={4} fill="#1e293b" />
-      <text x={sx} y={sy - 19} fontSize={10} fill="white" textAnchor="middle" fontWeight="600">
+
+      {/* Tooltip BELOW point */}
+      <rect x={sx - 50} y={sy + 14} width={100} height={24} rx={5} fill="#1e293b"
+      />
+
+      <text
+        x={sx}
+        y={sy + 30}
+        fontSize={10}
+        fill="white"
+        textAnchor="middle"
+        fontWeight="600"
+      >
         Subject · {Math.round(aqiScore)} / {Math.round(cpScore)}
       </text>
-
       {/* Legend */}
       <circle cx={QP.left + plotW - 80} cy={QP.top - 16} r={5} fill="#1e293b" />
       <text x={QP.left + plotW - 72} y={QP.top - 12} fontSize={9} fill="#475569">Subject</text>
