@@ -41,6 +41,9 @@ export type DemandElasticityPayload = {
     minRentChangePct: number;
     maxRentChangePct: number;
     baseAnnualRevenue: number;
+    submarket: "tight" | "balanced" | "soft";
+    assetClass: "a" | "b" | "c";
+    horizon: "immediate" | "stabilized";
     marketPosition: string;
     zoneDescription: string;
   } | null;

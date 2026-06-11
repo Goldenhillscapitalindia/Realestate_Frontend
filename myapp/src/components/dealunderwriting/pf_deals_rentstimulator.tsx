@@ -3,7 +3,11 @@ import { Sparkles } from "lucide-react";
 import type { DemandElasticityPayload } from "./pf_deal_elasticity";
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const OCCUPANCY_ELASTICITY_FACTOR = -0.5;
+
+// Elasticity model lookups (spec defaults)
+const BETA = { tight: 0.2, balanced: 0.55, soft: 1.1 };
+const CLASS = { a: 0.7, b: 1.0, c: 1.4 };
+const PHASE = { immediate: 0.35, stabilized: 1.0 };
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-US", {
@@ -12,20 +16,16 @@ const formatCurrency = (value: number) =>
     maximumFractionDigits: 0,
   }).format(Math.round(value));
 
-function getMarketPosition(projectedRent: number, marketRent: number): string {
-  const ratio = projectedRent / marketRent;
-  if (ratio < 0.95) return "Growth Opportunity";
-  if (ratio <= 1.0) return "Hold";
-  if (ratio <= 1.05) return "Defensive";
-  return "Demand Risk";
+function getMarketPosition(revenueDelta: number, premium: number, change: number): string {
+  if (Math.abs(change) < 0.5) return "Hold";
+  if (revenueDelta < 0) return "Demand Risk";
+  return premium < 0.08 ? "Growth Opportunity" : "Defensive";
 }
 
-function getZoneDescription(projectedRent: number, marketRent: number): string {
-  const ratio = projectedRent / marketRent;
-  if (ratio < 0.95) return "Below-market rents with pricing upside";
-  if (ratio <= 1.0) return "Stable market-aligned pricing";
-  if (ratio <= 1.05) return "Premium rents supported by demand";
-  return "Aggressive pricing may pressure occupancy";
+function getZoneDescription(revenueDelta: number, premium: number, change: number): string {
+  if (Math.abs(change) < 0.5) return "Stable market-aligned pricing";
+  if (revenueDelta < 0) return "Aggressive pricing may pressure occupancy";
+  return premium < 0.08 ? "Below-market rents with pricing upside" : "Premium rents supported by demand";
 }
 
 function signedPercent(value: number) {
@@ -64,11 +64,25 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
     if (!simulator) return null;
     if (!(simulator.baseRent > 0) || !(simulator.marketRent > 0) || !(simulator.baseOccupancy >= 0)) return null;
 
-    const projectedRent = simulator.baseRent * (1 + rentChangePct / 100);
-    const rentDeltaPct = ((projectedRent - simulator.baseRent) / simulator.baseRent) * 100;
-    const rawOccupancy = simulator.baseOccupancy + rentDeltaPct * OCCUPANCY_ELASTICITY_FACTOR;
-    const projectedOccupancy = clamp(Number.isFinite(rawOccupancy) ? rawOccupancy : simulator.baseOccupancy, 0, 100);
-    const occupancyImpactPp = projectedOccupancy - simulator.baseOccupancy;
+    const r0 = simulator.baseRent;
+    const m = simulator.marketRent;
+    const o0 = simulator.baseOccupancy;
+
+    // sensitivity = market softness × tenant price-sensitivity (replaces flat -0.5)
+    const beta = (BETA[simulator.submarket] ?? 0.55) * (CLASS[simulator.assetClass] ?? 1.0);
+    const phi = PHASE[simulator.horizon] ?? 1.0;
+
+    const projectedRent = r0 * (1 + rentChangePct / 100);
+
+    const pi0 = r0 / m - 1;                          // current premium to market
+    const pi1 = projectedRent / m - 1;              // new premium to market
+    const s = beta * (1 + 0.04 * 100 * Math.max(0, pi1));  // pain grows above market
+    let dOcc = -s * (pi1 - pi0) * 100;              // occupancy change (pp)
+    if (pi1 < pi0) dOcc *= 0.5;                      // cuts refill slower
+    dOcc *= phi;                                     // phase-in for horizon
+
+    const projectedOccupancy = clamp(o0 + dOcc, 80, 97.5);
+    const occupancyImpactPp = projectedOccupancy - o0;
     const annualRevenue = projectedRent * simulator.subjectUnits * 12 * (projectedOccupancy / 100);
     const revenueImpact = annualRevenue - simulator.baseAnnualRevenue;
 
@@ -78,8 +92,8 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
       annualRevenue,
       revenueImpact,
       occupancyImpactPp,
-      marketPosition: getMarketPosition(projectedRent, simulator.marketRent),
-      zoneDescription: getZoneDescription(projectedRent, simulator.marketRent),
+      marketPosition: getMarketPosition(revenueImpact, pi1, rentChangePct),
+      zoneDescription: getZoneDescription(revenueImpact, pi1, rentChangePct),
     };
   }, [rentChangePct, simulator]);
 
