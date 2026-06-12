@@ -156,7 +156,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
 
       {/* Metric Cards */}
       {insights.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
           {insights.map((card) => (
             <div
               key={card.label}
@@ -191,7 +191,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
             </svg>
             <h3 className="text-sm font-semibold text-[#102149]">Metric Insights</h3>
           </div>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {insights.map((card) => (
               <div key={card.label} className="rounded-xl border border-[#edf2fb] bg-[#f8fafd] p-4">
                 <div className="flex items-center gap-2">
@@ -208,7 +208,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
 
       {/* Summary */}
       {summary && (
-        <div className="rounded-2xl bg-[#102149] p-6">
+        <div className="rounded-2xl bg-[#2f568f] p-6">
           <div className="mb-3 flex items-center gap-2">
             <svg className="h-4 w-4 text-[#7eb3ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M12 20h9" /><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
@@ -217,7 +217,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
               Submarket Summary
             </p>
           </div>
-          <p className="text-sm leading-relaxed text-[#c8d9f0]">{summary}</p>
+          <p className="text-sm leading-relaxed text-[#ffffff]">{summary}</p>
         </div>
       )}
     </div>
