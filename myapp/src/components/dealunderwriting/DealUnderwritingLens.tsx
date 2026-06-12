@@ -23,6 +23,7 @@ const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
 const PfDealElasticity = lazy(() => import("./pf_deal_elasticity"));
 const PfDealsRentStimulator = lazy(() => import("./pf_deals_rentstimulator"));
 const PfDealAmenities = lazy(() => import("./pf_deal_amenities"));
+const PfDealSubmarketIntelligence = lazy(() => import("./pf_deal_submarketintelligence"));
 
 interface DealUnderwritingLensProps {
   onScreenChange?: (screen: "library" | "upload" | "detail") => void;
@@ -404,9 +405,14 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                 </Suspense>
               ) : null}
               <div className="pdf-flow-block rounded-[32px] border border-[#d8e2f1] bg-white p-7">
-              <Suspense fallback={null}>
-                <PfDealAmenities propertyName={activeDeal.name} />
-              </Suspense>
+                <Suspense fallback={null}>
+                  <PfDealAmenities propertyName={activeDeal.name} />
+                </Suspense>
+              </div>
+              <div className="pdf-flow-block rounded-[32px] border border-[#d8e2f1] bg-white p-7">
+                <Suspense fallback={null}>
+                  <PfDealSubmarketIntelligence propertyName={activeDeal.name} />
+                </Suspense>
               </div>
               <div className="pdf-flow-block">
                 <RisksOpportunities deal={activeDeal} />
