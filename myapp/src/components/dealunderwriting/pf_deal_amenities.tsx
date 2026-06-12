@@ -4,6 +4,7 @@ import { authClient } from "@/lib/auth-api";
 // ── Types ────────────────────────────────────────────────────────────────────
 
 type AmenityItem = { points: number; amenity: string; competitor_penetration: number };
+type MarketPosition = { name: string; aqi_score: number; competitive_position: number };
 
 type SubjectVsMarket = {
   amenity: string;
@@ -23,6 +24,7 @@ type AmenityAnalysis = {
   unit_amenities: { score: number; missing: string[]; present: string[]; coverage: string };
   community_amenities: { score: number; missing: string[]; present: string[]; coverage: string };
   subject_vs_market: SubjectVsMarket[];
+  market_positions?: MarketPosition[];
   competitive_position: {
     label: string;
     score: number;
@@ -87,9 +89,11 @@ function qy(score: number) {
 function PositioningQuadrant({
   aqiScore,
   cpScore,
+  market,
 }: {
   aqiScore: number;
   cpScore: number;
+  market: MarketPosition[];
 }) {
   const midX = qx(50);
   const midY = qy(50);
@@ -139,6 +143,23 @@ function PositioningQuadrant({
       <text x={QP.left + plotW / 2} y={QH - 4} fontSize={11} fill="#94a3b8" textAnchor="middle">
         AMENITY QUALITY INDEX
       </text>
+
+           {/* Competitors average point */}
+      {market.length > 0 && (() => {
+        const avgAqi = market.reduce((s, m) => s + m.aqi_score, 0) / market.length;
+        const avgCp = market.reduce((s, m) => s + m.competitive_position, 0) / market.length;
+        const mx = qx(avgAqi);
+        const my = qy(avgCp);
+        return (
+          <g>
+            <circle cx={mx} cy={my} r={7} fill="#94a3b8" />
+            <rect x={mx - 60} y={my - 38} width={120} height={24} rx={5} fill="#64748b" />
+            <text x={mx} y={my - 22} fontSize={10} fill="white" textAnchor="middle" fontWeight="600">
+              Competitors · {Math.round(avgAqi)} / {Math.round(avgCp)}
+            </text>
+          </g>
+        );
+      })()}
 
       {/* Subject point */}
       <circle cx={sx} cy={sy} r={8} fill="#1e293b" />
@@ -440,6 +461,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
           <PositioningQuadrant
             aqiScore={amenity_quality_index.score}
             cpScore={competitive_position.score}
+            market={data.market_positions ?? []}
           />
         </div>
       </div>
