@@ -44,6 +44,10 @@ export type DemandElasticityPayload = {
     submarket: "tight" | "balanced" | "soft";
     assetClass: "a" | "b" | "c";
     horizon: "immediate" | "stabilized";
+    vacancyRate: number;
+    inventory: number;
+    pipeline: number;
+    netAbsorption: number;
     marketPosition: string;
     zoneDescription: string;
   } | null;

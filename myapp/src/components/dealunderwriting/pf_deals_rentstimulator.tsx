@@ -69,7 +69,34 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
     const o0 = simulator.baseOccupancy;
 
     // sensitivity = market softness × tenant price-sensitivity (replaces flat -0.5)
-    const beta = (BETA[simulator.submarket] ?? 0.55) * (CLASS[simulator.assetClass] ?? 1.0);
+    let marketCondition: keyof typeof BETA = "balanced";
+
+    // Vacancy is the primary driver
+    if ((simulator.vacancyRate ?? 0) <= 5) {
+      marketCondition = "tight";
+    } else if ((simulator.vacancyRate ?? 0) <= 7.5) {
+      marketCondition = "balanced";
+    } else {
+      marketCondition = "soft";
+    }
+
+    // Negative absorption makes the market soft
+    if ((simulator.netAbsorption ?? 0) < 0) {
+      marketCondition = "soft";
+    }
+
+    // Pipeline pressure (>3% of inventory) makes market soft
+    const pipelinePct =
+      simulator.inventory && simulator.pipeline
+        ? (simulator.pipeline / simulator.inventory) * 100
+        : 0;
+
+    if (pipelinePct > 3) {
+      marketCondition = "soft";
+    }
+
+    const beta = (BETA[marketCondition] ?? 0.55) * (CLASS[simulator.assetClass] ?? 1.0);
+
     const phi = PHASE[simulator.horizon] ?? 1.0;
 
     const projectedRent = r0 * (1 + rentChangePct / 100);

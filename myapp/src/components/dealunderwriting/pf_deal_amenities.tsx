@@ -409,7 +409,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
               <span className="font-semibold text-[#0f172a]">Competitive Deficiencies</span>
             </div>
             <span className="rounded-full bg-red-600 px-3 py-0.5 text-sm font-bold text-white">
-              -{competitive_deficiencies.total_points}
+              {competitive_deficiencies.total_points}
             </span>
           </div>
           <div className="mt-3 space-y-2">
@@ -423,7 +423,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
                     <p className="text-xs text-[#64748b]">{item.competitor_penetration.toFixed(0)}% market penetration</p>
                   </div>
                   <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">
-                    -{item.points}
+                    {item.points}
                   </span>
                 </div>
               ))
