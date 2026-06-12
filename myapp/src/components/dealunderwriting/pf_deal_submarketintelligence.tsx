@@ -19,6 +19,7 @@ type SubmarketIntelligence = {
   pipeline: number | null;
   netAbsorption: number | null;
   marketAskingRent: number | null;
+  rentGrowth: number | null;
   insights: InsightCard[];
   summary: string;
 };
@@ -72,6 +73,13 @@ function metricIcon(label: string) {
         <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" />
       </svg>
     );
+  if (label === "Rent Growth")
+  return (
+    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}
+    >
+      <polyline points="3 17 9 11 13 15 21 7" /><polyline points="15 7 21 7 21 13" />
+    </svg>
+  );
   return (
     <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8}>
       <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
@@ -110,8 +118,8 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
     return (
       <div className="space-y-4">
         <div className="h-6 w-56 animate-pulse rounded bg-gray-100" />
-        <div className="grid grid-cols-5 gap-3">
-          {[...Array(5)].map((_, i) => (
+        <div className="grid grid-cols-6 gap-3">
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="h-32 animate-pulse rounded-2xl bg-gray-100" />
           ))}
         </div>
@@ -138,7 +146,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
         <div className="flex flex-wrap gap-2">
           <span className="flex items-center gap-1.5 rounded-full border border-[#d8e2f1] px-3 py-1 text-xs font-medium text-[#57719c]">
             <span className="h-1.5 w-1.5 rounded-full bg-[#57719c]" />
-            5 fundamentals tracked
+            6 fundamentals tracked
           </span>
           <span className="flex items-center gap-1.5 rounded-full border border-[#d8e2f1] px-3 py-1 text-xs font-medium text-[#57719c]">
             Source: CoStar, Yardi
@@ -148,7 +156,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
 
       {/* Metric Cards */}
       {insights.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {insights.map((card) => (
             <div
               key={card.label}
