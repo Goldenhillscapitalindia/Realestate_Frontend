@@ -62,16 +62,20 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
 
   const scenario = useMemo(() => {
     if (!simulator) return null;
-    if (!(simulator.baseRent > 0) || !(simulator.marketRent > 0) || !(simulator.baseOccupancy >= 0)) return null;
 
-    const r0 = simulator.baseRent;
-    const m = simulator.marketRent;
-    const o0 = simulator.baseOccupancy;
+    if (
+      !(simulator.baseRent > 0) ||
+      !(simulator.marketRent > 0) ||
+      !(simulator.baseOccupancy >= 0)
+    ) {
+      return null;
+    }
 
-    // sensitivity = market softness × tenant price-sensitivity (replaces flat -0.5)
+    // ---------------------------
+    // Market softness
+    // ---------------------------
     let marketCondition: keyof typeof BETA = "balanced";
 
-    // Vacancy is the primary driver
     if ((simulator.vacancyRate ?? 0) <= 5) {
       marketCondition = "tight";
     } else if ((simulator.vacancyRate ?? 0) <= 7.5) {
@@ -80,12 +84,12 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
       marketCondition = "soft";
     }
 
-    // Negative absorption makes the market soft
+    // Negative absorption = softer market
     if ((simulator.netAbsorption ?? 0) < 0) {
       marketCondition = "soft";
     }
 
-    // Pipeline pressure (>3% of inventory) makes market soft
+    // Pipeline pressure
     const pipelinePct =
       simulator.inventory && simulator.pipeline
         ? (simulator.pipeline / simulator.inventory) * 100
@@ -95,32 +99,65 @@ export default function PfDealsRentStimulator({ payload }: { payload: DemandElas
       marketCondition = "soft";
     }
 
+    // ---------------------------
+    // Elasticity coefficients
+    // ---------------------------
     const beta = (BETA[marketCondition] ?? 0.55) * (CLASS[simulator.assetClass] ?? 1.0);
 
-    const phi = PHASE[simulator.horizon] ?? 1.0;
+    const phaseMultiplier = PHASE[simulator.horizon] ?? 1.0;
 
-    const projectedRent = r0 * (1 + rentChangePct / 100);
+    // ---------------------------
+    // Rent after slider move
+    // ---------------------------
+    const projectedRent = simulator.baseRent * (1 + rentChangePct / 100);
 
-    const pi0 = r0 / m - 1;                          // current premium to market
-    const pi1 = projectedRent / m - 1;              // new premium to market
-    const s = beta * (1 + 0.04 * 100 * Math.max(0, pi1));  // pain grows above market
-    let dOcc = -s * (pi1 - pi0) * 100;              // occupancy change (pp)
-    if (pi1 < pi0) dOcc *= 0.5;                      // cuts refill slower
-    dOcc *= phi;                                     // phase-in for horizon
+    // Current premium to market
+    const currentPremium = simulator.baseRent / simulator.marketRent - 1;
 
-    const projectedOccupancy = clamp(o0 + dOcc, 80, 97.5);
-    const occupancyImpactPp = projectedOccupancy - o0;
+    // New premium after rent move
+    const newPremium = projectedRent / simulator.marketRent - 1;
+
+    // Sensitivity rises when pricing above market
+    const sensitivity = beta * (1 + 4 * Math.max(0, newPremium));
+
+    // Occupancy impact in percentage points
+    let occupancyImpactPp = -sensitivity * (newPremium - currentPremium) * 100;
+
+    // Rent cuts refill slower
+    if (newPremium < currentPremium) {
+      occupancyImpactPp *= 0.5;
+    }
+
+    // Horizon adjustment
+    occupancyImpactPp *= phaseMultiplier;
+
+    // Avoid floating point noise
+    if (Math.abs(rentChangePct) < 0.01) {
+      occupancyImpactPp = 0;
+    }
+
+    const projectedOccupancy = clamp(simulator.baseOccupancy + occupancyImpactPp,80,100);
+
+    // Recalculate actual pp after clamp
+    const finalOccupancyImpact = projectedOccupancy - simulator.baseOccupancy;
+
+    // Base revenue derived from current rent + occupancy
+    const baseRevenue = simulator.baseRent * simulator.subjectUnits * 12 * (simulator.baseOccupancy / 100);
+
     const annualRevenue = projectedRent * simulator.subjectUnits * 12 * (projectedOccupancy / 100);
-    const revenueImpact = annualRevenue - simulator.baseAnnualRevenue;
+
+    const revenueImpact = annualRevenue - baseRevenue;
 
     return {
       projectedRent,
       projectedOccupancy,
       annualRevenue,
       revenueImpact,
-      occupancyImpactPp,
-      marketPosition: getMarketPosition(revenueImpact, pi1, rentChangePct),
-      zoneDescription: getZoneDescription(revenueImpact, pi1, rentChangePct),
+      occupancyImpactPp: finalOccupancyImpact,
+
+      marketPosition: getMarketPosition( revenueImpact, newPremium, rentChangePct),
+
+      zoneDescription: getZoneDescription(revenueImpact, newPremium,rentChangePct),
     };
   }, [rentChangePct, simulator]);
 
