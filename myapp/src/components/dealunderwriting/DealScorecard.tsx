@@ -1,11 +1,5 @@
+import { AlertTriangle, BarChart2, Building2, CheckCircle, Settings2, Sparkles, TrendingUp } from "lucide-react";
 import type { Deal } from "./data";
-
-const scoreLabels: { key: keyof Deal["scores"]; label: string; weight: number; invert?: boolean }[] = [
-  { key: "marketPosition", label: "Market Position", weight: 0.25 },
-  { key: "cashFlowStability", label: "Cash Flow Stability", weight: 0.3 },
-  { key: "valueAddPotential", label: "Value-Add Potential", weight: 0.25 },
-  { key: "riskLevel", label: "Risk Level", weight: 0.2, invert: true },
-];
 
 export function getBarColor(score: number, invert?: boolean) {
   const effective = invert ? 100 - score : score;
@@ -14,39 +8,244 @@ export function getBarColor(score: number, invert?: boolean) {
   return "bg-[#ef4444]";
 }
 
-export function DealScorecard({ deal }: { deal: Deal }) {
+function getRecStyle(rec: string) {
+  const u = (rec ?? "").toUpperCase();
+  if (u.includes("STRONG BUY")) return { color: "#19b68f", bg: "#e8faf4", label: "STRONG BUY" };
+  if (u.includes("BUY")) return { color: "#19b68f", bg: "#e8faf4", label: "BUY" };
+  if (u.includes("HOLD")) return { color: "#f3a122", bg: "#fef8ed", label: "HOLD" };
+  if (u.includes("AVOID")) return { color: "#ef4444", bg: "#fef2f2", label: "AVOID" };
+  return { color: "#6b7280", bg: "#f9fafb", label: rec || "—" };
+}
+
+function CircularScore({ score, color }: { score: number; color: string }) {
+  const r = 28;
+  const circ = 2 * Math.PI * r;
+  const offset = circ - (Math.min(score, 100) / 100) * circ;
   return (
-    <section className="rounded-2xl border border-[#294e86] bg-white p-6">
-      <h3 className="mb-6 text-xl font-semibold uppercase tracking-[0.12em] text-[#102149]">Deal Scorecard</h3>
-      <div className="space-y-5">
-        {scoreLabels.map(({ key, label, weight, invert }) => {
-          const score = deal.scores[key];
-          return (
-            <div key={key}>
-              <div className="mb-2 flex justify-between text-lg">
-                <span className="text-[#62708d]">
-                  {label} <span className="text-sm text-[#9aa7c0]">({(weight * 100).toFixed(0)}%)</span>
-                </span>
-                <span className="font-semibold text-[#102149]">{score}</span>
+    <div className="relative inline-flex items-center justify-center">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle cx="36" cy="36" r={r} fill="none" stroke="#e5e7eb" strokeWidth="6" />
+        <circle
+          cx="36" cy="36" r={r} fill="none"
+          stroke={color} strokeWidth="6"
+          strokeDasharray={circ}
+          strokeDashoffset={offset}
+          strokeLinecap="round"
+          transform="rotate(-90 36 36)"
+        />
+      </svg>
+      <span className="absolute text-lg font-bold text-[#102149]">{score}</span>
+    </div>
+  );
+}
+
+const CATEGORIES = [
+  { key: "pricing" as const, label: "PRICING", Icon: TrendingUp },
+  { key: "stability" as const, label: "STABILITY", Icon: Building2 },
+  { key: "market" as const, label: "MARKET", Icon: BarChart2 },
+  { key: "operations" as const, label: "OPERATIONS", Icon: Settings2 },
+  { key: "upside" as const, label: "UPSIDE", Icon: Sparkles },
+];
+
+const SCORE_MARKERS = [0, 40, 55, 70, 85, 100];
+
+export function DealScorecard({ deal }: { deal: Deal }) {
+  const sc = deal.dealScorecard;
+  const overall = deal.scores.overall;
+  const overallRec = sc?.recommendation || deal.signal || "";
+  const { color: overallColor, label: overallLabel } = getRecStyle(overallRec);
+  const fit = sc?.investmentStyleFit;
+
+  return (
+    <section className="overflow-hidden rounded-2xl border border-[#e1e7f5] bg-white">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[#e1e7f5] px-6 py-3">
+        <div className="flex items-center gap-2">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#19b68f]" />
+          <span className="text-sm font-bold uppercase tracking-[0.15em] text-[#102149]">Deal Scorecard</span>
+          {/* <span className="text-xs text-[#9aa7c0]">· Model v2.4</span> */}
+        </div>
+        <span className="font-mono text-xs text-[#9aa7c0]">{deal.id?.toUpperCase?.() ?? ""}</span>
+      </div>
+
+      <div className="flex divide-x divide-[#e1e7f5]">
+        {/* Left: Overall + Category Cards */}
+        <div className="min-w-0 flex-1 space-y-5 p-6">
+          {/* Overall Score */}
+          <div className="rounded-xl border border-[#e1e7f5] bg-[#f9fbff] p-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#9aa7c0]">Overall Deal Score</p>
+            <div className="mt-2 flex items-end justify-between gap-4">
+              <div className="flex items-end gap-2">
+                <span className="text-7xl font-bold leading-none text-[#102149]">{overall}</span>
+                <span className="mb-2 text-2xl text-[#9aa7c0]">/ 100</span>
               </div>
-              <div className="h-3 rounded-full bg-[#edf2fb]">
-                <div className={`h-3 rounded-full ${getBarColor(score, invert)}`} style={{ width: `${score}%` }} />
+              <div className="flex flex-col items-end gap-1">
+                <button
+                  type="button"
+                  className="flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-bold text-white"
+                  style={{ backgroundColor: overallColor }}
+                >
+                  ✓ {overallLabel}
+                </button>
+                <span className="text-xs text-[#9aa7c0]">Recommendation</span>
               </div>
             </div>
-          );
-        })}
-        <div className="border-t border-[#e1e7f5] pt-4">
-          <div className="mb-2 flex justify-between text-lg">
-            <span className="font-semibold text-[#102149]">Overall Deal Score</span>
-            <span className="text-3xl font-bold text-[#102149]">{deal.scores.overall}</span>
+            {/* Progress bar with markers */}
+            <div className="relative mt-4">
+              <div className="relative h-3 w-full overflow-hidden rounded-full bg-[#e8edf8]">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{ width: `${overall}%`, backgroundColor: overallColor }}
+                />
+                {[40, 55, 70, 85].map((pos) => (
+                  <div
+                    key={pos}
+                    className="absolute top-0 h-full w-px bg-white/60"
+                    style={{ left: `${pos}%` }}
+                  />
+                ))}
+              </div>
+              <div className="relative h-5 mt-0.5">
+                {SCORE_MARKERS.map((pos) => (
+                  <span
+                    key={pos}
+                    className="absolute top-1 text-[10px] text-[#9aa7c0]"
+                    style={{
+                      left: `${pos}%`,
+                      transform: pos === 0 ? "none" : pos === 100 ? "translateX(-100%)" : "translateX(-50%)",
+                    }}
+                  >
+                    {pos}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {sc?.overallSummary && (
+              <p className="mt-3 rounded-lg border border-[#d1f5ea] bg-[#f0fdf8] px-3 py-2 text-sm text-[#102149]">
+                <span className="mr-1 text-[#19b68f]">↗</span>
+                {sc.overallSummary}
+              </p>
+            )}
           </div>
-          <div className="h-4 rounded-full bg-[#edf2fb]">
-            <div
-              className={`h-4 rounded-full ${getBarColor(deal.scores.overall)}`}
-              style={{ width: `${deal.scores.overall}%` }}
-            />
+
+          {/* Category Cards */}
+          <div className="grid grid-cols-5 gap-3">
+            {CATEGORIES.map(({ key, label, Icon }) => {
+              const cat = sc?.[key];
+              const score = cat?.score ?? 0;
+              const rec = cat?.recommendation ?? "";
+              const { color, bg, label: recLabel } = getRecStyle(rec);
+              return (
+                <div key={key} className="flex flex-col gap-3 rounded-xl border border-[#e1e7f5] bg-white p-4">
+                  <div className="flex items-center gap-1.5">
+                    <Icon className="h-4 w-4 text-[#62708d]" />
+                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#62708d]">{label}</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1">
+                    <CircularScore score={score} color={color} />
+                    <span className="text-xs text-[#9aa7c0]">/100</span>
+                    {rec && (
+                      <span
+                        className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
+                        style={{ color, backgroundColor: bg }}
+                      >
+                        {recLabel}
+                      </span>
+                    )}
+                  </div>
+                  {cat?.explanation && (
+                    <p className="line-clamp-4 text-xs leading-relaxed text-[#62708d]">{cat.explanation}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
+
+        {/* Right: Investment Style Fit */}
+        {fit && (
+          <div className="w-72 shrink-0 space-y-4 p-6">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#102149]">Investment Style Fit</p>
+              <p className="mt-0.5 text-xs text-[#9aa7c0]">Algorithmic profile match across institutional strategies.</p>
+            </div>
+
+            {(
+              [
+                { label: "Core", value: fit.core },
+                { label: "Core+", value: fit.corePlus },
+                { label: "Value Add", value: fit.valueAdd },
+                { label: "Opportunistic", value: fit.opportunistic },
+              ] as const
+            ).map(({ label, value }) => {
+              const isBest = label.toLowerCase() === fit.bestMatch?.toLowerCase();
+              const barColor = value >= 75 ? "#19b68f" : value >= 50 ? "#f3a122" : "#ef4444";
+              return (
+                <div
+                  key={label}
+                  className={`rounded-xl p-3 ${isBest ? "border-2 border-[#19b68f] bg-[#f0fdf8]" : "border border-[#e1e7f5]"}`}
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      {isBest && <span className="text-[#19b68f]">✓</span>}
+                      <span className="text-sm font-semibold text-[#102149]">{label}</span>
+                      {isBest && (
+                        <span className="rounded-full bg-[#19b68f] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                          Best Match
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-sm font-bold text-[#102149]">{value}%</span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#e8edf8]">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${value}%`, backgroundColor: barColor }}
+                    />
+                  </div>
+
+                </div>
+              );
+            })}
+
+            {fit.recommendation && (
+              <div className="rounded-xl border border-[#e1e7f5] bg-[#f9fbff] p-3">
+                <p className="text-xs text-[#102149]">
+                  <span className="font-semibold">Recommendation: </span>
+                  {fit.recommendation}
+                </p>
+              </div>
+            )}
+
+            {fit.strengths.length > 0 && (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#19b68f]">Strengths</p>
+                <ul className="mt-2 space-y-1.5">
+                  {fit.strengths.map((s) => (
+                    <li key={s} className="flex items-start gap-1.5 text-xs text-[#102149]">
+                      <CheckCircle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#19b68f]" />
+                      {s}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {fit.watchItems.length > 0 && (
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#f3a122]">Watch Items</p>
+                <ul className="mt-2 space-y-1.5">
+                  {fit.watchItems.map((w) => (
+                    <li key={w} className="flex items-start gap-1.5 text-xs text-[#102149]">
+                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#f3a122]" />
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </section>
   );

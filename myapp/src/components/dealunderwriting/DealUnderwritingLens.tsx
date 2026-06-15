@@ -376,13 +376,9 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                 <div>
                   <KeyMetrics deal={activeDeal} />
                 </div>
-                <div className="grid gap-4 xl:grid-cols-3">
-                  <div className="xl:col-span-1">
-                    <DealScorecard deal={activeDeal} />
-                  </div>
-                  <div className="xl:col-span-2">
-                    <WhatMovesTheDeal deal={activeDeal} />
-                  </div>
+                <div className="space-y-4">
+                  <DealScorecard deal={activeDeal} />
+                  <WhatMovesTheDeal deal={activeDeal} />
                 </div>
               </div>
 

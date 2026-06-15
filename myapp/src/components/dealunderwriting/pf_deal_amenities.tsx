@@ -182,6 +182,8 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showAllAmenities, setShowAllAmenities] = useState(false);
+  const [showAllAdvantages, setShowAllAdvantages] = useState(false);
+  const [showAllDeficiencies, setShowAllDeficiencies] = useState(false);
 
   useEffect(() => {
     if (!propertyName) return;
@@ -410,17 +412,29 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
             {competitive_advantages.items.length === 0 ? (
               <p className="text-sm text-[#94a3b8]">No advantages identified.</p>
             ) : (
-              competitive_advantages.items.map((item) => (
-                <div key={item.amenity} className="flex items-center justify-between rounded-lg bg-white px-4 py-2.5 text-sm">
-                  <div>
-                    <p className="font-medium text-[#0f172a]">{item.amenity}</p>
-                    <p className="text-xs text-[#64748b]">only {item.competitor_penetration.toFixed(0)}% of competitors</p>
+              <>
+                {(showAllAdvantages ? competitive_advantages.items : competitive_advantages.items.slice(0, 5)).map((item) => (
+                  <div key={item.amenity} className="flex items-center justify-between rounded-lg bg-white px-4 py-2.5 text-sm">
+                    <div>
+                      <p className="font-medium text-[#0f172a]">{item.amenity}</p>
+                      <p className="text-xs text-[#64748b]">only {item.competitor_penetration.toFixed(0)}% of competitors</p>
+                    </div>
+                    <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-700">
+                      +{item.points}
+                    </span>
                   </div>
-                  <span className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-bold text-green-700">
-                    +{item.points}
-                  </span>
-                </div>
-              ))
+                ))}
+                {competitive_advantages.items.length > 5 && (
+                  <div className="mt-2 flex justify-center">
+                    <button
+                      onClick={() => setShowAllAdvantages(!showAllAdvantages)}
+                      className="rounded-lg px-4 py-2 text-sm font-semibold text-green-700 transition hover:bg-green-50"
+                    >
+                      {showAllAdvantages ? "↑ Show Less" : "↓ Show More"}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -440,24 +454,36 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
             {competitive_deficiencies.items.length === 0 ? (
               <p className="text-sm text-[#94a3b8]">No deficiencies identified.</p>
             ) : (
-              competitive_deficiencies.items.map((item) => (
-                <div key={item.amenity} className="flex items-center justify-between rounded-lg bg-white px-4 py-2.5 text-sm">
-                  <div>
-                    <p className="font-medium text-[#0f172a]">{item.amenity}</p>
-                    <p className="text-xs text-[#64748b]">{item.competitor_penetration.toFixed(0)}% market penetration</p>
+              <>
+                {(showAllDeficiencies ? competitive_deficiencies.items : competitive_deficiencies.items.slice(0, 5)).map((item) => (
+                  <div key={item.amenity} className="flex items-center justify-between rounded-lg bg-white px-4 py-2.5 text-sm">
+                    <div>
+                      <p className="font-medium text-[#0f172a]">{item.amenity}</p>
+                      <p className="text-xs text-[#64748b]">{item.competitor_penetration.toFixed(0)}% market penetration</p>
+                    </div>
+                    <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">
+                      {item.points}
+                    </span>
                   </div>
-                  <span className="rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-bold text-red-600">
-                    {item.points}
-                  </span>
-                </div>
-              ))
+                ))}
+                {competitive_deficiencies.items.length > 5 && (
+                  <div className="mt-2 flex justify-center">
+                    <button
+                      onClick={() => setShowAllDeficiencies(!showAllDeficiencies)}
+                      className="rounded-lg px-4 py-2 text-sm font-semibold text-red-600 transition hover:bg-red-50"
+                    >
+                      {showAllDeficiencies ? "↑ Show Less" : "↓ Show More"}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       </div>
 
       {/* Positioning Quadrant – full width */}
-      <div className="rounded-2xl border border-[#d8e2f1] bg-white p-7">
+      {/* <div className="rounded-2xl border border-[#d8e2f1] bg-white p-7">
         <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#64748b]">Positioning Quadrant</p>
         <h3 className="mt-1 text-xl font-bold text-[#0f172a]">Amenity Quality vs. Competitive Position</h3>
         <div className="mt-5 w-full">
@@ -467,7 +493,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
             market={data.market_positions ?? []}
           />
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
