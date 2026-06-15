@@ -144,7 +144,7 @@ function PositioningQuadrant({
         AMENITY QUALITY INDEX
       </text>
 
-                  {/* Competitor points */}
+      {/* Competitor points */}
       {market.map((m, i) => {
         const mx = qx(m.aqi_score);
         const my = qy(m.competitive_position);
@@ -163,19 +163,9 @@ function PositioningQuadrant({
 
       {/* Subject point */}
       <circle cx={sx} cy={sy} r={8} fill="#1e293b" />
-
-      {/* Tooltip BELOW point */}
-      <rect x={sx - 50} y={sy + 14} width={100} height={24} rx={5} fill="#1e293b"
-      />
-
-      <text
-        x={sx}
-        y={sy + 30}
-        fontSize={10}
-        fill="white"
-        textAnchor="middle"
-        fontWeight="600"
-      >
+      <line x1={sx} y1={sy} x2={sx + 12} y2={sy + 12} stroke="#0a0a0a" strokeWidth={2} />
+      <rect x={sx + 12} y={sy + 28} width={210} height={24} rx={5} fill="#1e293b" />
+      <text x={sx + 22} y={sy + 44} fontSize={11} fill="white" textAnchor="start" fontWeight="600">
         Subject · {Math.round(aqiScore)} / {Math.round(cpScore)}
       </text>
       {/* Legend */}
