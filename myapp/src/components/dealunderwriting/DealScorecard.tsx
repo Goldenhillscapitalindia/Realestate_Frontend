@@ -73,7 +73,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
         <div className="min-w-0 flex-1 space-y-5 p-6">
           {/* Overall Score */}
           <div className="rounded-xl border border-[#e1e7f5] bg-[#f9fbff] p-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#9aa7c0]">Overall Deal Score</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#9aa7c0]">Overall Deal Score</p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div className="flex items-end gap-2">
                 <span className="text-7xl font-bold leading-none text-[#102149]">{overall}</span>
@@ -157,7 +157,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                     )}
                   </div>
                   {explanation && (
-                    <p className="text-xs leading-relaxed text-[#62708d]">{explanation}</p>
+                    <p className="text-xs leading-relaxed text-[#00000]">{explanation}</p>
                   )}
                 </div>
               );

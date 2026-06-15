@@ -226,7 +226,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
       {/* ── Single unified Amenity Analysis card ── */}
       <div className="rounded-2xl border border-[#d8e2f1] bg-white p-7">
         {/* Header */}
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#64748b]">Section 04</p>
+        {/* <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#64748b]">Section 04</p> */}
         <h2 className="mt-1 text-3xl font-bold text-[#0f172a]">Amenity Analysis</h2>
         <p className="mt-1 text-[15px] text-[#64748b]">
           Does this property have an amenity advantage that can support higher rents and occupancy relative to competitors?
