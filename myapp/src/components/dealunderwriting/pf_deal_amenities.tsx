@@ -110,7 +110,7 @@ function PositioningQuadrant({
 
       {/* Quadrant labels */}
       <text x={QP.left + 8} y={QP.top + 16} fontSize={10} fill="#6b7280" fontWeight="600" letterSpacing="0.05em">COMPETITIVE BUT AGING</text>
-      <text x={midX + 8} y={QP.top + 16} fontSize={10} fill="#15803d" fontWeight="600" letterSpacing="0.05em">BEST-IN-CLASS</text>
+      <text x={midX + 8} y={QP.top + 16} fontSize={10} fill="#005820" fontWeight="600" letterSpacing="0.05em">BEST-IN-CLASS</text>
       <text x={QP.left + 8} y={midY + 18} fontSize={10} fill="#ef4444" fontWeight="600" letterSpacing="0.05em">AMENITY DEFICIENT</text>
       <text x={midX + 8} y={midY + 18} fontSize={10} fill="#6b7280" fontWeight="600" letterSpacing="0.05em">MODERN BUT LIMITED</text>
 
@@ -144,22 +144,22 @@ function PositioningQuadrant({
         AMENITY QUALITY INDEX
       </text>
 
-           {/* Competitors average point */}
-      {market.length > 0 && (() => {
-        const avgAqi = market.reduce((s, m) => s + m.aqi_score, 0) / market.length;
-        const avgCp = market.reduce((s, m) => s + m.competitive_position, 0) / market.length;
-        const mx = qx(avgAqi);
-        const my = qy(avgCp);
+                  {/* Competitor points */}
+      {market.map((m, i) => {
+        const mx = qx(m.aqi_score);
+        const my = qy(m.competitive_position);
+        const labelY = QP.top + 34 + i * 30;   // start below the quadrant title
         return (
-          <g>
-            <circle cx={mx} cy={my} r={7} fill="#94a3b8" />
-            <rect x={mx - 60} y={my - 38} width={120} height={24} rx={5} fill="#64748b" />
-            <text x={mx} y={my - 22} fontSize={10} fill="white" textAnchor="middle" fontWeight="600">
-              Competitors · {Math.round(avgAqi)} / {Math.round(avgCp)}
+          <g key={m.name}>
+            <circle cx={mx} cy={my} r={7} fill="#d1d3d8" />
+            <line x1={mx} y1={my} x2={mx + 12} y2={labelY + 12} stroke="#0a0a0a" strokeWidth={2} />
+            <rect x={mx + 12} y={labelY} width={210} height={24} rx={5} fill="#eeeff3" />
+            <text x={mx + 22} y={labelY + 16} fontSize={11} fill="black" textAnchor="start" fontWeight="600">
+              {m.name} · {Math.round(m.aqi_score)} / {Math.round(m.competitive_position)}
             </text>
           </g>
         );
-      })()}
+      })}
 
       {/* Subject point */}
       <circle cx={sx} cy={sy} r={8} fill="#1e293b" />
@@ -191,6 +191,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
   const [data, setData] = useState<AmenityAnalysis | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showAllAmenities, setShowAllAmenities] = useState(false);
 
   useEffect(() => {
     if (!propertyName) return;
@@ -355,7 +356,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
               </tr>
             </thead>
             <tbody>
-              {subject_vs_market.map((row) => (
+              {(showAllAmenities ? subject_vs_market : subject_vs_market.slice(0, 5)).map((row) => (
                 <tr key={row.amenity} className="border-b border-[#f1f5f9]">
                   <td className="py-2.5 pr-4">
                     <div className="flex items-center gap-2">
@@ -387,6 +388,18 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
               ))}
             </tbody>
           </table>
+          
+          {/* Show More / Show Less Button */}
+          {subject_vs_market.length > 5 && (
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => setShowAllAmenities(!showAllAmenities)}
+                className="px-4 py-2 text-sm font-semibold text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition duration-200"
+              >
+                {showAllAmenities ? '↑ Show Less' : '↓ Show More'}
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
