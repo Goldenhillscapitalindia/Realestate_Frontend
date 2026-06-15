@@ -45,7 +45,7 @@ export function RisksOpportunities({ deal }: { deal: Deal }) {
                   </div>
                 </div>
                 {risk.impact && (
-                  <p className="text-base font-semibold text-[#d63838]">{risk.impact}</p>
+                  <p className="text-base font-semibold text-[#d63838]">{risk.impact.replace(/^--/, '-')}</p>
                 )}
                 {risk.explanation && (
                   <p className="mt-1 text-base text-[#62708d]">{risk.explanation}</p>
@@ -80,12 +80,12 @@ export function RisksOpportunities({ deal }: { deal: Deal }) {
                       </span>
                     )}
                     <span className={`inline-flex h-7 items-center justify-center whitespace-nowrap rounded-full px-3 text-sm font-semibold leading-none ${severityBadge[opportunity.severity]}`}>
-                      {opportunity.severity} Serevity
+                      {opportunity.severity} 
                     </span>
                   </div>
                 </div>
                 {opportunity.impact && (
-                  <p className="text-base font-semibold text-[#0ea56f]">{opportunity.impact}</p>
+                  <p className="text-base font-semibold text-[#0ea56f]">{opportunity.impact.replace(/^--/, '-')}</p>
                 )}
                 {opportunity.explanation && (
                   <p className="mt-1 text-base text-[#62708d]">{opportunity.explanation}</p>
