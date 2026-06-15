@@ -59,13 +59,13 @@ export function DealScorecard({ deal }: { deal: Deal }) {
   return (
     <section className="overflow-hidden rounded-2xl border border-[#e1e7f5] bg-white">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#e1e7f5] px-6 py-3">
+      <div className="flex items-center justify-between bg-[#2f568f] px-6 py-3">
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[#19b68f]" />
-          <span className="text-sm font-bold uppercase tracking-[0.15em] text-[#102149]">Deal Scorecard</span>
-          {/* <span className="text-xs text-[#9aa7c0]">· Model v2.4</span> */}
+          <span className="text-sm font-bold uppercase tracking-[0.15em] text-white">Deal Scorecard</span>
+          {/* <span className="text-xs text-[#8295b8]">· Model v2.4</span> */}
         </div>
-        <span className="font-mono text-xs text-[#9aa7c0]">{deal.id?.toUpperCase?.() ?? ""}</span>
+        <span className="font-mono text-sm  tracking-[0.15em] text-[#8295b8]">{deal.id?.toUpperCase?.() ?? ""}</span>
       </div>
 
       <div className="flex divide-x divide-[#e1e7f5]">
@@ -129,14 +129,17 @@ export function DealScorecard({ deal }: { deal: Deal }) {
           </div>
 
           {/* Category Cards */}
-          <div className="grid grid-cols-5 gap-3">
+          <div className="grid grid-cols-5 gap-3 items-stretch">
             {CATEGORIES.map(({ key, label, Icon }) => {
               const cat = sc?.[key];
               const score = cat?.score ?? 0;
               const rec = cat?.recommendation ?? "";
               const { color, bg, label: recLabel } = getRecStyle(rec);
+              // explanation may be empty on the category; fall back to the sibling `${key}Explanation` field
+              const explanation =
+                cat?.explanation?.trim() || (sc as Record<string, any>)?.[`${key}Explanation`] || "";
               return (
-                <div key={key} className="flex flex-col gap-3 rounded-xl border border-[#e1e7f5] bg-white p-4">
+                <div key={key} className="flex h-full flex-col gap-3 rounded-xl border border-[#e1e7f5] bg-white p-4">
                   <div className="flex items-center gap-1.5">
                     <Icon className="h-4 w-4 text-[#62708d]" />
                     <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#62708d]">{label}</span>
@@ -153,8 +156,8 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                       </span>
                     )}
                   </div>
-                  {cat?.explanation && (
-                    <p className="line-clamp-4 text-xs leading-relaxed text-[#62708d]">{cat.explanation}</p>
+                  {explanation && (
+                    <p className="text-xs leading-relaxed text-[#62708d]">{explanation}</p>
                   )}
                 </div>
               );
@@ -203,7 +206,6 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                       style={{ width: `${value}%`, backgroundColor: barColor }}
                     />
                   </div>
-
                 </div>
               );
             })}
