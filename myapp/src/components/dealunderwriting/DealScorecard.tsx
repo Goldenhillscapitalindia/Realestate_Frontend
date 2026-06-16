@@ -153,15 +153,15 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                 <div
                   key={key}
                   className="flex h-full flex-col gap-3 rounded-xl border-t-4 bg-[#14294d] p-4"
-                  style={{ borderTopColor: scoreColor }}
+                  style={{ borderTopColor: scoreColor , background: "linear-gradient(180deg, #284D82 0%, #1F3D68 100%)",}}
                 >
                   <div className="flex items-center gap-1.5">
-                    <Icon className="h-4 w-4 text-[#8ea3c4]" />
-                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#c3cee3]">{label}</span>
+                    <Icon className="h-4 w-4 text-[#b7c8e8]" />
+                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#dbe6f8]">{label}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
                     <CircularScore score={score} color={scoreColor} />
-                    <span className="text-xs text-[#7488ab]">/100</span>
+                    <span className="text-xs text-[#b9c8df]">/100</span>
                     {rec && (
                       <span
                         className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
@@ -172,7 +172,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                     )}
                   </div>
                   {explanation && (
-                    <p className="text-xs leading-relaxed text-[#e2e8f5]">{explanation}</p>
+                    <p className="text-xs leading-relaxed text-[#edf3ff]">{explanation}</p>
                   )}
                 </div>
               );
