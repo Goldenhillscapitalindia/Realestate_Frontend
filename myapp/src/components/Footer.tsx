@@ -119,6 +119,13 @@ const Footer = () => {
           ))}
         </div>
 
+        {/* Caption row aligned under the left card */}
+        <div className="mt-4 grid lg:grid-cols-[1.45fr_0.9fr_0.9fr_0.9fr_0.9fr]">
+          <div className="lg:col-start-1">
+            <p className="text-xs text-background/40 ml-6">Asset72 sometimes written as Asset 72</p>
+          </div>
+        </div>
+
         <div className="mt-12 flex flex-col gap-4 border-t border-white/10 pt-8 text-sm text-background/40 md:flex-row md:items-center md:justify-between">
           <p>Copyright 2026 Asset72. All rights reserved.</p>
           <p>Portfolio intelligence for modern real estate.</p>
