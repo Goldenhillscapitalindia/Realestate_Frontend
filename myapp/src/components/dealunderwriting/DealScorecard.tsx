@@ -8,6 +8,15 @@ export function getBarColor(score: number, invert?: boolean) {
   return "bg-[#ef4444]";
 }
 
+// Score-based color (green / yellow / red) for circles + accent borders
+function getScoreColor(score: number) {
+  if (score >= 85) return "#19b68f";   // STRONG BUY
+  if (score >= 70) return "#34d399";   // BUY
+  if (score >= 55) return "#f3a122";   // HOLD
+  if (score >= 40) return "#fb923c";   // WATCH
+  return "#ef4444";                    // AVOID
+}
+
 function getRecStyle(rec: string) {
   const u = (rec ?? "").toUpperCase();
   if (u.includes("STRONG BUY")) return { color: "#19b68f", bg: "#e8faf4", label: "STRONG BUY" };
@@ -24,7 +33,7 @@ function CircularScore({ score, color }: { score: number; color: string }) {
   return (
     <div className="relative inline-flex items-center justify-center">
       <svg width="72" height="72" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r={r} fill="none" stroke="#e5e7eb" strokeWidth="6" />
+        <circle cx="36" cy="36" r={r} fill="none" stroke="#33476b" strokeWidth="6" />
         <circle
           cx="36" cy="36" r={r} fill="none"
           stroke={color} strokeWidth="6"
@@ -34,7 +43,7 @@ function CircularScore({ score, color }: { score: number; color: string }) {
           transform="rotate(-90 36 36)"
         />
       </svg>
-      <span className="absolute text-lg font-bold text-[#102149]">{score}</span>
+      <span className="absolute text-lg font-bold text-white">{score}</span>
     </div>
   );
 }
@@ -65,7 +74,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
           <span className="text-sm font-bold uppercase tracking-[0.15em] text-white">Deal Scorecard</span>
           {/* <span className="text-xs text-[#8295b8]">· Model v2.4</span> */}
         </div>
-        <span className="font-mono text-sm  tracking-[0.15em] text-[#8295b8]">{deal.id?.toUpperCase?.() ?? ""}</span>
+        <span className="font-mono text-sm tracking-[0.15em] text-[#8295b8]">{deal.id?.toUpperCase?.() ?? ""}</span>
       </div>
 
       <div className="flex divide-x divide-[#e1e7f5]">
@@ -129,35 +138,41 @@ export function DealScorecard({ deal }: { deal: Deal }) {
           </div>
 
           {/* Category Cards */}
-          <div className="grid grid-cols-5 gap-3 items-stretch">
+          <div className="grid grid-cols-5 gap-1.5 items-stretch">
             {CATEGORIES.map(({ key, label, Icon }) => {
               const cat = sc?.[key];
               const score = cat?.score ?? 0;
               const rec = cat?.recommendation ?? "";
-              const { color, bg, label: recLabel } = getRecStyle(rec);
+              // color drives off the SCORE so circles + top border always color correctly
+              const scoreColor = getScoreColor(score);
+              const { bg, label: recLabel } = getRecStyle(rec);
               // explanation may be empty on the category; fall back to the sibling `${key}Explanation` field
               const explanation =
                 cat?.explanation?.trim() || (sc as Record<string, any>)?.[`${key}Explanation`] || "";
               return (
-                <div key={key} className="flex h-full flex-col gap-3 rounded-xl border border-[#e1e7f5] bg-white p-4">
+                <div
+                  key={key}
+                  className="flex h-full flex-col gap-3 rounded-xl border-t-4 bg-[#14294d] p-4"
+                  style={{ borderTopColor: scoreColor }}
+                >
                   <div className="flex items-center gap-1.5">
-                    <Icon className="h-4 w-4 text-[#62708d]" />
-                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#62708d]">{label}</span>
+                    <Icon className="h-4 w-4 text-[#8ea3c4]" />
+                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#c3cee3]">{label}</span>
                   </div>
                   <div className="flex flex-col items-center gap-1">
-                    <CircularScore score={score} color={color} />
-                    <span className="text-xs text-[#9aa7c0]">/100</span>
+                    <CircularScore score={score} color={scoreColor} />
+                    <span className="text-xs text-[#7488ab]">/100</span>
                     {rec && (
                       <span
                         className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
-                        style={{ color, backgroundColor: bg }}
+                        style={{ color: scoreColor, backgroundColor: bg }}
                       >
                         {recLabel}
                       </span>
                     )}
                   </div>
                   {explanation && (
-                    <p className="text-xs leading-relaxed text-[#00000]">{explanation}</p>
+                    <p className="text-xs leading-relaxed text-[#e2e8f5]">{explanation}</p>
                   )}
                 </div>
               );
