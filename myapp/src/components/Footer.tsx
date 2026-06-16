@@ -122,7 +122,7 @@ const Footer = () => {
         {/* Caption row aligned under the left card */}
         <div className="mt-4 grid lg:grid-cols-[1.45fr_0.9fr_0.9fr_0.9fr_0.9fr]">
           <div className="lg:col-start-1">
-            <p className="text-xs text-background/40 ml-6">Asset72 sometimes written as Asset 72</p>
+            <p className="text-sm text-background/40 ml-6">Asset72 sometimes written as Asset 72</p>
           </div>
         </div>
 
