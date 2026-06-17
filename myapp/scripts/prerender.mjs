@@ -19,6 +19,11 @@ const publicRoutes = [
   "/privacy-policy",
   "/terms-of-use",
   "/pf/portfolio_intelligence",
+  "/pf/portfolio_intelligence/snapshot",
+  "/pf/portfolio_intelligence/performancedrivers",
+  "/pf/portfolio_intelligence/revenue_leases",
+  "/pf/portfolio_intelligence/expense_intel",
+  "/pf/portfolio_intelligence/risk_stability",
   "/pf/property_intelligence",
   "/pf/ai_rent_intelligence",
   "/pf/market_radar",
@@ -50,6 +55,31 @@ const routeMeta = {
     title: "Portfolio Intelligence | Asset72",
     description:
       "Aggregate asset-level data into portfolio-wide risk and allocation visibility. Track NOI, occupancy, and performance across your entire real estate portfolio.",
+  },
+  "/pf/portfolio_intelligence/snapshot": {
+    title: "Portfolio Snapshot | Asset72",
+    description:
+      "View a portfolio-level operating snapshot across scale, profitability, revenue momentum, expense pressure, occupancy, and risk signals.",
+  },
+  "/pf/portfolio_intelligence/performancedrivers": {
+    title: "Portfolio Performance Drivers | Asset72",
+    description:
+      "Analyze the revenue, expense, and NOI drivers behind portfolio performance with Asset72 portfolio intelligence.",
+  },
+  "/pf/portfolio_intelligence/revenue_leases": {
+    title: "Portfolio Revenue and Lease Intelligence | Asset72",
+    description:
+      "Track revenue quality, lease rollover, occupancy trends, and lease exposure across a real estate portfolio.",
+  },
+  "/pf/portfolio_intelligence/expense_intel": {
+    title: "Portfolio Expense Intel | Asset72",
+    description:
+      "Monitor expense pressure, operating expense ratios, and controllable cost signals across portfolio assets.",
+  },
+  "/pf/portfolio_intelligence/risk_stability": {
+    title: "Portfolio Risk and Stability | Asset72",
+    description:
+      "Evaluate portfolio stability, risk concentration, occupancy exposure, and operating resilience signals.",
   },
   "/pf/property_intelligence": {
     title: "Property Intelligence | Asset72",

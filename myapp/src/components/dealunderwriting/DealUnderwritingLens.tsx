@@ -15,15 +15,31 @@ import PfDealUnderwritingUpload from "./pf_dealunderwriting_upload";
 import { Search, Trash2 } from "lucide-react";
 import { isDemoMode } from "@/lib/demo-mode";
 import { exportElementToPdf } from "@/lib/pdf-export";
+import { productRoutes } from "@/lib/product-routes";
+import { useLocation, useNavigate } from "react-router";
 import "./DealUnderwritingLens.css";
 
 const DealCompAnalysis = lazy(() => import("./DealCompAnalysis"));
+const PfDealElasticity = lazy(() => import("./pf_deal_elasticity"));
+const PfDealsRentStimulator = lazy(() => import("./pf_deals_rentstimulator"));
+const PfDealAmenities = lazy(() => import("./pf_deal_amenities"));
+const PfDealSubmarketIntelligence = lazy(() => import("./pf_deal_submarketintelligence"));
 
 interface DealUnderwritingLensProps {
   onScreenChange?: (screen: "library" | "upload" | "detail") => void;
 }
 
+const slugify = (value: string) =>
+  value
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritingLensProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const demoMode = isDemoMode();
   const [activeDealId, setActiveDealId] = useState("");
   const [activeView, setActiveView] = useState<"deal" | "compare">("deal");
@@ -37,12 +53,26 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
   const { deals, loading, error, refresh } = useDealUnderwritingData();
 
   const activeDeal = getDealById(deals, activeDealId) ?? deals[0];
+  const routeDealSlug = location.pathname.startsWith(`${productRoutes.dealLens}/`)
+    ? location.pathname.slice(`${productRoutes.dealLens}/`.length).split("/")[0]
+    : "";
 
   useEffect(() => {
     if (!activeDealId && deals.length) {
       setActiveDealId(deals[0].id);
     }
   }, [activeDealId, deals]);
+
+  useEffect(() => {
+    if (!routeDealSlug || !deals.length) return;
+
+    const matchedDeal = deals.find((deal) => slugify(deal.name) === routeDealSlug);
+    if (!matchedDeal) return;
+
+    setActiveDealId(matchedDeal.id);
+    setActiveView("deal");
+    setScreen("detail");
+  }, [deals, routeDealSlug]);
 
   useEffect(() => {
     if (!pendingPropertyName) return;
@@ -56,17 +86,22 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
     setActiveDealId(matchedDeal.id);
     setPendingPropertyName("");
     setScreen("detail");
-  }, [deals, pendingPropertyName]);
+    navigate(`${productRoutes.dealLens}/${slugify(matchedDeal.name)}`);
+  }, [deals, navigate, pendingPropertyName]);
 
   useEffect(() => {
     onScreenChange?.(screen);
   }, [onScreenChange, screen]);
 
   const openDeal = useCallback((id: string) => {
+    const selectedDeal = getDealById(deals, id);
     setActiveDealId(id);
     setActiveView("deal");
     setScreen("detail");
-  }, []);
+    if (selectedDeal) {
+      navigate(`${productRoutes.dealLens}/${slugify(selectedDeal.name)}`);
+    }
+  }, [deals, navigate]);
 
   const toggleCompare = useCallback((id: string) => {
     setCompareIds((current) => {
@@ -86,6 +121,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
       if (activeDeal?.name?.trim().toLowerCase() === selectedName.toLowerCase()) {
         setActiveDealId("");
         setScreen("library");
+        navigate(productRoutes.dealLens);
       }
       setDealToDelete("");
       await refresh();
@@ -94,7 +130,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
     } finally {
       setIsDeleting(false);
     }
-  }, [dealToDelete, isDeleting, activeDeal, refresh]);
+  }, [dealToDelete, isDeleting, activeDeal, navigate, refresh]);
 
   const compareDeals = compareIds
     .map((id) => getDealById(deals, id))
@@ -127,7 +163,10 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
   if (screen === "upload") {
     return (
       <PfDealUnderwritingUpload
-        onBack={() => setScreen("library")}
+        onBack={() => {
+          setScreen("library");
+          navigate(productRoutes.dealLens);
+        }}
         onSubmitted={async (propertyName) => {
           setPendingPropertyName(propertyName);
           await refresh();
@@ -294,7 +333,10 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
         activeDealId={activeDeal.id}
         activeView={activeView}
         deals={sidebarDeals}
-        onBackToLibrary={() => setScreen("library")}
+        onBackToLibrary={() => {
+          setScreen("library");
+          navigate(productRoutes.dealLens);
+        }}
         onDealSelect={openDeal}
         onViewChange={setActiveView}
       />
@@ -334,18 +376,22 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                 <div>
                   <KeyMetrics deal={activeDeal} />
                 </div>
-                <div className="grid gap-4 xl:grid-cols-3">
-                  <div className="xl:col-span-1">
-                    <DealScorecard deal={activeDeal} />
-                  </div>
-                  <div className="xl:col-span-2">
-                    <WhatMovesTheDeal deal={activeDeal} />
-                  </div>
+                <div className="space-y-4">
+                  <DealScorecard deal={activeDeal} />
+                  <WhatMovesTheDeal deal={activeDeal} />
                 </div>
               </div>
 
               <DealCharts deal={activeDeal} />
 
+              {activeDeal.demandElasticity ? (
+                <Suspense fallback={null}>
+                  <div className="grid gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(360px,1fr)]">
+                    <PfDealElasticity payload={activeDeal.demandElasticity} />
+                    <PfDealsRentStimulator payload={activeDeal.demandElasticity} />
+                  </div>
+                </Suspense>
+              ) : null}
               {activeDeal.compAnalysis ? (
                 <Suspense fallback={null}>
                   <DealCompAnalysis
@@ -354,6 +400,16 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                   />
                 </Suspense>
               ) : null}
+              <div className="pdf-flow-block rounded-[32px] border border-[#d8e2f1] bg-white p-7">
+                <Suspense fallback={null}>
+                  <PfDealAmenities propertyName={activeDeal.name} />
+                </Suspense>
+              </div>
+              <div className="pdf-flow-block rounded-[32px] border border-[#d8e2f1] bg-white p-7">
+                <Suspense fallback={null}>
+                  <PfDealSubmarketIntelligence propertyName={activeDeal.name} />
+                </Suspense>
+              </div>
               <div className="pdf-flow-block">
                 <RisksOpportunities deal={activeDeal} />
               </div>

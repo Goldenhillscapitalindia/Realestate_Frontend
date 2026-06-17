@@ -324,12 +324,21 @@ type PropertyContext = {
   region: string;
 };
 
+type ViewMode = "property_analytics" | "ai_rent_intelligence" | "comp_analysis";
+
 type PfPropertyInsightsProps = {
   propertyContext?: PropertyContext;
   onBack?: () => void;
+  viewRoute?: ViewMode;
+  onViewRouteChange?: (view: ViewMode) => void;
 };
 
-const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext, onBack }) => {
+const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
+  propertyContext,
+  onBack,
+  viewRoute,
+  onViewRouteChange,
+}) => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const propertyName = propertyContext?.property_name ?? searchParams.get("property_name") ?? "";
@@ -447,16 +456,26 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
   }, [riskAlert?.avgTenure, riskAlert?.avgTenureMonths]);
 
   type InsightKey = "review" | "market";
-  type ViewMode = "property_analytics" | "ai_rent_intelligence" | "comp_analysis";
   const [viewMode, setViewMode] = useState<ViewMode>("property_analytics");
   const [selectedInsight, setSelectedInsight] = useState<InsightKey>("review");
   const canShowCompAnalysis = !isDemoDataRecord;
 
+  const changeViewMode = (mode: ViewMode) => {
+    setViewMode(mode);
+    onViewRouteChange?.(mode);
+  };
+
   // reset selection if property changes
   useEffect(() => {
     setSelectedInsight("review");
-    setViewMode("property_analytics");
+    setViewMode(viewRoute ?? "property_analytics");
   }, [propertyName, submarket, region]);
+
+  useEffect(() => {
+    if (viewRoute) {
+      setViewMode(viewRoute);
+    }
+  }, [viewRoute]);
 
   useEffect(() => {
     if (!canShowCompAnalysis && viewMode === "comp_analysis") {
@@ -741,7 +760,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
         <div className={`grid gap-4 ${canShowCompAnalysis ? "md:grid-cols-3" : "md:grid-cols-2"}`}>
           <button
             type="button"
-            onClick={() => setViewMode("property_analytics")}
+              onClick={() => changeViewMode("property_analytics")}
             className={`rounded-[22px] border p-5 text-center transition ${
               viewMode === "property_analytics"
                 ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"
@@ -755,7 +774,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
           {canShowCompAnalysis ? (
             <button
               type="button"
-              onClick={() => setViewMode("comp_analysis")}
+              onClick={() => changeViewMode("comp_analysis")}
               className={`rounded-[22px] border p-5 text-center transition ${
                 viewMode === "comp_analysis"
                   ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"
@@ -768,7 +787,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({ propertyContext
 
           <button
             type="button"
-            onClick={() => setViewMode("ai_rent_intelligence")}
+            onClick={() => changeViewMode("ai_rent_intelligence")}
             className={`rounded-[22px] border p-5 text-center transition ${
               viewMode === "ai_rent_intelligence"
                 ? "border-[#0fa77d] bg-[#0fa77d] text-white shadow-[0_12px_28px_rgba(15,167,125,0.28)]"

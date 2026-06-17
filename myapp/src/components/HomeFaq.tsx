@@ -56,16 +56,16 @@ const HomeFaq = () => {
       <div className="relative mx-auto max-w-5xl">
         <ScrollReveal variant="up">
           <div className="mx-auto mb-12 max-w-3xl text-center">
-            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-[#1ebc9a]">
+            <p className="mb-4 text-[30px] font-semibold uppercase tracking-[0.3em] text-[#1ebc9a]">
               FAQ
             </p>
-            <h2 className="font-display text-[2rem] font-extrabold tracking-tight text-[#0f1d2f] md:text-[2.35rem] lg:text-[2.8rem]">
+            {/* <h2 className="font-display text-[2rem] font-extrabold tracking-tight text-[#0f1d2f] md:text-[2.35rem] lg:text-[2.8rem]">
               Answers AI engines and investors can read clearly
-            </h2>
-            <p className="mt-4 text-[15px] leading-7 text-[#526277] md:text-[16px]">
+            </h2> */}
+            {/* <p className="mt-4 text-[15px] leading-7 text-[#526277] md:text-[16px]">
               A short factual overview of what Asset72 does, what data it analyzes,
               and who it is built for.
-            </p>
+            </p> */}
           </div>
         </ScrollReveal>
 

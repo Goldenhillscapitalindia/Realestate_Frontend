@@ -194,6 +194,9 @@ function OccupancyDonut({ occupied, total }: { occupied: number; total: number }
 
 export function DealCharts({ deal }: { deal: Deal }) {
   const ci = deal.chartInsights;
+  const annualRevenueVsExpenses = deal.revenueVsExpenses.find(
+    (item) => item.month?.toLowerCase() === "annual" || item.noi != null
+  );
 
   const pieOptions = {
     responsive: true,
@@ -257,10 +260,36 @@ export function DealCharts({ deal }: { deal: Deal }) {
         </ChartCard>
 
         <ChartCard
-          title={hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? "Revenue vs Expenses" : "Revenue vs Expenses vs NOI"}
+          title={annualRevenueVsExpenses ? "Revenue vs Expenses vs NOI" : "Revenue vs Expenses"}
           insight={ci.revenueVsExpenses}
         >
-          {hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? (
+          {annualRevenueVsExpenses ? (
+            <Bar
+              data={{
+                labels: ["Revenue", "Expenses", "NOI"],
+                datasets: [
+                  {
+                    label: " ",
+                    data: [
+                      annualRevenueVsExpenses.revenue,
+                      annualRevenueVsExpenses.expenses,
+                      annualRevenueVsExpenses.noi ?? deal.metrics.noi,
+                    ],
+                    backgroundColor: ["#274b87", "#f59e0b", "#22c55e"],
+                    barPercentage: 0.6,
+                    categoryPercentage: 0.7,
+                  },
+                ],
+              }}
+              options={{
+                ...barOptions,
+                plugins: {
+                  ...barOptions.plugins,
+                  legend: { display: false },
+                },
+              }}
+            />
+          ) : hasChartData(deal.revenueVsExpenses as unknown as Array<Record<string, number | string>>) ? (
             <Line
               data={{
                 labels: deal.revenueVsExpenses.map((item) => item.month),

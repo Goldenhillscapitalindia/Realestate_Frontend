@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
 import type { DealCompAnalysisPayload } from "./DealCompAnalysis";
+import type { DemandElasticityPayload } from "./pf_deal_elasticity";
 
 export type DealSignal = "Strong Buy" | "Buy" | "Neutral" | "Avoid";
 
@@ -120,11 +121,33 @@ type DealUnderwritingApiRecord = {
     totalProjectedRevenueLift: number | null;
   };
   dealScorecard: {
-    marketPosition: number;
-    cashFlowStability: number;
-    valueAddPotential: number;
-    riskLevel: number;
+    marketPosition?: number;
+    cashFlowStability?: number;
+    valueAddPotential?: number;
+    riskLevel?: number;
     overallDealScore: number;
+    market?: { score: number; explanation: string; recommendation: string };
+    upside?: { score: number; explanation: string; recommendation: string };
+    pricing?: { score: number; explanation: string; recommendation: string };
+    stability?: { score: number; explanation: string; recommendation: string };
+    operations?: { score: number; explanation: string; recommendation: string };
+    recommendation?: string;
+    overallSummary?: string;
+    marketExplanation?: string;
+    upsideExplanation?: string;
+    pricingExplanation?: string;
+    stabilityExplanation?: string;
+    operationsExplanation?: string;
+    investmentStyleFit?: {
+      core: number;
+      corePlus: number;
+      valueAdd: number;
+      opportunistic: number;
+      bestMatch: string;
+      strengths: string[];
+      watchItems: string[];
+      recommendation: string;
+    };
   };
   whatDrivesThisInvestment: {
     rentIncrease: number;
@@ -132,13 +155,31 @@ type DealUnderwritingApiRecord = {
     occupancyImprovement: number;
     totalPotentialNoiUplift: number;
   };
-  risks: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string }>;
-  opportunities: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string }>;
+  risks: Array<{
+    title: string;
+    severity: "High" | "Medium" | "Low";
+    impact?: string;
+    explanation?: string;
+    description?: string;
+    estimated_noi_impact?: number;
+    confidence?: string;
+    type?: string;
+  }>;
+  opportunities: Array<{
+    title: string;
+    severity: "High" | "Medium" | "Low";
+    impact?: string;
+    explanation?: string;
+    description?: string;
+    estimated_noi_impact?: number;
+    confidence?: string;
+    type?: string;
+  }>;
   performanceAnalytics: {
     tenantMix?: Array<{ unitType: string; count: number; percent: number }>;
     rentVsMarket?: Array<{ unitType: string; market: number; inPlace: number }>;
     noiGrowthProjection?: Array<{ year: number; noi: number }>;
-    revenueVsExpenses?: Array<{ month: string; revenue: number; expense: number }>;
+    revenueVsExpenses?: Array<{ month: string; revenue: number; expense: number; noi:number }>;
     expenseBreakdown?: Array<{ category: string; amount: number; percent?: number }>;
     expenseDistribution?: Array<{ category: string; amount: number; percent?: number }>;
     leaseExpiration?: Array<{ month: string; units: number }>;
@@ -164,6 +205,7 @@ type DealUnderwritingApiRecord = {
   dealRentrollResponse?: unknown;
   deal_rentroll_response?: unknown;
   compAnalysis?: DealCompAnalysisPayload | null;
+  demandElasticity?: DemandElasticityPayload | null;
 };
 
 export interface Deal {
@@ -210,12 +252,12 @@ export interface Deal {
     occupancyImprovement: number;
     totalPotentialNoiUplift?: number;
   };
-  risks: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string }>;
-  opportunities: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string }>;
+  risks: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string; confidence?: string; noiImpact?: number }>;
+  opportunities: Array<{ title: string; severity: "High" | "Medium" | "Low"; impact: string; explanation: string; confidence?: string; noiImpact?: number }>;
   tenantMix: Array<{ name: string; percentage: number; count?: number }>;
   rentVsMarket: Array<{ type: string; current: number; market: number }>;
   noiProjection: Array<{ year: string; noi: number }>;
-  revenueVsExpenses: Array<{ month: string; revenue: number; expenses: number }>;
+  revenueVsExpenses: Array<{ month: string; revenue: number; expenses: number; noi?: number }>;
   expenseBreakdown: Array<{ category: string; amount: number; percent?: number }>;
   expenseDistribution: Array<{ category: string; amount: number; percent?: number }>;
   leaseExpirations: Array<{ year: string; units: number }>;
@@ -235,7 +277,27 @@ export interface Deal {
     "tenantMix" | "rentVsMarket" | "noiProjection" | "revenueVsExpenses" | "expenseBreakdown" | "expenseDistribution" | "leaseExpirations" | "occupancyVacancy",
     { insight: string; impact: string; drives: string }
   >;
+  dealScorecard?: {
+    market?: { score: number; explanation: string; recommendation: string };
+    upside?: { score: number; explanation: string; recommendation: string };
+    pricing?: { score: number; explanation: string; recommendation: string };
+    stability?: { score: number; explanation: string; recommendation: string };
+    operations?: { score: number; explanation: string; recommendation: string };
+    recommendation?: string;
+    overallSummary?: string;
+    investmentStyleFit?: {
+      core: number;
+      corePlus: number;
+      valueAdd: number;
+      opportunistic: number;
+      bestMatch: string;
+      strengths: string[];
+      watchItems: string[];
+      recommendation: string;
+    };
+  };
   compAnalysis?: DealCompAnalysisPayload | null;
+  demandElasticity?: DemandElasticityPayload | null;
 }
 
 type DealDataState = {
@@ -804,10 +866,49 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
     },
     scores: {
       overall: toNumber(record.dealScorecard.overallDealScore, 0),
-      marketPosition: toNumber(record.dealScorecard.marketPosition, 0),
-      cashFlowStability: toNumber(record.dealScorecard.cashFlowStability, 0),
-      valueAddPotential: toNumber(record.dealScorecard.valueAddPotential, 0),
+      marketPosition: toNumber(record.dealScorecard.marketPosition ?? record.dealScorecard.market?.score, 0),
+      cashFlowStability: toNumber(record.dealScorecard.cashFlowStability ?? record.dealScorecard.stability?.score, 0),
+      valueAddPotential: toNumber(record.dealScorecard.valueAddPotential ?? record.dealScorecard.upside?.score, 0),
       riskLevel: toNumber(record.dealScorecard.riskLevel, 0),
+    },
+    dealScorecard: {
+      market: record.dealScorecard.market ? {
+        score: toNumber(record.dealScorecard.market.score, 0),
+        explanation: record.dealScorecard.market.explanation?.trim() || record.dealScorecard.marketExplanation?.trim() || "",
+        recommendation: record.dealScorecard.market.recommendation || "",
+      } : undefined,
+      upside: record.dealScorecard.upside ? {
+        score: toNumber(record.dealScorecard.upside.score, 0),
+        explanation: record.dealScorecard.upside.explanation?.trim() || record.dealScorecard.upsideExplanation?.trim() || "",
+        recommendation: record.dealScorecard.upside.recommendation || "",
+      } : undefined,
+      pricing: record.dealScorecard.pricing ? {
+        score: toNumber(record.dealScorecard.pricing.score, 0),
+        explanation: record.dealScorecard.pricing.explanation?.trim() || record.dealScorecard.pricingExplanation?.trim() || "",
+        recommendation: record.dealScorecard.pricing.recommendation || "",
+      } : undefined,
+      stability: record.dealScorecard.stability ? {
+        score: toNumber(record.dealScorecard.stability.score, 0),
+        explanation: record.dealScorecard.stability.explanation?.trim() || record.dealScorecard.stabilityExplanation?.trim() || "",
+        recommendation: record.dealScorecard.stability.recommendation || "",
+      } : undefined,
+      operations: record.dealScorecard.operations ? {
+        score: toNumber(record.dealScorecard.operations.score, 0),
+        explanation: record.dealScorecard.operations.explanation?.trim() || record.dealScorecard.operationsExplanation?.trim() || "",
+        recommendation: record.dealScorecard.operations.recommendation || "",
+      } : undefined,
+      recommendation: record.dealScorecard.recommendation,
+      overallSummary: record.dealScorecard.overallSummary,
+      investmentStyleFit: record.dealScorecard.investmentStyleFit ? {
+        core: toNumber(record.dealScorecard.investmentStyleFit.core, 0),
+        corePlus: toNumber(record.dealScorecard.investmentStyleFit.corePlus, 0),
+        valueAdd: toNumber(record.dealScorecard.investmentStyleFit.valueAdd, 0),
+        opportunistic: toNumber(record.dealScorecard.investmentStyleFit.opportunistic, 0),
+        bestMatch: record.dealScorecard.investmentStyleFit.bestMatch || "",
+        strengths: record.dealScorecard.investmentStyleFit.strengths || [],
+        watchItems: record.dealScorecard.investmentStyleFit.watchItems || [],
+        recommendation: record.dealScorecard.investmentStyleFit.recommendation || "",
+      } : undefined,
     },
     movers: {
       rentIncrease: toNumber(record.whatDrivesThisInvestment.rentIncrease, 0),
@@ -815,8 +916,22 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       occupancyImprovement: toNumber(record.whatDrivesThisInvestment.occupancyImprovement, 0),
       totalPotentialNoiUplift: toNumber(record.whatDrivesThisInvestment.totalPotentialNoiUplift, 0),
     },
-    risks: record.risks ?? [],
-    opportunities: record.opportunities ?? [],
+    risks: (record.risks ?? []).map((r) => ({
+      title: r.title,
+      severity: r.severity,
+      impact: r.impact ?? (r.estimated_noi_impact != null ? `-${formatCompactCurrencyValue(r.estimated_noi_impact)} NOI impact` : ""),
+      explanation: r.explanation ?? r.description ?? "",
+      confidence: r.confidence,
+      noiImpact: r.estimated_noi_impact,
+    })),
+    opportunities: (record.opportunities ?? []).map((o) => ({
+      title: o.title,
+      severity: o.severity,
+      impact: o.impact ?? (o.estimated_noi_impact != null ? `+${formatCompactCurrencyValue(o.estimated_noi_impact)} NOI impact` : ""),
+      explanation: o.explanation ?? o.description ?? "",
+      confidence: o.confidence,
+      noiImpact: o.estimated_noi_impact,
+    })),
     tenantMix: (record.performanceAnalytics.tenantMix ?? []).map((item) => ({
       name: item.unitType,
       percentage: toNumber(item.percent),
@@ -835,6 +950,7 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       month: item.month,
       revenue: toNumber(item.revenue),
       expenses: toNumber(item.expense),
+      noi: item.noi == null ? undefined : toNumber(item.noi),
     })),
     expenseBreakdown: (record.performanceAnalytics.expenseBreakdown ?? []).map((item) => ({
       category: item.category,
@@ -876,6 +992,7 @@ function mapUserApiRecordToDeal(record: DealUnderwritingApiRecord, index: number
       occupancyVacancy: mergeChartInsight(defaultChartInsights.occupancyVacancy, record.performanceAnalytics.occupancyVsVacancyInsights),
     },
     compAnalysis: record.compAnalysis ?? null,
+    demandElasticity: record.demandElasticity ?? null,
   };
 }
 

@@ -21,6 +21,7 @@ type CompAnalysisMarker = {
   distanceMiles?: number;
   inPlaceRents?: Record<string, number | null | undefined>;
   vsYourAvg?: number | null;
+  occupancy?: number | string | null;
 };
 
 type MarkerWithCoords = CompAnalysisMarker & { coords: Coords };
@@ -58,6 +59,7 @@ export type DealCompAnalysisPayload = {
     inPlaceRents?: Record<string, number | null | undefined>;
     compAvgInPlaceRent?: number;
     vsYourAvg?: number;
+    occupancy?: number | string | null;
     markerColor?: "green" | "red" | string;
   }>;
   map?: {
@@ -93,9 +95,18 @@ const formatGap = (value?: number | null): string => {
 
 const formatPct = (value?: number | null): string => {
   if (typeof value !== "number" || Number.isNaN(value)) return "-";
-  const pct = value > 1 ? value : value * 100;
+  const pct = Math.abs(value) > 1 ? value : value * 100;
   const sign = pct > 0 ? "+" : pct < 0 ? "-" : "";
-  return `${sign}${Math.abs(pct).toFixed(1)}%`;
+  return `${sign}${Math.abs(pct).toFixed(2)}%`;
+};
+
+const formatOccupancy = (value?: number | string | null): string => {
+  if (typeof value === "number") {
+    if (Number.isNaN(value)) return "-";
+    return `${(Math.abs(value) > 1 ? value : value * 100).toFixed(1)}%`;
+  }
+  if (typeof value === "string" && value.trim()) return value;
+  return "-";
 };
 
 function colorToHex(color?: string) {
@@ -194,7 +205,7 @@ export default function DealCompAnalysis({
 }) {
   const [classFilter, setClassFilter] = useState<string>("All");
   const [sortKey, setSortKey] = useState<
-    "name" | "class" | "distance" | "vsYourAvg" | "source" | `ut:${string}`
+    "name" | "class" | "distance" | "vsYourAvg" | "occupancy" | "source" | `ut:${string}`
   >("distance");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -299,6 +310,9 @@ export default function DealCompAnalysis({
       } else if (sortKey === "vsYourAvg") {
         av = typeof a.vsYourAvg === "number" ? a.vsYourAvg : Number.POSITIVE_INFINITY;
         bv = typeof b.vsYourAvg === "number" ? b.vsYourAvg : Number.POSITIVE_INFINITY;
+      } else if (sortKey === "occupancy") {
+        av = typeof a.occupancy === "number" ? a.occupancy : Number.POSITIVE_INFINITY;
+        bv = typeof b.occupancy === "number" ? b.occupancy : Number.POSITIVE_INFINITY;
       } else if (sortKey === "source") {
         av = (a.source ?? "").toLowerCase();
         bv = (b.source ?? "").toLowerCase();
@@ -631,6 +645,18 @@ export default function DealCompAnalysis({
                     type="button"
                     className="hover:text-slate-900"
                     onClick={() => {
+                      setSortKey("occupancy");
+                      setSortDir((direction) => (sortKey === "occupancy" ? (direction === "asc" ? "desc" : "asc") : "asc"));
+                    }}
+                  >
+                    Occupancy
+                  </button>
+                </th>
+                <th className="px-4 py-3">
+                  <button
+                    type="button"
+                    className="hover:text-slate-900"
+                    onClick={() => {
                       setSortKey("source");
                       setSortDir((direction) => (sortKey === "source" ? (direction === "asc" ? "desc" : "asc") : "asc"));
                     }}
@@ -655,6 +681,7 @@ export default function DealCompAnalysis({
                     {formatCurrency(normalizedPayload.subjectProperty?.inPlaceRents?.[unitType] ?? null)}
                   </td>
                 ))}
+                <td className="px-4 py-4">-</td>
                 <td className="px-4 py-4">-</td>
                 <td className="px-4 py-4 text-slate-600">Subject</td>
               </tr>
@@ -685,6 +712,7 @@ export default function DealCompAnalysis({
                   >
                     {formatGap(comp.vsYourAvg ?? null)}
                   </td>
+                  <td className="px-4 py-4">{formatOccupancy(comp.occupancy ?? null)}</td>
                   <td className="px-4 py-4 text-indigo-600">{comp.source ?? "-"}</td>
                 </tr>
               ))}
