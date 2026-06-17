@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-api";
 
@@ -100,18 +101,56 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!propertyName) return;
+    const normalizedPropertyName = propertyName.trim();
+
+    if (!normalizedPropertyName) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+
     setLoading(true);
 
-    authClient
-      .post<ApiResponse>("/api/user_properties/submarket_intelligence/", {
-        property_name: propertyName,
-      })
-      .then((res) => {
-        setData(res.data.submarketIntelligence ?? null);
-      })
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
+    const loadSubmarketIntelligence = async () => {
+      try {
+        const getResponse = await authClient.get<ApiResponse>("/api/user_properties/submarket_intelligence/", {
+          params: { property_name: normalizedPropertyName },
+        });
+
+        if (cancelled) return;
+
+        const nextData = getResponse.data.submarketIntelligence ?? null;
+        setData(nextData);
+      } catch (error) {
+        if (!axios.isAxiosError(error) || error.response?.status !== 404) {
+          if (!cancelled) setData(null);
+          return;
+        }
+
+        try {
+          const postResponse = await authClient.post<ApiResponse>("/api/user_properties/submarket_intelligence/", {
+            property_name: normalizedPropertyName,
+          });
+
+          if (cancelled) return;
+
+          const nextData = postResponse.data.submarketIntelligence ?? null;
+          setData(nextData);
+        } catch {
+          if (!cancelled) setData(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    void loadSubmarketIntelligence();
+
+    return () => {
+      cancelled = true;
+    };
   }, [propertyName]);
 
   if (loading) {
