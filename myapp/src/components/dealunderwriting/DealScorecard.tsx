@@ -27,23 +27,27 @@ function getRecStyle(rec: string) {
 }
 
 function CircularScore({ score, color }: { score: number; color: string }) {
-  const r = 28;
+  const r = 30;
   const circ = 2 * Math.PI * r;
   const offset = circ - (Math.min(score, 100) / 100) * circ;
   return (
     <div className="relative inline-flex items-center justify-center">
-      <svg width="72" height="72" viewBox="0 0 72 72">
-        <circle cx="36" cy="36" r={r} fill="none" stroke="#33476b" strokeWidth="6" />
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r={r} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="6" />
         <circle
-          cx="36" cy="36" r={r} fill="none"
+          cx="40" cy="40" r={r} fill="none"
           stroke={color} strokeWidth="6"
           strokeDasharray={circ}
           strokeDashoffset={offset}
           strokeLinecap="round"
-          transform="rotate(-90 36 36)"
+          transform="rotate(-90 40 40)"
         />
       </svg>
-      <span className="absolute text-lg font-bold text-white">{score}</span>
+      <div className="absolute flex flex-col items-center leading-none">
+        <span className="text-xl font-bold text-white">{score}</span>
+        <span className="mt-0.5 text-[9px] text-white/60">/100</span>
+      </div>
+      
     </div>
   );
 }
@@ -72,7 +76,6 @@ export function DealScorecard({ deal }: { deal: Deal }) {
         <div className="flex items-center gap-2">
           <span className="h-2.5 w-2.5 rounded-full bg-[#19b68f]" />
           <span className="text-sm font-bold uppercase tracking-[0.15em] text-white">Deal Scorecard</span>
-          {/* <span className="text-xs text-[#8295b8]">· Model v2.4</span> */}
         </div>
         <span className="font-mono text-sm tracking-[0.15em] text-[#8295b8]">{deal.id?.toUpperCase?.() ?? ""}</span>
       </div>
@@ -80,7 +83,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
       <div className="flex divide-x divide-[#e1e7f5]">
         {/* Left: Overall + Category Cards */}
         <div className="min-w-0 flex-1 space-y-5 p-6">
-          {/* Overall Score */}
+          {/* Overall Score (unchanged) */}
           <div className="rounded-xl border border-[#e1e7f5] bg-[#f9fbff] p-5">
             <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#9aa7c0]">Overall Deal Score</p>
             <div className="mt-2 flex items-end justify-between gap-4">
@@ -99,7 +102,6 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                 <span className="text-xs text-[#9aa7c0]">Recommendation</span>
               </div>
             </div>
-            {/* Progress bar with markers */}
             <div className="relative mt-4">
               <div className="relative h-3 w-full overflow-hidden rounded-full bg-[#e8edf8]">
                 <div
@@ -107,11 +109,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                   style={{ width: `${overall}%`, backgroundColor: overallColor }}
                 />
                 {[40, 55, 70, 85].map((pos) => (
-                  <div
-                    key={pos}
-                    className="absolute top-0 h-full w-px bg-white/60"
-                    style={{ left: `${pos}%` }}
-                  />
+                  <div key={pos} className="absolute top-0 h-full w-px bg-white/60" style={{ left: `${pos}%` }} />
                 ))}
               </div>
               <div className="relative h-5 mt-0.5">
@@ -137,50 +135,71 @@ export function DealScorecard({ deal }: { deal: Deal }) {
             )}
           </div>
 
-          {/* Category Cards */}
-          <div className="grid grid-cols-5 gap-1.5 items-stretch">
+          {/* Category Cards — Variant 2: navy header (score) + white body (explanation) */}
+          <div className="grid grid-cols-5 gap-3 items-stretch">
             {CATEGORIES.map(({ key, label, Icon }) => {
               const cat = sc?.[key];
               const score = cat?.score ?? 0;
               const rec = cat?.recommendation ?? "";
-              // color drives off the SCORE so circles + top border always color correctly
               const scoreColor = getScoreColor(score);
               const { bg, label: recLabel } = getRecStyle(rec);
-              // explanation may be empty on the category; fall back to the sibling `${key}Explanation` field
               const explanation =
                 cat?.explanation?.trim() || (sc as Record<string, any>)?.[`${key}Explanation`] || "";
+
               return (
                 <div
                   key={key}
-                  className="flex h-full flex-col gap-3 rounded-xl border-t-4 bg-[#14294d] p-4"
-                  style={{ borderTopColor: scoreColor , background: "linear-gradient(180deg, #284D82 0%, #1F3D68 100%)",}}
+                  className="flex h-full flex-col overflow-hidden rounded-xl border border-[#e1e7f5] bg-white shadow-sm"
                 >
-                  <div className="flex items-center gap-1.5">
-                    <Icon className="h-4 w-4 text-[#b7c8e8]" />
-                    <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#dbe6f8]">{label}</span>
+                  {/* Top accent stripe */}
+                  <div className="h-1.5 w-full" style={{ backgroundColor: scoreColor }} />
+
+                  {/* Navy header: icon + score */}
+                  <div
+                    className="relative px-4 pt-4 pb-7"
+                    style={{ background: "linear-gradient(180deg, #284D82 0%, #1F3D68 100%)" }}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <Icon className="h-4 w-4 text-[#b7c8e8]" />
+                      <span className="text-xs font-bold uppercase tracking-[0.1em] text-[#dbe6f8]">{label}</span>
+                    </div>
+
+                    <div className="mt-3 flex flex-col items-center gap-2">
+                      <CircularScore score={score} color={scoreColor} />
+                      {rec && (
+                        <span
+                          className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
+                          style={{ color: scoreColor, backgroundColor: bg }}
+                        >
+                          {recLabel}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Curved divider into white body */}
+                    <svg
+                      className="absolute -bottom-px left-0 h-3 w-full"
+                      viewBox="0 0 100 8"
+                      preserveAspectRatio="none"
+                      aria-hidden
+                    >
+                      <path d="M0,8 Q50,0 100,8 L100,8 L0,8 Z" fill="#ffffff" />
+                    </svg>
                   </div>
-                  <div className="flex flex-col items-center gap-1">
-                    <CircularScore score={score} color={scoreColor} />
-                    <span className="text-xs text-[#b9c8df]">/100</span>
-                    {rec && (
-                      <span
-                        className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
-                        style={{ color: scoreColor, backgroundColor: bg }}
-                      >
-                        {recLabel}
-                      </span>
+
+                  {/* White body: explanation */}
+                  <div className="flex-1 bg-white px-4 py-4">
+                    {explanation && (
+                      <p className="text-xs leading-relaxed text-[#334466]">{explanation}</p>
                     )}
                   </div>
-                  {explanation && (
-                    <p className="text-xs leading-relaxed text-[#edf3ff]">{explanation}</p>
-                  )}
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Right: Investment Style Fit */}
+        {/* Right: Investment Style Fit (unchanged) */}
         {fit && (
           <div className="w-72 shrink-0 space-y-4 p-6">
             <div>
@@ -216,10 +235,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
                     <span className="text-sm font-bold text-[#102149]">{value}%</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-[#e8edf8]">
-                    <div
-                      className="h-full rounded-full"
-                      style={{ width: `${value}%`, backgroundColor: barColor }}
-                    />
+                    <div className="h-full rounded-full" style={{ width: `${value}%`, backgroundColor: barColor }} />
                   </div>
                 </div>
               );
