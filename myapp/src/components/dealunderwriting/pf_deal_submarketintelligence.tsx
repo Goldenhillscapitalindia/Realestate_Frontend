@@ -31,15 +31,15 @@ type ApiResponse = {
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function statusBorderColor(color: StatusColor) {
-  if (color === "green") return "border-t-[3px] border-t-green-500";
-  if (color === "red") return "border-t-[3px] border-t-red-500";
+  if (color === "green") return "border-t-[3px] border-t-green-400";
+  if (color === "red") return "border-t-[3px] border-t-red-400";
   return "border-t-[3px] border-t-amber-400";
 }
 
 function statusBadgeColor(color: StatusColor) {
-  if (color === "green") return "bg-green-50 text-green-700 border border-green-200";
-  if (color === "red") return "bg-red-50 text-red-600 border border-red-200";
-  return "bg-amber-50 text-amber-700 border border-amber-200";
+  if (color === "green") return "bg-green-400/15 text-green-300 border border-green-400/40";
+  if (color === "red") return "bg-red-400/15 text-red-300 border border-red-400/40";
+  return "bg-amber-400/15 text-amber-300 border border-amber-400/40";
 }
 
 function insightDotColor(color: StatusColor) {
@@ -88,9 +88,9 @@ function metricIcon(label: string) {
 }
 
 function iconColor(color: StatusColor) {
-  if (color === "green") return "text-green-500";
-  if (color === "red") return "text-red-500";
-  return "text-amber-500";
+  if (color === "green") return "text-green-400";
+  if (color === "red") return "text-red-400";
+  return "text-amber-400";
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -160,19 +160,23 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
           {insights.map((card) => (
             <div
               key={card.label}
-              className={`rounded-2xl border border-[#d8e2f1] bg-white p-4 ${statusBorderColor(card.status.color)}`}
+              className={`bg-[#2f568f] rounded-xl p-5 shadow-sm transition-transform hover:-translate-y-0.5 ${statusBorderColor(card.status.color)}`}
             >
               <div className="flex items-start justify-between">
-                <p className="text-[10px] font-semibold uppercase tracking-widest text-[#57719c]">
+                <span className="text-[11px] font-semibold tracking-[0.12em] text-white/65 uppercase">
                   {card.label}
-                </p>
-                <span className={iconColor(card.status.color)}>{metricIcon(card.label)}</span>
+                </span>
+                <span className={iconColor(card.status.color)}>
+                  {metricIcon(card.label)}
+                </span>
               </div>
-              <p className="mt-3 text-2xl font-bold leading-tight text-[#102149]">{card.value}</p>
-              <p className="mt-1 text-xs text-[#62708d]">{card.subDetail}</p>
-              <div className="mt-3">
+
+              <div className="mt-3 text-3xl font-bold text-white">{card.value}</div>
+              <div className="mt-1 text-xs text-white/60">{card.subDetail}</div>
+
+              <div className="mt-4">
                 <span
-                  className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${statusBadgeColor(card.status.color)}`}
+                  className={`inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wider ${statusBadgeColor(card.status.color)}`}
                 >
                   {card.status.tag}
                 </span>
@@ -193,7 +197,7 @@ export default function PfDealSubmarketIntelligence({ propertyName }: { property
           </div>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {insights.map((card) => (
-              <div key={card.label} className="rounded-xl border border-[#edf2fb] bg-[#f8fafd] p-4">
+              <div key={card.label} className="rounded-xl border border-[#edf2fb] bg-[#eff3f9] p-4">
                 <div className="flex items-center gap-2">
                   <span className={`h-2 w-2 rounded-full ${insightDotColor(card.status.color)}`} />
                   <span className="text-sm font-semibold text-[#102149]">{card.label}</span>
