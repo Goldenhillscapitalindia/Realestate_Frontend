@@ -27,7 +27,7 @@ function getRecStyle(rec: string) {
 }
 
 function CircularScore({ score, color }: { score: number; color: string }) {
-  const r = 30;
+  const r = 37;
   const circ = 2 * Math.PI * r;
   const offset = circ - (Math.min(score, 100) / 100) * circ;
   return (
@@ -136,7 +136,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
           </div>
 
           {/* Category Cards — Variant 2: navy header (score) + white body (explanation) */}
-          <div className="grid grid-cols-5 gap-3 items-stretch">
+          <div className="grid grid-cols-5 gap-2 items-stretch">
             {CATEGORIES.map(({ key, label, Icon }) => {
               const cat = sc?.[key];
               const score = cat?.score ?? 0;
