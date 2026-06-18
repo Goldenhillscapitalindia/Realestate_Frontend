@@ -220,6 +220,9 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
   const { amenity_score, unit_amenities, community_amenities, subject_vs_market,
     competitive_position, amenity_quality_index, competitive_advantages,
     competitive_deficiencies, investment_insight } = data;
+  const sortedSubjectVsMarket = [...subject_vs_market].sort(
+    (a, b) => b.competitor_penetration - a.competitor_penetration
+  );
 
   return (
     <div className="space-y-5">
@@ -348,7 +351,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
               </tr>
             </thead>
             <tbody>
-              {(showAllAmenities ? subject_vs_market : subject_vs_market.slice(0, 5)).map((row) => (
+              {(showAllAmenities ? sortedSubjectVsMarket : sortedSubjectVsMarket.slice(0, 5)).map((row) => (
                 <tr key={row.amenity} className="border-b border-[#f1f5f9]">
                   <td className="py-2.5 pr-4">
                     <div className="flex items-center gap-2">
@@ -382,7 +385,7 @@ export default function PfDealAmenities({ propertyName }: { propertyName: string
           </table>
           
           {/* Show More / Show Less Button */}
-          {subject_vs_market.length > 5 && (
+          {sortedSubjectVsMarket.length > 5 && (
             <div className="mt-4 flex justify-center">
               <button
                 onClick={() => setShowAllAmenities(!showAllAmenities)}

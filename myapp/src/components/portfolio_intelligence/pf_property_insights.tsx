@@ -62,7 +62,29 @@ type RiskAlert = IntelligenceTips & {
   avgTenureMonths?: number;
 };
 
+type MarketMomentumOverview = {
+  score?: number | null;
+  label?: string | null;
+  confidence?: string | null;
+  headline?: string | null;
+  subHeadline?: string | null;
+};
+
+type MarketMomentumInsight = {
+  label?: string;
+  value?: string;
+  subDetail?: string;
+  insight?: string;
+  status?: {
+    tag?: string;
+    color?: string;
+  };
+};
+
 type MarketMomentum = IntelligenceTips & {
+  overview?: MarketMomentumOverview;
+  summary?: string | null;
+  insights?: MarketMomentumInsight[];
   absorption?: number | string;
   vacancyTrend?: string;
   monthlyImpact?: number;
@@ -508,6 +530,8 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
     avgTenure !== undefined ||
     isValidNumber(riskAlert?.revenueAtRisk) ||
     isValidNumber(riskAlert?.renewalRate);
+  const marketOverview = marketMomentum?.overview;
+  const marketInsights = marketMomentum?.insights ?? [];
 
   const insightCards = useMemo(() => {
     const reviewValue = isValidNumber(reviewDetails?.ratingScore)
@@ -517,11 +541,6 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
         : isValidNumber(reviewDetails?.rating)
           ? reviewDetails?.rating?.toFixed(1) ?? "-"
           : "-";
-    const marketValue = marketMomentum?.absorption
-      ? typeof marketMomentum.absorption === "number"
-        ? `${marketMomentum.absorption.toLocaleString()} units`
-        : marketMomentum.absorption
-      : "-";
 
     return [
       {
@@ -536,18 +555,14 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
       {
         key: "market" as InsightKey,
         title: "Market Momentum",
-        value: marketValue,
-        caption: "Metro absorption",
-        badge: marketMomentum?.confidence ?? "Medium",
+        value: marketOverview?.label ?? "-",
+        caption: marketOverview?.headline ?? "Market overview",
+        badge: marketOverview?.confidence ?? marketMomentum?.confidence ?? "Medium",
         badgeClass: "bg-sky-100 text-sky-700",
-        description: marketMomentum?.vacancy
-          ? `Vacancy ${marketMomentum.vacancy.toLowerCase()}`
-          : marketMomentum?.vacancyTrend
-            ? `Vacancy ${marketMomentum.vacancyTrend.toLowerCase()}`
-          : "Momentum data loading.",
+        description: marketOverview?.subHeadline ?? "Market momentum unavailable.",
       },
     ];
-  }, [marketMomentum, reviewDetails]);
+  }, [marketMomentum?.confidence, marketOverview, reviewDetails]);
 
   const propertyMeta = record?.property_response?.property;
   const yearBuilt = propertyMeta?.yearBuilt;
@@ -701,34 +716,23 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
   }, [rentComparisonEntries]);
 
   const selectedInsightTitle = selectedInsight === "market" ? "Market Momentum" : "Review Intelligence";
-  const selectedWhyThisMatters = selectedInsight === "market"
-    ? marketMomentum?.whyThisMatters
-    : reviewDetails?.whyThisMatters;
-  const selectedNextBestActions = selectedInsight === "market"
-    ? marketMomentum?.nextBestActions
-    : reviewDetails?.nextBestActions;
-  const fallbackWhyThisMatters = selectedInsight === "market"
-    ? [
-      "Absorption momentum helps dial lease pricing and concessions.",
-      "Vacancy trends signal when to push appliance or renovation programs.",
-      "Employment growth keeps demand steady even with seasonal dips.",
-    ]
-    : [
-      "Properties rated 4.5+ retain residents longer.",
-      "Resolving maintenance complaints improves digital sentiment.",
-      "Positive reviews lift discovery and lead flow organically.",
-    ];
-  const fallbackNextBestActions = selectedInsight === "market"
-    ? [
-      "Push 3-4% renewals aligned with submarket growth",
-      "Monitor vacancy weekly during rollover periods",
-      "Benchmark pricing monthly against nearby comps",
-    ]
-    : [
-      "Respond to all reviews within 24 hours",
-      "Address recurring maintenance themes",
-      "Highlight wins in marketing and leasing",
-    ];
+  const selectedMarketSummary = selectedInsight === "market" ? marketMomentum?.summary : null;
+  const selectedWhyThisMatters = selectedInsight === "review"
+    ? reviewDetails?.whyThisMatters
+    : null;
+  const selectedNextBestActions = selectedInsight === "review"
+    ? reviewDetails?.nextBestActions
+    : [];
+  const fallbackWhyThisMatters = [
+    "Properties rated 4.5+ retain residents longer.",
+    "Resolving maintenance complaints improves digital sentiment.",
+    "Positive reviews lift discovery and lead flow organically.",
+  ];
+  const fallbackNextBestActions = [
+    "Respond to all reviews within 24 hours",
+    "Address recurring maintenance themes",
+    "Highlight wins in marketing and leasing",
+  ];
 
   if (status === "loading") {
     return (
@@ -1018,7 +1022,7 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
                 </div>
                 <span className="rounded-full bg-blue-50 px-1 py-1 text-[13px] font-semibold text-black shadow-sm">
                   {selectedInsight === "market"
-                    ? `${marketMomentum?.confidence ?? "Medium"} confidence`
+                    ? `${marketOverview?.confidence ?? marketMomentum?.confidence ?? "Medium"} confidence`
                     : `${reviewDetails?.confidence ?? "Medium"} confidence`}
                 </span>
               </div>
@@ -1026,23 +1030,24 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
               {selectedInsight === "market" ? (
                 <>
                   <p className="mt-2 text-sm text-slate-900">Monitor metro and submarket signals to capture demand shifts safely.</p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
-                      <span className="block text-[15px] font-normal text-indigo-700">Absorption</span>
-                      <span className="text-lg text-slate-900">{marketMomentum?.absorption ? String(marketMomentum.absorption) : "-"}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
-                      <span className="block text-[15px] font-normal text-indigo-700">Vacancy</span>
-                      <span className="text-lg text-slate-900">{marketMomentum?.vacancy ?? marketMomentum?.vacancyTrend ?? "-"}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
-                      <span className="block text-[15px] font-normal text-indigo-700">Rent Growth</span>
-                      <span className="text-lg text-slate-900">{marketMomentum?.rentGrowth ?? marketMomentum?.rentGrowthTrend ?? "-"}</span>
-                    </div>
-                    <div className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-800">
-                      <span className="block text-[15px] font-normal text-indigo-700">Momentum View</span>
-                      <span className="text-lg text-slate-900">{marketMomentum?.momentumView ?? "-"}</span>
-                    </div>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {marketInsights.length ? (
+                      marketInsights.map((item, index) => (
+                        <div
+                          key={`${item.label ?? "market-insight"}-${index}`}
+                          className="rounded-2xl border border-slate-200 bg-white px-4 py-3"
+                        >
+                          <span className="block text-[15px] font-normal text-indigo-700">
+                            {item.label ?? "-"}
+                          </span>
+                          <span className="text-lg font-semibold text-slate-900">
+                            {item.value ?? "-"}
+                          </span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-sm text-slate-700">No market momentum insights available.</p>
+                    )}
                   </div>
                 </>
               ) : (
@@ -1092,36 +1097,49 @@ const PfPropertyInsights: React.FC<PfPropertyInsightsProps> = ({
                 </>
               )}
 
-              <div className="mt-4 space-y-2">
-                <p className="text-m font-semibold uppercase tracking-wide text-black">Why this matters</p>
-                <ul className="space-y-2 text-sm text-slate-800">
-                  {(selectedWhyThisMatters
-                    ? [selectedWhyThisMatters]
-                    : fallbackWhyThisMatters).map((item: string) => (
-                    <li key={item} className="flex items-start gap-2">
-                      <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-black" />
-                      <span className="text-black">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {selectedInsight === "review" ? (
+                <div className="mt-4 space-y-2">
+                  <p className="text-m font-semibold uppercase tracking-wide text-black">Why this matters</p>
+                  <ul className="space-y-2 text-sm text-slate-800">
+                    {(selectedWhyThisMatters
+                      ? [selectedWhyThisMatters]
+                      : fallbackWhyThisMatters).map((item: string) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="mt-0.5 h-2 w-2 shrink-0 rounded-full bg-black" />
+                        <span className="text-black">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
 
-              <div className="mt-4 space-y-2">
-                <p className="text-m font-semibold uppercase tracking-wide text-black">Next best actions</p>
-                <ol className="space-y-2 text-sm text-slate-800">
-                  {(selectedNextBestActions?.length
-                    ? selectedNextBestActions
-                    : fallbackNextBestActions).map((action: string, index: number) => (
-                    <li
-                      key={`${action}-${index}`}
-                      className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-indigo-50 px-3 py-2"
-                    >
-                      <span className="text-xs font-semibold text-black">{index + 1}</span>
-                      <span className="text-black">{action}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
+              {selectedInsight === "market" ? (
+                <div className="mt-4 space-y-2">
+                  <p className="text-m font-semibold uppercase tracking-wide text-black">Summary</p>
+                  <div className="rounded-2xl border border-slate-100 bg-white px-4 py-4 text-sm leading-7 text-slate-800">
+                    {selectedMarketSummary ?? "No market momentum summary available."}
+                  </div>
+                </div>
+              ) : null}
+
+              {selectedInsight === "review" ? (
+                <div className="mt-4 space-y-2">
+                  <p className="text-m font-semibold uppercase tracking-wide text-black">Next best actions</p>
+                  <ol className="space-y-2 text-sm text-slate-800">
+                    {(selectedNextBestActions?.length
+                      ? selectedNextBestActions
+                      : fallbackNextBestActions).map((action: string, index: number) => (
+                      <li
+                        key={`${action}-${index}`}
+                        className="flex items-center gap-3 rounded-2xl border border-slate-100 bg-indigo-50 px-3 py-2"
+                      >
+                        <span className="text-xs font-semibold text-black">{index + 1}</span>
+                        <span className="text-black">{action}</span>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

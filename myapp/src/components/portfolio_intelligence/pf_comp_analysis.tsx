@@ -60,6 +60,7 @@ type CompAnalysisPayload = {
     inPlaceRents?: Record<string, number | null | undefined>;
     compAvgInPlaceRent?: number;
     vsYourAvg?: number;
+    occupancy?: number | null;
     markerColor?: "green" | "red" | string;
   }>;
   map?: {
@@ -162,7 +163,7 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
   const [payload, setPayload] = useState<CompAnalysisPayload | null>(null);
   const [classFilter, setClassFilter] = useState<string>("All");
   const [sortKey, setSortKey] = useState<
-    "name" | "class" | "distance" | "vsYourAvg" | "source" | `ut:${string}`
+    "name" | "class" | "distance" | "vsYourAvg" | "occupancy" | "source" | `ut:${string}`
   >("distance");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
@@ -288,6 +289,9 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
       } else if (sortKey === "vsYourAvg") {
         av = typeof ak.vsYourAvg === "number" ? ak.vsYourAvg : Number.POSITIVE_INFINITY;
         bv = typeof bk.vsYourAvg === "number" ? bk.vsYourAvg : Number.POSITIVE_INFINITY;
+      } else if (sortKey === "occupancy") {
+        av = typeof ak.occupancy === "number" ? ak.occupancy : Number.NEGATIVE_INFINITY;
+        bv = typeof bk.occupancy === "number" ? bk.occupancy : Number.NEGATIVE_INFINITY;
       } else if (sortKey === "source") {
         av = (ak.source ?? "").toString().toLowerCase();
         bv = (bk.source ?? "").toString().toLowerCase();
@@ -634,6 +638,18 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
                     type="button"
                     className="hover:text-slate-900"
                     onClick={() => {
+                      setSortKey("occupancy");
+                      setSortDir((d) => (sortKey === "occupancy" ? (d === "asc" ? "desc" : "asc") : "asc"));
+                    }}
+                  >
+                    Occupancy
+                  </button>
+                </th>
+                <th className="px-4 py-3">
+                  <button
+                    type="button"
+                    className="hover:text-slate-900"
+                    onClick={() => {
                       setSortKey("source");
                       setSortDir((d) => (sortKey === "source" ? (d === "asc" ? "desc" : "asc") : "asc"));
                     }}
@@ -657,6 +673,7 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
                   </td>
                 ))}
                 <td className="px-4 py-4">-</td>
+                <td className="px-4 py-4">-</td>
                 <td className="px-4 py-4 text-slate-600">Subject</td>
               </tr>
 
@@ -675,6 +692,9 @@ export default function PfCompAnalysis({ propertyName }: { propertyName: string 
                   ))}
                   <td className={`px-4 py-4 font-semibold ${(c.markerColor ?? "") === "green" ? "text-green-600" : (c.markerColor ?? "") === "red" ? "text-red-600" : "text-slate-800"}`}>
                     {formatGap(c.vsYourAvg ?? null)}
+                  </td>
+                  <td className="px-4 py-4">
+                    {typeof c.occupancy === "number" ? `${c.occupancy.toFixed(1)}%` : "-"}
                   </td>
                   <td className="px-4 py-4 text-indigo-600">{c.source ?? "-"}</td>
                 </tr>
