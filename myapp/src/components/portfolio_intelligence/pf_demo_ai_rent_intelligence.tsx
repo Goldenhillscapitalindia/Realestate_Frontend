@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useMemo, useState } from "react";
+import type { DemandElasticityPayload } from "../dealunderwriting/pf_deal_elasticity";
 import { Bar, Line } from "react-chartjs-2";
 import { ChevronRight } from "lucide-react";
 import { authClient } from "@/lib/auth-api";
@@ -18,6 +19,9 @@ import {
 import "../ui/interactive-data-table.css";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, Tooltip, Legend, Title);
+
+const PfDealElasticity = React.lazy(() => import("../dealunderwriting/pf_deal_elasticity"));
+const PfDealsRentStimulator = React.lazy(() => import("../dealunderwriting/pf_deals_rentstimulator"));
 
 type AiChartEntry = {
   units: string;
@@ -51,6 +55,7 @@ type AiRentResponse = {
     basic_info?: BasicInfo;
     unitSummary?: AiChartEntry[];
   };
+  demandElasticity?: DemandElasticityPayload | null;
 };
 
 type PropertyRecord = {
@@ -202,6 +207,13 @@ const PfDemoAiRentIntelligence: React.FC<PfDemoAiRentIntelligenceProps> = ({
   const revenueProjection = dashboard?.charts?.revenueProjection12Months ?? [];
   const basicInfo = dashboard?.basic_info;
   const unitSummary = dashboard?.unitSummary ?? [];
+  const aiRentDemandElasticity =
+    selectedProperty?.ai_rent_intelligence_response?.demandElasticity ?? null;
+
+  const hasAiRentDemandElasticity =
+    aiRentDemandElasticity?.status === "ready" &&
+    !!aiRentDemandElasticity?.subject &&
+    (aiRentDemandElasticity?.comparables?.length ?? 0) > 0;
 
   const totalProjectedLift = basicInfo?.totalprojectedrevenuelift;
   const summaryCards = [
@@ -427,7 +439,16 @@ const PfDemoAiRentIntelligence: React.FC<PfDemoAiRentIntelligenceProps> = ({
           </div>
         </div>
 
-      </div>
+        </div>
+      ) : null}
+
+      {hasAiRentDemandElasticity ? (
+        <React.Suspense fallback={null}>
+          <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,2fr)_minmax(340px,1fr)]">
+            <PfDealElasticity payload={aiRentDemandElasticity} />
+            <PfDealsRentStimulator payload={aiRentDemandElasticity} />
+          </div>
+        </React.Suspense>
       ) : null}
       {hasRenewalSplitChart ? (
       <div >
