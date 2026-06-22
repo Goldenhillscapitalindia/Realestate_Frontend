@@ -2,7 +2,7 @@ import { Building2, Calendar, Download, MapPin } from "lucide-react";
 import type { Deal } from "./data";
 
 const strategyColors: Record<string, string> = {
-  Core: "border-sky-300 bg-sky-100 text-sky-800",
+  Core: "border-green-300 bg-green-100 text-green-800",
   "Core+": "border-blue-300 bg-blue-100 text-blue-800",
   "Value-Add": "border-amber-300 bg-amber-100 text-amber-800",
   Opportunistic: "border-red-300 bg-red-100 text-red-800",
@@ -19,6 +19,9 @@ export function DealHeader({
   onAddCompare: (id: string) => void;
   onExportPdf?: () => void;
 }) {
+  const strategyLabel = deal.dealScorecard?.investmentStyleFit?.bestMatch || deal.strategy;
+  const strategyClass = strategyColors[strategyLabel] ?? strategyColors[deal.strategy];
+
   const noiLabel = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
@@ -30,8 +33,8 @@ export function DealHeader({
     <section className="mb-8 flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
       <div>
         <div className="mb-2 flex flex-wrap items-center gap-3">
-          <span className={`pdf-pill-text inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-3 text-sm font-semibold leading-none ${strategyColors[deal.strategy]}`}>
-            {deal.strategy}
+          <span className={`pdf-pill-text inline-flex h-8 items-center justify-center whitespace-nowrap rounded-full border px-3 text-sm font-semibold leading-none ${strategyClass}`}>
+            {strategyLabel}
           </span>
 
           <h2 className="break-words text-2xl font-semibold text-[#102149] md:text-3xl xl:text-4xl">{deal.name}</h2>
