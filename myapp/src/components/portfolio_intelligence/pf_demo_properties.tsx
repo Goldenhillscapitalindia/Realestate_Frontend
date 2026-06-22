@@ -642,16 +642,11 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
       <div className="pf-properties__hero">
         <div className="pf-properties__hero-inner">
           <h1 className="pf-properties__title">Property Intelligence</h1>
-          {!isDemoMode() ? (
+          {!isDemoMode() && !isAddPropertyBlocked ? (
             <button
               type="button"
               className="pf-add-property-btn"
-              onClick={() => {
-                if (isAddPropertyBlocked) return;
-                setShowAddPropertyForm(true);
-              }}
-              disabled={isAddPropertyBlocked}
-              title={isAddPropertyBlocked ? "Add Property is disabled for this account." : undefined}
+              onClick={() => setShowAddPropertyForm(true)}
             >
               Add Property
             </button>

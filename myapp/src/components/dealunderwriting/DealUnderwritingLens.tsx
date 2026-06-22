@@ -188,16 +188,11 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
               No property data available for underwriting.
             </p>
           </div>
-          {!demoMode ? (
+          {!demoMode && !isAddPropertyBlocked ? (
             <button
               type="button"
-              onClick={() => {
-                if (isAddPropertyBlocked) return;
-                setScreen("upload");
-              }}
-              disabled={isAddPropertyBlocked}
-              title={isAddPropertyBlocked ? "Add Property is disabled for this account." : undefined}
-              className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:hover:scale-100"
+              onClick={() => setScreen("upload")}
+              className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02]"
             >
               + Add Property
             </button>
@@ -248,18 +243,20 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
                 {isDeleting ? "Deleting..." : "Delete"}
               </button>
 
-              <button
-                type="button"
-                onClick={() => {
-                  if (isAddPropertyBlocked) return;
-                  setScreen("upload");
-                }}
-                disabled={isAddPropertyBlocked}
-                title={isAddPropertyBlocked ? "Add Property is disabled for this account." : undefined}
-                className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                + Add Property
-              </button>
+              {!isAddPropertyBlocked ? (
+                <button
+                  type="button"
+                  onClick={() => setScreen("upload")}
+                  className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02]"
+                >
+                  + Add Property
+                </button>
+              ) : (
+                <div
+                  aria-hidden="true"
+                  className="h-[56px] w-[188px] shrink-0"
+                />
+              )}
             </div>
           ) : null}
         </div>
