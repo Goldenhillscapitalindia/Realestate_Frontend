@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, MapPin, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-api";
 import { isDemoMode } from "@/lib/demo-mode";
+import { isAddPropertyBlockedForCurrentUser } from "@/lib/property-access";
 import {
   Select,
   SelectContent,
@@ -527,6 +528,7 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [showAddPropertyForm, setShowAddPropertyForm] = useState(false);
   const [deletingPropertyName, setDeletingPropertyName] = useState<string | null>(null);
+  const isAddPropertyBlocked = isAddPropertyBlockedForCurrentUser();
 
   const loadProperties = useCallback(async (isActive = true) => {
     setStatus("loading");
@@ -640,7 +642,7 @@ const PfDemoProperties: React.FC<PfDemoPropertiesProps> = ({ onSelectProperty })
       <div className="pf-properties__hero">
         <div className="pf-properties__hero-inner">
           <h1 className="pf-properties__title">Property Intelligence</h1>
-          {!isDemoMode() ? (
+          {!isDemoMode() && !isAddPropertyBlocked ? (
             <button
               type="button"
               className="pf-add-property-btn"

@@ -5,6 +5,7 @@ import RealEstateResponses from "./RealEstateResponses";
 import { useTheme } from "./ThemeContext";
 import { Block } from "./Realestate_components/Utils/RComponentsUtils";
 import { ArrowLeft } from "lucide-react";
+import { isAddPropertyBlockedForCurrentUser } from "@/lib/property-access";
 
 const createEmptyBlocks = (): Record<FileType, Block[]> => ({
   memorandum: [],
@@ -44,6 +45,7 @@ const RealEstateUploader: React.FC<RealEstateUploaderProps> = ({ showBackButton 
   const API_URL = import.meta.env.VITE_API_URL;
   const navigate = useNavigate();
   const { theme } = useTheme();
+  const isAddPropertyBlocked = isAddPropertyBlockedForCurrentUser();
 
   const [files, setFiles] = useState<Record<FileType, File | null>>(createEmptyFiles());
 
@@ -286,12 +288,14 @@ const RealEstateUploader: React.FC<RealEstateUploaderProps> = ({ showBackButton 
                 Click a property to preview its stored memorandum, T12, and rent roll responses.
               </p>
             </div>
-            <button
-              onClick={handleStartAddProperty}
-              className="rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white shadow-[0_10px_40px_rgba(59,7,145,0.5)] transition hover:opacity-90"
-            >
-              + Add Property
-            </button>
+            {!isAddPropertyBlocked ? (
+              <button
+                onClick={handleStartAddProperty}
+                className="rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 px-6 py-3 text-sm font-semibold uppercase tracking-wider text-white shadow-[0_10px_40px_rgba(59,7,145,0.5)] transition hover:opacity-90"
+              >
+                + Add Property
+              </button>
+            ) : null}
           </div>
 
           <div className="mt-8 flex flex-col gap-4">
@@ -509,12 +513,14 @@ const RealEstateUploader: React.FC<RealEstateUploaderProps> = ({ showBackButton 
                   >
                     Back to list
                   </button>
-                  <button
-                    onClick={handleStartAddProperty}
-                    className="rounded-full bg-blue-500 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-blue-600"
-                  >
-                    + Add Property
-                  </button>
+                  {!isAddPropertyBlocked ? (
+                    <button
+                      onClick={handleStartAddProperty}
+                      className="rounded-full bg-blue-500 px-5 py-2 text-xs font-semibold uppercase tracking-wide text-white shadow-lg transition hover:bg-blue-600"
+                    >
+                      + Add Property
+                    </button>
+                  ) : null}
                 </div>
               </div>
             )}
