@@ -16,6 +16,7 @@ import { Search, Trash2 } from "lucide-react";
 import { isDemoMode } from "@/lib/demo-mode";
 import { exportElementToPdf } from "@/lib/pdf-export";
 import { productRoutes } from "@/lib/product-routes";
+import { isAddPropertyBlockedForCurrentUser } from "@/lib/property-access";
 import { useLocation, useNavigate } from "react-router";
 import "./DealUnderwritingLens.css";
 
@@ -41,6 +42,7 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
   const location = useLocation();
   const navigate = useNavigate();
   const demoMode = isDemoMode();
+  const isAddPropertyBlocked = isAddPropertyBlockedForCurrentUser();
   const [activeDealId, setActiveDealId] = useState("");
   const [activeView, setActiveView] = useState<"deal" | "compare">("deal");
   const [compareIds, setCompareIds] = useState<string[]>([]);
@@ -189,8 +191,13 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
           {!demoMode ? (
             <button
               type="button"
-              onClick={() => setScreen("upload")}
-              className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02]"
+              onClick={() => {
+                if (isAddPropertyBlocked) return;
+                setScreen("upload");
+              }}
+              disabled={isAddPropertyBlocked}
+              title={isAddPropertyBlocked ? "Add Property is disabled for this account." : undefined}
+              className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:hover:scale-100"
             >
               + Add Property
             </button>
@@ -243,8 +250,13 @@ export default function DealUnderwritingLens({ onScreenChange }: DealUnderwritin
 
               <button
                 type="button"
-                onClick={() => setScreen("upload")}
-                className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02]"
+                onClick={() => {
+                  if (isAddPropertyBlocked) return;
+                  setScreen("upload");
+                }}
+                disabled={isAddPropertyBlocked}
+                title={isAddPropertyBlocked ? "Add Property is disabled for this account." : undefined}
+                className="rounded-full bg-[linear-gradient(90deg,#a54cf5,#5d6df9)] px-7 py-4 text-lg font-semibold text-white shadow-[0_18px_45px_rgba(118,90,255,0.35)] transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 + Add Property
               </button>

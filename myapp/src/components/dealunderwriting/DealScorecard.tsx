@@ -142,7 +142,7 @@ export function DealScorecard({ deal }: { deal: Deal }) {
               const score = cat?.score ?? 0;
               const rec = cat?.recommendation ?? "";
               const scoreColor = getScoreColor(score);
-              const { bg, label: recLabel } = getRecStyle(rec);
+              // const { bg, label: recLabel } = getRecStyle(rec);
               const explanation =
                 cat?.explanation?.trim() || (sc as Record<string, any>)?.[`${key}Explanation`] || "";
 
@@ -166,14 +166,14 @@ export function DealScorecard({ deal }: { deal: Deal }) {
 
                     <div className="mt-3 flex flex-col items-center gap-2">
                       <CircularScore score={score} color={scoreColor} />
-                      {rec && (
+                      {/* {rec && (
                         <span
                           className="rounded-full px-2.5 py-0.5 text-[10px] font-bold"
                           style={{ color: scoreColor, backgroundColor: bg }}
                         >
                           {recLabel}
                         </span>
-                      )}
+                      )} */}
                     </div>
 
                     {/* Curved divider into white body */}
